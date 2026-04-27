@@ -1,9 +1,25 @@
-import { Bot, CheckCircle2, Clock3, Info, TriangleAlert } from "lucide-react";
+import {
+  Bot,
+  CheckCircle2,
+  Clock3,
+  Copy,
+  Download,
+  ExternalLink,
+  FileText,
+  Info,
+  Layers3,
+  MessageSquareText,
+  TriangleAlert,
+} from "lucide-react";
 
 import { Button } from "@/components/shared";
 import { clientPortalContent } from "@/constants";
 import { cn } from "@/lib/utils";
-import type { PortalDeliveryPreviewHero } from "@/types";
+import type {
+  PortalDeliveryPreviewHero,
+  PortalDeliveryPreviewStageDetails,
+  PortalDeliveryPreviewSubmission,
+} from "@/types";
 
 const badgeClassNames = {
   warning: "border-amber-400/30 bg-amber-400/15 text-[#fbbf24]",
@@ -48,6 +64,10 @@ export function DeliveryPreviewSection() {
         </header>
 
         <DeliveryHero hero={deliveryPreview.hero} />
+        <div className="mt-5 overflow-hidden rounded-[18px] border border-white/[0.08] bg-[#111426] text-start shadow-[0_10px_40px_rgba(0,0,0,0.22)]">
+          <StageDetailsCard details={deliveryPreview.stageDetails} />
+          <SubmissionCard submission={deliveryPreview.submission} />
+        </div>
       </section>
     </main>
   );
@@ -143,4 +163,213 @@ function ValueCard({ hero }: { hero: PortalDeliveryPreviewHero }) {
       </div>
     </aside>
   );
+}
+
+function StageDetailsCard({
+  details,
+}: {
+  details: PortalDeliveryPreviewStageDetails;
+}) {
+  return (
+    <section className="border-b border-white/[0.08] p-5 sm:p-6">
+      <SectionTitle icon={Layers3} title={details.title} iconClassName="text-[#a78bfa]" />
+
+      <dl className="mt-5 divide-y divide-white/[0.07]">
+        {details.rows.map((row) => (
+          <div
+            key={row.label}
+            className="grid gap-1 py-2.5 text-[12px] leading-[1.5] sm:grid-cols-[9rem_minmax(0,1fr)] sm:items-center sm:gap-6"
+          >
+            <dt className="text-[#7f86a8]">{row.label}</dt>
+            <dd
+              className={cn(
+                "font-extrabold text-[#d8dcf0] sm:order-first",
+                row.tone === "green" && "text-[#4ade80]",
+                row.tone === "purple" && "text-[#a78bfa]",
+                row.tone === "warning" && "text-[#fbbf24]",
+              )}
+            >
+              {row.value}
+            </dd>
+          </div>
+        ))}
+      </dl>
+
+      <p className="mt-4 flex items-center gap-2 rounded-[8px] border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-[11px] leading-[1.7] text-[#b8bdd8]">
+        <Info className="size-3 shrink-0 text-[#7f86a8]" aria-hidden="true" />
+        {details.note}
+      </p>
+    </section>
+  );
+}
+
+function SubmissionCard({
+  submission,
+}: {
+  submission: PortalDeliveryPreviewSubmission;
+}) {
+  return (
+    <section className="p-5 sm:p-6">
+      <div className="flex flex-col gap-4  sm:items-start sm:justify-between">
+        <div>
+          <SectionTitle
+            icon={FileText}
+            title={submission.title}
+            iconClassName="text-[#60a5fa]"
+          />
+          <p className="mt-3 text-[12px] leading-[1.7] text-[#7f86a8]">
+            {submission.description}
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3 sm:flex-row-reverse">
+          <div className="flex size-9 items-center justify-center rounded-[10px] bg-[#6d5dfc]/35 text-sm font-black text-[#c4b5fd]">
+            {submission.freelancer.avatarLabel}
+          </div>
+          <div className="text-start sm:text-end">
+            <p className="text-[13px] font-black text-white">
+              {submission.freelancer.name}
+            </p>
+            <p className="text-[11px] leading-[1.5] text-[#7f86a8]">
+              {submission.freelancer.uploadedAt}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-5 space-y-3">
+        {submission.attachments.map((attachment) => (
+          <AttachmentRow key={attachment.title} attachment={attachment} />
+        ))}
+      </div>
+
+      <TextPanel label={submission.summary.label} text={submission.summary.text} />
+      <TextPanel
+        label={submission.notes.label}
+        text={submission.notes.text}
+        icon={MessageSquareText}
+        className="border-[#2f80ed]/15 bg-[#2f80ed]/[0.06]"
+      />
+    </section>
+  );
+}
+
+function AttachmentRow({
+  attachment,
+}: {
+  attachment: PortalDeliveryPreviewSubmission["attachments"][number];
+}) {
+  const isLink = attachment.kind === "link";
+
+  return (
+    <article
+      className={cn(
+        "flex flex-col gap-4 rounded-[10px] border p-4 sm:flex-row sm:items-center sm:justify-between",
+        isLink
+          ? "border-[#2f80ed]/20 bg-[#2f80ed]/[0.06]"
+          : "border-red-400/15 bg-red-400/[0.04]",
+      )}
+    >
+      <div className="min-w-0 sm:order-last sm:text-start">
+        <h3 className="text-[12px] font-black leading-[1.5] text-white">
+          {attachment.title}
+        </h3>
+        <p
+          className={cn(
+            "mt-1 truncate text-[10px] leading-[1.5]",
+            isLink ? "text-[#60a5fa]" : "text-[#7f86a8]",
+          )}
+        >
+          {attachment.meta}
+        </p>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {attachment.actions.map((action) => (
+          <Button
+            key={action.label}
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-8 rounded-[8px] border-white/[0.08] bg-[#0f1222] px-3 text-[11px] font-bold text-[#d8dcf0] hover:bg-[#1a1d2e] hover:text-white"
+          >
+            <AttachmentActionIcon icon={action.icon} />
+            {action.label}
+          </Button>
+        ))}
+      </div>
+
+      <div
+        className={cn(
+          "hidden size-9 items-center justify-center rounded-[10px] border sm:flex",
+          isLink
+            ? "border-[#2f80ed]/25 bg-[#2f80ed]/15 text-[#60a5fa]"
+            : "border-red-400/25 bg-red-400/15 text-red-300",
+        )}
+        aria-hidden="true"
+      >
+        {isLink ? <ExternalLink className="size-4" /> : <FileText className="size-4" />}
+      </div>
+    </article>
+  );
+}
+
+function TextPanel({
+  label,
+  text,
+  icon: Icon,
+  className,
+}: {
+  label: string;
+  text: string;
+  icon?: typeof MessageSquareText;
+  className?: string;
+}) {
+  return (
+    <article
+      className={cn(
+        "mt-3 rounded-[10px] border border-white/[0.08] bg-white/[0.03] p-4 text-[12px] leading-[1.7]",
+        className,
+      )}
+    >
+      <h3 className="flex items-center gap-1.5 text-[11px] font-black text-[#7f86a8]">
+        {Icon ? <Icon className="size-3" aria-hidden="true" /> : null}
+        {label}
+      </h3>
+      <p className="mt-3 text-[#d8dcf0]">{text}</p>
+    </article>
+  );
+}
+
+function SectionTitle({
+  icon: Icon,
+  title,
+  iconClassName,
+}: {
+  icon: typeof Layers3;
+  title: string;
+  iconClassName?: string;
+}) {
+  return (
+    <h2 className="flex items-center gap-2 text-[17px] font-black leading-[1.5] text-white">
+      <Icon className={cn("size-4", iconClassName)} aria-hidden="true" />
+      {title}
+    </h2>
+  );
+}
+
+function AttachmentActionIcon({
+  icon,
+}: {
+  icon: PortalDeliveryPreviewSubmission["attachments"][number]["actions"][number]["icon"];
+}) {
+  if (icon === "copy") {
+    return <Copy className="size-3" aria-hidden="true" />;
+  }
+
+  if (icon === "download") {
+    return <Download className="size-3" aria-hidden="true" />;
+  }
+
+  return <ExternalLink className="size-3" aria-hidden="true" />;
 }

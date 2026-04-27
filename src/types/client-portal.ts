@@ -249,6 +249,9 @@ export interface PortalDeliveryPreviewContent {
   title: string;
   description: string;
   hero: PortalDeliveryPreviewHero;
+  stageDetails: PortalDeliveryPreviewStageDetails;
+  submission: PortalDeliveryPreviewSubmission;
+  review: PortalDeliveryPreviewReview;
 }
 
 export interface PortalDeliveryPreviewHero {
@@ -269,6 +272,80 @@ export interface PortalDeliveryPreviewHero {
     variant: "accept" | "secondary" | "ai";
   }>;
   note: string;
+}
+
+export interface PortalDeliveryPreviewStageDetails {
+  title: string;
+  rows: Array<{
+    label: string;
+    value: string;
+    tone?: "green" | "purple" | "warning";
+  }>;
+  note: string;
+}
+
+export interface PortalDeliveryPreviewSubmission {
+  title: string;
+  description: string;
+  freelancer: {
+    name: string;
+    uploadedAt: string;
+    avatarLabel: string;
+  };
+  attachments: Array<{
+    title: string;
+    meta: string;
+    kind: "link" | "file";
+    actions: Array<{
+      label: string;
+      icon: "external-link" | "copy" | "download";
+    }>;
+  }>;
+  summary: {
+    label: string;
+    text: string;
+  };
+  notes: {
+    label: string;
+    text: string;
+  };
+}
+
+export interface PortalDeliveryPreviewReview {
+  criteria: {
+    title: string;
+    description: string;
+    note: string;
+    items: Array<{
+      label: string;
+      status: string;
+      state: "completed" | "review";
+    }>;
+  };
+  decision: {
+    title: string;
+    description: string;
+    note: string;
+    options: Array<{
+      title: string;
+      description: string;
+      actionLabel: string;
+      tone: "accept" | "revision" | "ai";
+    }>;
+  };
+  flow: {
+    title: string;
+    cards: Array<{
+      title: string;
+      tone: "accept" | "revision" | "ai";
+      steps: string[];
+    }>;
+  };
+  notice: {
+    title: string;
+    description: string;
+    disclaimer: string;
+  };
 }
 
 export interface ClientPortalOverview {
