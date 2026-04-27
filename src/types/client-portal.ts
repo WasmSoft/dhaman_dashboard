@@ -1,11 +1,85 @@
 import type {
   ApiListResponse,
-  FeaturePlaceholderContent,
   PaginatedQueryParams,
 } from "@/types/common";
 
 export interface ClientPortalContentMap {
-  portal: FeaturePlaceholderContent;
+  portal: PortalReviewContent;
+}
+
+export interface PortalReviewContent {
+  title: string;
+  description: string;
+  agreement: PortalAgreement;
+  project: PortalProjectSummary;
+  payments: PortalPayment[];
+  milestones: PortalMilestone[];
+  policies: PortalPolicy[];
+  aiReviewSteps: PortalAiReviewStep[];
+  securityNotice: PortalSecurityNotice;
+  footerText: string;
+}
+
+export interface PortalAgreementBadge {
+  label: string;
+  className: string;
+}
+
+export interface PortalAgreement {
+  sender: string;
+  title: string;
+  total: string;
+  currency: string;
+  stagesLabel: string;
+  paymentTiming: string;
+  badges: PortalAgreementBadge[];
+}
+
+export interface PortalProjectSummary {
+  title: string;
+  description: string;
+  details: Array<{
+    label: string;
+    value: string;
+  }>;
+  roles: Array<{
+    title: string;
+    description: string;
+    className: string;
+  }>;
+}
+
+export interface PortalPayment {
+  label: string;
+  amount: string;
+  percent: number;
+  description: string;
+}
+
+export interface PortalMilestone {
+  id: string;
+  title: string;
+  amount: string;
+  summary: string;
+  description: string;
+  acceptanceCriteria: string[];
+}
+
+export interface PortalPolicy {
+  title: string;
+  description: string;
+  className: string;
+}
+
+export interface PortalAiReviewStep {
+  order: number;
+  label: string;
+}
+
+export interface PortalSecurityNotice {
+  title: string;
+  description: string;
+  disclaimer: string;
 }
 
 export interface ClientPortalOverview {
