@@ -167,6 +167,72 @@ export const clientPortalContent = {
     },
     footerText: "© 2026 Dhaman · جميع الحقوق محفوظة",
   },
+  paymentSetup: {
+    title: "إعداد الدفعات المحمية",
+    description:
+      "راجع خطة الدفعات، احجز دفعة المرحلة الأولى، وابدأ المشروع بثقة.",
+    eyebrow: "إعداد دفع محمي",
+    project: {
+      title: "تصميم صفحة هبوط لشركة ناشئة",
+      meta: "حمزة → شركة المدار · دفعات حسب المراحل",
+    },
+    stats: [
+      {
+        label: "مطلوب الآن",
+        value: "$150",
+        description: "المرحلة الأولى",
+        tone: "green",
+      },
+      {
+        label: "إجمالي الاتفاق",
+        value: "$450",
+        description: "3 مراحل",
+        tone: "default",
+      },
+    ],
+    badges: [
+      {
+        label: "اتفاق معتمد",
+        className:
+          "border-emerald-400/25 bg-emerald-400/[0.12] text-[#4ade80]",
+      },
+      {
+        label: "3 مراحل",
+        className: "border-[#6d5dfc]/30 bg-[#6d5dfc]/15 text-[#a78bfa]",
+      },
+      {
+        label: "دفعة أولى مطلوبة",
+        className: "border-amber-400/30 bg-amber-400/15 text-[#fbbf24]",
+      },
+      {
+        label: "دفعات محمية",
+        className: "border-[#2f80ed]/30 bg-[#2f80ed]/15 text-[#60a5fa]",
+      },
+      {
+        label: "AI Review متاح عند الخلاف",
+        className: "border-white/[0.08] bg-white/[0.05] text-[#7f86a8]",
+      },
+    ],
+    actions: [
+      {
+        label: "حجز الدفعة الأولى",
+        icon: "lock",
+        variant: "primary",
+      },
+      {
+        label: "عرض تفاصيل الاتفاق",
+        icon: "file",
+        variant: "secondary",
+      },
+      {
+        label: "العودة للبوابة",
+        icon: "arrow",
+        variant: "ghost",
+      },
+    ],
+    notice:
+      "سيتم حجز دفعة المرحلة الأولى حتى يتم تسليمها ومراجعتها حسب شروط الاتفاق.",
+  },
   tracking: {
     title: "متابعة المشروع",
     description: "تابع مراحل الاتفاق، حالة الدفعات، والإجراءات المطلوبة منك.",
