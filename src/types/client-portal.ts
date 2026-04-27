@@ -87,7 +87,9 @@ export interface PortalTrackingContent {
   title: string;
   description: string;
   activeProject: PortalTrackingProject;
-  statusRows: PortalTrackingStatusRow[];
+  paymentSummary: PortalTrackingPaymentSummary;
+  requiredAction: PortalTrackingRequiredAction;
+  agreementTimeline: PortalTrackingTimeline;
 }
 
 export interface PortalTrackingProject {
@@ -106,10 +108,42 @@ export interface PortalTrackingProject {
   secondaryAction: string;
 }
 
-export interface PortalTrackingStatusRow {
+export interface PortalTrackingPaymentSummary {
+  title: string;
+  description: string;
+  stats: PortalTrackingPaymentStat[];
+  note: string;
+}
+
+export interface PortalTrackingPaymentStat {
   label: string;
   value: string;
-  tone: "purple" | "amber";
+  description: string;
+  tone: "default" | "purple" | "blue" | "green";
+}
+
+export interface PortalTrackingRequiredAction {
+  title: string;
+  heading: string;
+  description: string;
+  status: string;
+  expectation: string;
+  note: string;
+  actions: string[];
+}
+
+export interface PortalTrackingTimeline {
+  title: string;
+  description: string;
+  steps: PortalTrackingTimelineStep[];
+}
+
+export interface PortalTrackingTimelineStep {
+  title: string;
+  time?: string;
+  description: string;
+  status?: string;
+  state: "completed" | "current" | "upcoming";
 }
 
 export interface ClientPortalOverview {
