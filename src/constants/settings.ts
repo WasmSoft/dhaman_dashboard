@@ -1,0 +1,202 @@
+import type { SettingsContentMap } from "@/types";
+
+export const settingsContent = {
+  settings: {
+    title: "الإعدادات",
+    description: "اضبط معلومات حسابك، تفضيلات الاتفاقات، الإشعارات، وسياسات العمل الافتراضية.",
+    actions: [
+      { label: "حفظ التغييرات", icon: "save" },
+      { label: "إلغاء", icon: "close" },
+      { label: "استعادة الافتراضي", icon: "refresh" },
+    ],
+    navigation: [
+      {
+        key: "profile",
+        label: "الملف الشخصي",
+        description: "الاسم والبريد والصورة",
+        icon: "profile",
+      },
+      {
+        key: "business",
+        label: "معلومات العمل",
+        description: "العلامة التجارية والخدمات",
+        icon: "business",
+      },
+      {
+        key: "agreementPolicies",
+        label: "سياسات الاتفاق",
+        description: "قواعد التأخير والإلغاء والمراجعة",
+        icon: "agreementPolicies",
+      },
+      {
+        key: "aiPreferences",
+        label: "تفضيلات AI",
+        description: "طريقة توليد الخطط والمراجعات",
+        icon: "aiPreferences",
+      },
+      {
+        key: "notifications",
+        label: "الإشعارات",
+        description: "البريد والتنبيهات",
+        icon: "notifications",
+      },
+      {
+        key: "security",
+        label: "الأمان",
+        description: "كلمة المرور والجلسات",
+        icon: "security",
+      },
+      {
+        key: "billing",
+        label: "الفوترة التجريبية",
+        description: "إعدادات الدفع لاحقًا",
+        icon: "billing",
+      },
+    ],
+    profileSummary: {
+      name: "حمزة",
+      email: "hamza@email.com",
+      role: "Freelancer",
+      initials: "ح",
+      buttonLabel: "تعديل الملف",
+    },
+    businessSummary: {
+      businessName: "Hamza Studio",
+      service: "تصميم واجهات وتطوير ويب",
+      currency: "USD",
+      buttonLabel: "تعديل معلومات العمل",
+    },
+    notificationSummary: [
+      { label: "تنبيهات موافقة العميل", status: "مفعلة" },
+      { label: "تنبيهات مراجعة التسليم", status: "مفعلة" },
+      { label: "نتائج AI Review", status: "مفعلة" },
+    ],
+    securitySummary: {
+      password: "••••••••••",
+      lastLogin: "اليوم",
+      twoFactor: "غير مفعلة",
+      buttonLabel: "إعدادات الأمان",
+    },
+    overviewCards: [
+      { title: "الملف الشخصي", icon: "profile", type: "profile" },
+      { title: "معلومات العمل", icon: "business", type: "business" },
+      { title: "تفضيلات الإشعارات", icon: "notifications", type: "notifications" },
+      { title: "الأمان", icon: "security", type: "security" },
+    ],
+    placeholderTitle: "الملف الشخصي",
+    placeholderDescription: "هذا القسم سيكون متاحًا قريبًا. القسم الحالي المفعّل في هذه النسخة هو سياسات الاتفاق.",
+    placeholderActionLabel: "الانتقال إلى سياسات الاتفاق",
+    policyIntroTitle: "سياسات الاتفاق الافتراضية",
+    policyIntroDescription: "استخدم هذه السياسات كنقطة بداية عند إنشاء اتفاق جديد، مع إمكانية تعديلها لكل مشروع عند الحاجة.",
+    policyBadges: [
+      { label: "تطبق على الاتفاقات الجديدة" },
+      { label: "قابلة للتعديل لكل مشروع" },
+      { label: "تستخدم في مراجعات AI" },
+    ],
+    policyHint: "كلما كانت السياسات أوضح، أصبحت مراجعات AI أدق عند تحليل الاعتراضات والتسليمات.",
+    policies: [
+      {
+        key: "delay",
+        title: "سياسة التأخير الافتراضية",
+        description: "تحدد ماذا يحدث عند تأخر الفريلانسر في التسليم أو تأخر العميل في المراجعة.",
+        icon: "warning",
+        enabledByDefault: true,
+        fields: [
+          { label: "مدة مراجعة العميل", value: "3 أيام عمل" },
+          { label: "مهلة التأخير المسموحة للفريلانسر", value: "2 يوم" },
+          {
+            label: "حالة الدفعة عند التأخير",
+            value: "تعليق الدفعة حتى حل الاعتراض",
+            inputType: "select",
+            options: ["تعليق الدفعة حتى حل الاعتراض", "السماح بالصرف الجزئي", "تحويلها لمراجعة AI"],
+          },
+          {
+            label: "نص السياسة",
+            value: "عند التأخير، يمنح العميل مهلة مراجعة واضحة، ويمكن تعليق الصرف مؤقتًا حتى يتم توضيح سبب التأخير أو معالجة الأثر على التسليم.",
+            inputType: "textarea",
+          },
+        ],
+      },
+      {
+        key: "cancel",
+        title: "سياسة الإلغاء الافتراضية",
+        description: "توضح طريقة التعامل مع إلغاء المشروع قبل أو بعد بدء التنفيذ، وما يترتب عليه ماليًا.",
+        icon: "agreementPolicies",
+        enabledByDefault: true,
+        fields: [
+          { label: "الإلغاء قبل بدء العمل", value: "مسموح بدون صرف أي دفعة" },
+          { label: "الإلغاء بعد بدء العمل", value: "يتم تقييم ما تم إنجازه حسب المرحلة" },
+          { label: "يتطلب موافقة الطرفين", value: "مفعل" },
+          {
+            label: "نص السياسة",
+            value: "في حال الإلغاء بعد بدء التنفيذ، يتم تقييم المرحلة الحالية وما تم إنجازه فعليًا، ثم يحدد القرار المالي بناءً على التقدم الموثق داخل الاتفاق.",
+            inputType: "textarea",
+          },
+        ],
+      },
+      {
+        key: "scope",
+        title: "سياسة الطلبات الإضافية الافتراضية",
+        description: "تحدد كيف يتم التعامل مع الطلبات التي تقع خارج نطاق الاتفاق الأساسي.",
+        icon: "billing",
+        enabledByDefault: true,
+        fields: [
+          {
+            label: "التعامل مع الطلبات خارج النطاق",
+            value: "طلب تكلفة ومدة جديدة قبل التنفيذ",
+            inputType: "select",
+            options: ["طلب تكلفة ومدة جديدة قبل التنفيذ", "تنفيذ محدود مع توثيق الفرق", "تحويلها مباشرة إلى Change Request"],
+          },
+          { label: "يتطلب تكلفة ومدة جديدة", value: "مفعل" },
+          {
+            label: "نص السياسة",
+            value: "أي طلب إضافي خارج نطاق الاتفاق الأصلي يجب أن يوثق ضمن طلب تغيير مستقل يوضح أثره على الوقت والتكلفة قبل بدء التنفيذ.",
+            inputType: "textarea",
+          },
+        ],
+      },
+      {
+        key: "review",
+        title: "سياسة المراجعة والاعتراض الافتراضية",
+        description: "تحدد كيف يراجع العميل التسليم، وكيف يتم فتح مراجعة AI عند وجود اعتراضات موثقة.",
+        icon: "aiPreferences",
+        enabledByDefault: true,
+        fields: [
+          { label: "شرط قبول الاعتراض", value: "يجب ربط الاعتراض بشرط قبول محدد" },
+          {
+            label: "متى يتم فتح مراجعة AI؟",
+            value: "عند استمرار الخلاف بعد أول رد موثق",
+            inputType: "select",
+            options: ["عند استمرار الخلاف بعد أول رد موثق", "بعد انتهاء مهلة المراجعة", "عند طلب أحد الطرفين"],
+          },
+          {
+            label: "نتائج المراجعة الممكنة",
+            value: "",
+            inputType: "pill-list",
+            pills: ["صرف الدفعة", "طلب تعديل", "تعليق الدفعة", "Change Request"],
+          },
+          {
+            label: "نص السياسة",
+            value: "يراجع العميل التسليم وفق شروط القبول المحددة، وأي اعتراض يجب أن يرتبط ببند واضح. عند تعذر الحسم، يتم فتح مراجعة AI لتقديم توصية موثقة.",
+            inputType: "textarea",
+          },
+        ],
+      },
+    ],
+    aiPreferenceTitle: "تفضيلات AI للاتفاقات الجديدة",
+    aiPreferenceLevelLabel: "مستوى دقة AI عند توليد الاتفاق",
+    aiPreferenceOptions: [
+      { key: "strict", label: "صارم" },
+      { key: "balanced", label: "متوازن" },
+      { key: "flexible", label: "مرن" },
+    ],
+    aiPreferenceToggles: [
+      { label: "إظهار تنبيهات الغموض", enabled: true },
+      { label: "اقتراح المراحل تلقائيًا", enabled: true },
+      { label: "اقتراح السياسات تلقائيًا", enabled: true },
+    ],
+    aiPreferenceHint: "هذه التفضيلات تؤثر على إنشاء الاتفاقات الجديدة فقط، ولا تغيّر الاتفاقات السابقة.",
+    footerBanner: "سيتم تطبيق هذه الإعدادات على الاتفاقات الجديدة فقط.",
+    footerNote: "إذا قمت بإعادة ضبط القيم الافتراضية فسيتم الاحتفاظ باتفاقاتك الحالية كما هي، وسيقتصر التغيير على الاتفاقات الجديدة بعد الحفظ.",
+  },
+} as const satisfies SettingsContentMap;
