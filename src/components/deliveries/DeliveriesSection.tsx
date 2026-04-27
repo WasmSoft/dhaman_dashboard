@@ -48,7 +48,7 @@ function DeliveriesHeader() {
         <p className="mt-1 text-[13px] leading-6 text-[#737b99]">{content.subtitle}</p>
       </div>
 
-      <div className="order-1 flex flex-wrap gap-2 lg:order-2">
+      <div className="order-1 flex  gap-2 lg:order-2">
         <Button asChild className="h-[41px] rounded-[10px] bg-[#6f52ff] px-4 text-[13px] font-bold text-white shadow-[0_12px_28px_rgba(111,82,255,0.26)] hover:bg-[#7b63ff]">
           <Link href="/agreements/delivery">
             <Send className="size-[15px]" />
@@ -70,10 +70,12 @@ function DeliveriesHeader() {
 
 function DeliveriesMetrics() {
   return (
-    <section className="mb-6 grid max-w-[966px] gap-4 sm:grid-cols-2 xl:ms-[284px] xl:grid-cols-4">
+    // AR: نترك مساحة الشريط الجانبي في جهة النهاية حتى تبدأ البطاقات من اليمين داخل تخطيط RTL.
+    // EN: Reserve sidebar space on the inline end side so the cards start from the right in the RTL layout.
+    <section className="mb-6 grid max-w-[966px] justify-start gap-4 sm:grid-cols-2 xl:me-[284px] xl:grid-cols-4">
       {deliveriesContent.metrics.map((metric) => (
         <article key={metric.label} className={cn("relative min-h-[109px] rounded-[12px] border p-[18px] text-start", metricToneClasses[metric.tone].card)}>
-          <span className={cn("absolute start-4 top-3 rounded-md px-2 py-1 text-[10px] font-bold", metricToneClasses[metric.tone].badge)}>{metric.badge}</span>
+          <span className={cn("absolute end-4 top-3 rounded-md px-2 py-1 text-[10px] font-bold", metricToneClasses[metric.tone].badge)}>{metric.badge}</span>
           <span className={cn("grid size-10 place-items-center rounded-[10px]", metricToneClasses[metric.tone].icon)}>{metricIcon(metric.tone)}</span>
           <strong className={cn("mt-3 block text-[24px] font-extrabold", metricToneClasses[metric.tone].value)}>{metric.value}</strong>
           <span className="mt-1 block text-[13px] font-bold text-white">{metric.label}</span>

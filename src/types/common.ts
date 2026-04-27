@@ -5,6 +5,18 @@ export interface FeaturePlaceholderContent {
   description: string;
 }
 
+export interface NotFoundStateContent {
+  eyebrow: string;
+  code: string;
+  title: string;
+  description: string;
+  primaryActionLabel: string;
+  primaryActionHref: string;
+  secondaryActionLabel?: string;
+  secondaryActionHref?: string;
+  highlights: readonly string[];
+}
+
 export interface ApiErrorShape {
   message: string;
   statusCode: number | null;

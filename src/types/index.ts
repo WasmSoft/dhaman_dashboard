@@ -5,3 +5,5 @@ export * from "./dashboard";
 export * from "./deliveries";
 export * from "./agreements";
 export * from "./clients";
+export * from "./ai-review";
+export * from "./settings";
