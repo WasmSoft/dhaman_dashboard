@@ -2,6 +2,7 @@ import { Copy, Eye } from "lucide-react";
 
 import { Button } from "@/components/shared";
 import { TrackingDetailsSection } from "@/components/client-portal/TrackingDetailsSection";
+import { TrackingFinalSection } from "@/components/client-portal/TrackingFinalSection";
 import { TrackingProgressSection } from "@/components/client-portal/TrackingProgressSection";
 import { clientPortalContent } from "@/constants";
 import { cn } from "@/lib/utils";
@@ -111,6 +112,10 @@ export function TrackingSection() {
             agreementTimeline={tracking.agreementTimeline}
           />
           <TrackingProgressSection progressDetails={tracking.progressDetails} />
+          <TrackingFinalSection
+            finalSummary={tracking.finalSummary}
+            footer={tracking.footer}
+          />
         </div>
       </section>
     </main>
