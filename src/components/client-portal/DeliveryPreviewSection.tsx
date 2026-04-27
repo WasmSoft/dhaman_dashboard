@@ -11,19 +11,24 @@ import {
   FileText,
   Info,
   Layers3,
+  Lock,
   MessageSquareText,
+  ReceiptText,
   RefreshCw,
   ShieldCheck,
   Sparkles,
   TriangleAlert,
   Zap,
+  type LucideIcon,
 } from "lucide-react";
+import type { ReactNode } from "react";
 
 import { Button } from "@/components/shared";
 import { clientPortalContent } from "@/constants";
 import { cn } from "@/lib/utils";
 import type {
   PortalDeliveryPreviewHero,
+  PortalDeliveryPreviewContextSummary,
   PortalDeliveryPreviewReview,
   PortalDeliveryPreviewStageDetails,
   PortalDeliveryPreviewSubmission,
@@ -91,6 +96,12 @@ const flowClassNames = {
   ai: "border-[#a78bfa]/15 text-[#a78bfa]",
 } as const;
 
+const summaryValueClassNames = {
+  green: "text-[#4ade80]",
+  warning: "text-[#fbbf24]",
+  purple: "text-[#a78bfa]",
+} as const;
+
 export function DeliveryPreviewSection() {
   const { deliveryPreview } = clientPortalContent;
 
@@ -119,6 +130,7 @@ export function DeliveryPreviewSection() {
           <SubmissionCard submission={deliveryPreview.submission} />
         </div>
         <DeliveryReviewSection review={deliveryPreview.review} />
+        <DeliveryContextSummarySection summary={deliveryPreview.contextSummary} />
       </section>
     </main>
   );
@@ -423,6 +435,191 @@ function AttachmentActionIcon({
   }
 
   return <ExternalLink className="size-3" aria-hidden="true" />;
+}
+
+function DeliveryContextSummarySection({
+  summary,
+}: {
+  summary: PortalDeliveryPreviewContextSummary;
+}) {
+  return (
+    <section
+      className="mt-5 overflow-hidden rounded-[16px] border border-white/[0.07] text-start"
+      aria-label="ملخص مراجعة التسليم"
+    >
+      <SummaryPaymentCard payment={summary.payment} />
+      <SummaryDeadlineCard deadline={summary.deadline} />
+      <SummaryPoliciesCard policies={summary.policies} />
+      <SummaryProjectCard project={summary.project} />
+      <SummarySecurityCard security={summary.security} />
+    </section>
+  );
+}
+
+function SummaryPaymentCard({
+  payment,
+}: {
+  payment: PortalDeliveryPreviewContextSummary["payment"];
+}) {
+  return (
+    <SummaryCard>
+      <SummaryCardTitle icon={ReceiptText} title={payment.title} iconClassName="text-[#4ade80]" />
+      <dl className="mt-4 space-y-1.5">
+        {payment.rows.map((row) => (
+          <div
+            key={row.label}
+            className="flex flex-wrap items-baseline justify-start gap-x-1.5 gap-y-0.5 text-[16px] leading-6 text-[#f1f3fc]"
+          >
+            <dt>{row.label}</dt>
+            <dd className={cn("text-[11px] leading-[1.5]", summaryValueClassNames[row.tone])}>
+              {row.value}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </SummaryCard>
+  );
+}
+
+function SummaryDeadlineCard({
+  deadline,
+}: {
+  deadline: PortalDeliveryPreviewContextSummary["deadline"];
+}) {
+  return (
+    <SummaryCard className="border-amber-400/20">
+      <SummaryCardTitle icon={Clock3} title={deadline.title} iconClassName="text-[#fbbf24]" />
+      <div className="mt-7 flex flex-col items-center text-center">
+        <div className="flex size-[60px] flex-col items-center justify-center rounded-full border-[1.6px] border-amber-500/30 bg-amber-500/10">
+          <strong className="text-[20px] font-black leading-5 text-[#fbbf24]">
+            {deadline.value}
+          </strong>
+          <span className="text-[9px] font-bold leading-[1.5] text-[#7f86a8]">
+            {deadline.unit}
+          </span>
+        </div>
+        <p className="mt-3 text-[12px] leading-[1.5] text-[#b8bdd8]">
+          {deadline.description}
+        </p>
+        <p className="mt-1.5 text-[10px] leading-[1.5] text-[#7f86a8]">
+          {deadline.note}
+        </p>
+      </div>
+    </SummaryCard>
+  );
+}
+
+function SummaryPoliciesCard({
+  policies,
+}: {
+  policies: PortalDeliveryPreviewContextSummary["policies"];
+}) {
+  return (
+    <SummaryCard>
+      <SummaryCardTitle icon={ShieldCheck} title={policies.title} iconClassName="text-[#60a5fa]" />
+      <ul className="mt-4 space-y-2 text-[11px] leading-[1.5] text-[#b8bdd8]">
+        {policies.items.map((item) => (
+          <li key={item} className="flex items-start gap-2">
+            <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-[#2f80ed]/60" />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+      <Button
+        type="button"
+        variant="ghost"
+        className="mt-4 h-auto gap-1.5 px-0 py-0 text-[11px] font-medium text-[#f1f3fc] hover:bg-transparent hover:text-white"
+      >
+        <ExternalLink className="size-[11px]" aria-hidden="true" />
+        {policies.actionLabel}
+      </Button>
+    </SummaryCard>
+  );
+}
+
+function SummaryProjectCard({
+  project,
+}: {
+  project: PortalDeliveryPreviewContextSummary["project"];
+}) {
+  return (
+    <SummaryCard>
+      <SummaryCardTitle icon={FileText} title={project.title} iconClassName="text-[#a78bfa]" />
+      <dl className="mt-4 space-y-1.5">
+        {project.rows.map((row) => (
+          <div
+            key={row.label}
+            className="flex flex-wrap items-baseline justify-start gap-x-1.5 gap-y-0.5 text-[16px] leading-6 text-[#f1f3fc]"
+          >
+            <dt>{row.label}</dt>
+            <dd className={cn("text-[#b8bdd8]", row.tone === "green" && "text-[#4ade80]")}>
+              {row.value}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </SummaryCard>
+  );
+}
+
+function SummarySecurityCard({
+  security,
+}: {
+  security: PortalDeliveryPreviewContextSummary["security"];
+}) {
+  return (
+    <SummaryCard className="border-emerald-400/15">
+      <SummaryCardTitle icon={Lock} title={security.title} iconClassName="text-[#4ade80]" titleClassName="text-[#4ade80]" />
+      <p className="mt-5 text-[16px] leading-6 text-[#f1f3fc]">{security.description}</p>
+      <span className="mt-3 inline-flex min-h-[23px] items-center gap-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/[0.08] px-3 text-[10px] font-bold leading-none text-[#4ade80]">
+        <Lock className="size-[9px]" aria-hidden="true" />
+        {security.badge}
+      </span>
+    </SummaryCard>
+  );
+}
+
+function SummaryCard({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <article
+      className={cn(
+        "border-b border-white/[0.07] bg-[#131627] px-5 py-5 last:border-b-0 sm:px-6",
+        className,
+      )}
+    >
+      {children}
+    </article>
+  );
+}
+
+function SummaryCardTitle({
+  icon: Icon,
+  title,
+  iconClassName,
+  titleClassName,
+}: {
+  icon: LucideIcon;
+  title: string;
+  iconClassName?: string;
+  titleClassName?: string;
+}) {
+  return (
+    <h2
+      className={cn(
+        "flex items-center justify-start gap-2 text-[13px] font-extrabold leading-[1.5] text-white",
+        titleClassName,
+      )}
+    >
+      <Icon className={cn("size-[13px]", iconClassName)} aria-hidden="true" />
+      {title}
+    </h2>
+  );
 }
 
 function DeliveryReviewSection({

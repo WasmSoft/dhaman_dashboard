@@ -585,6 +585,77 @@ export const clientPortalContent = {
           "يرجى التركيز على ترتيب الأقسام والرسالة الرئيسية قبل الانتقال للتصميم النهائي.",
       },
     },
+    contextSummary: {
+      payment: {
+        title: "ملخص الدفعة",
+        rows: [
+          {
+            label: "مبلغ المرحلة",
+            value: "$150",
+            tone: "green",
+          },
+          {
+            label: "الحالة الحالية",
+            value: "Client Review",
+            tone: "warning",
+          },
+          {
+            label: "بعد القبول",
+            value: "Ready to Release",
+            tone: "green",
+          },
+          {
+            label: "عند الاعتراض",
+            value: "AI Review · On Hold",
+            tone: "purple",
+          },
+        ],
+      },
+      deadline: {
+        title: "مهلة المراجعة",
+        value: "3",
+        unit: "أيام",
+        description: "لديك 3 أيام عمل لمراجعة التسليم.",
+        note: "تساعد المهلة على إبقاء المشروع واضحًا للطرفين.",
+      },
+      policies: {
+        title: "سياسات مرتبطة",
+        items: [
+          "يجب ربط الاعتراض بشرط قبول محدد.",
+          "أي طلب خارج النطاق يتحول إلى Change Request.",
+          "يمكن فتح AI Review عند وجود خلاف.",
+        ],
+        actionLabel: "عرض السياسات",
+      },
+      project: {
+        title: "ملخص المشروع",
+        rows: [
+          {
+            label: "المشروع",
+            value: "تصميم صفحة هبوط لشركة ناشئة",
+          },
+          {
+            label: "الفريلانسر",
+            value: "حمزة",
+          },
+          {
+            label: "المرحلة الحالية",
+            value: "1 من 3",
+          },
+          {
+            label: "قيمة الاتفاق",
+            value: "$450",
+            tone: "green",
+          },
+        ],
+      },
+      security: {
+        title: "مراجعة آمنة",
+        description:
+          "هذا الرابط مخصص لمراجعة هذا التسليم فقط داخل اتفاقك مع الفريلانسر.",
+        badge: "Token Protected",
+      },
+    },
     review: {
       criteria: {
         title: "شروط قبول المرحلة",

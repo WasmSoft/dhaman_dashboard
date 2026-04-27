@@ -251,6 +251,7 @@ export interface PortalDeliveryPreviewContent {
   hero: PortalDeliveryPreviewHero;
   stageDetails: PortalDeliveryPreviewStageDetails;
   submission: PortalDeliveryPreviewSubmission;
+  contextSummary: PortalDeliveryPreviewContextSummary;
   review: PortalDeliveryPreviewReview;
 }
 
@@ -308,6 +309,42 @@ export interface PortalDeliveryPreviewSubmission {
   notes: {
     label: string;
     text: string;
+  };
+}
+
+export interface PortalDeliveryPreviewContextSummary {
+  payment: {
+    title: string;
+    rows: Array<{
+      label: string;
+      value: string;
+      tone: "green" | "warning" | "purple";
+    }>;
+  };
+  deadline: {
+    title: string;
+    value: string;
+    unit: string;
+    description: string;
+    note: string;
+  };
+  policies: {
+    title: string;
+    items: string[];
+    actionLabel: string;
+  };
+  project: {
+    title: string;
+    rows: Array<{
+      label: string;
+      value: string;
+      tone?: "green";
+    }>;
+  };
+  security: {
+    title: string;
+    description: string;
+    badge: string;
   };
 }
 
