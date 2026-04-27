@@ -1,13 +1,9 @@
 import { Copy, Eye } from "lucide-react";
 
 import { Button } from "@/components/shared";
+import { TrackingDetailsSection } from "@/components/client-portal/TrackingDetailsSection";
 import { clientPortalContent } from "@/constants";
 import { cn } from "@/lib/utils";
-
-const statusToneClassNames = {
-  purple: "text-[#a78bfa]",
-  amber: "text-[#fbbf24]",
-} as const;
 
 export function TrackingSection() {
   const { tracking } = clientPortalContent;
@@ -108,21 +104,11 @@ export function TrackingSection() {
             </div>
           </div>
 
-          <div className="grid gap-10 pt-14 sm:gap-12 sm:pt-20">
-            {tracking.statusRows.map((row) => (
-              <p key={row.label} className="text-start text-base leading-6">
-                {row.label}
-                <span
-                  className={cn(
-                    "me-2 font-bold",
-                    statusToneClassNames[row.tone],
-                  )}
-                >
-                  {row.value}
-                </span>
-              </p>
-            ))}
-          </div>
+          <TrackingDetailsSection
+            paymentSummary={tracking.paymentSummary}
+            requiredAction={tracking.requiredAction}
+            agreementTimeline={tracking.agreementTimeline}
+          />
         </div>
       </section>
     </main>

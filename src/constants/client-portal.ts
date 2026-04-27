@@ -203,22 +203,89 @@ export const clientPortalContent = {
       primaryAction: "عرض تفاصيل الاتفاق",
       secondaryAction: "نسخ رابط البوابة",
     },
-    statusRows: [
-      {
-        label: "الحالة",
-        value: "قيد التنفيذ",
-        tone: "purple",
-      },
-      {
-        label: "الإجراء التالي",
-        value: "بانتظار تسليم الفريلانسر",
-        tone: "amber",
-      },
-      {
-        label: "الدفعة",
-        value: "$150 محجوزة",
-        tone: "purple",
-      },
-    ],
+    paymentSummary: {
+      title: "ملخص الدفعات",
+      description: "كل دفعة مرتبطة بمرحلة واضحة وشروط قبول محددة.",
+      stats: [
+        {
+          label: "إجمالي الاتفاق",
+          value: "$450",
+          description: "قيمة المشروع كاملة",
+          tone: "default",
+        },
+        {
+          label: "محجوز",
+          value: "$150",
+          description: "دفعة المرحلة الحالية",
+          tone: "purple",
+        },
+        {
+          label: "تحت المراجعة",
+          value: "$0",
+          description: "لا توجد دفعات قيد المراجعة الآن",
+          tone: "blue",
+        },
+        {
+          label: "مصروف",
+          value: "$0",
+          description: "لم يتم صرف أي دفعة بعد",
+          tone: "green",
+        },
+      ],
+      note: "بعد تسليم المرحلة، ستنتقل الدفعة إلى مراجعتك قبل الصرف.",
+    },
+    requiredAction: {
+      title: "الإجراء المطلوب الآن",
+      heading: "لا يوجد إجراء مطلوب منك حاليًا",
+      description:
+        "الفريلانسر يعمل على المرحلة الأولى. ستظهر لك هنا إجراءات المراجعة عند رفع التسليم.",
+      status: "بانتظار تسليم الفريلانسر",
+      expectation: "متوقع: بعد يومين",
+      note:
+        "عند رفع التسليم، ستتمكن من قبوله، طلب تعديل، أو فتح مراجعة AI إذا كان هناك خلاف.",
+      actions: ["مراجعة التسليم", "طلب تعديل", "فتح AI Review"],
+    },
+    agreementTimeline: {
+      title: "مسار الاتفاق",
+      description: "يعرض هذا المسار أهم الأحداث منذ إنشاء الاتفاق وحتى اكتماله.",
+      steps: [
+        {
+          title: "تم إنشاء الاتفاق",
+          time: "منذ 3 أيام",
+          description: "أنشأ حمزة اتفاق الدفع والمراحل.",
+          state: "completed",
+        },
+        {
+          title: "تم إرسال الدعوة",
+          time: "منذ يومين",
+          description: "تم إرسال رابط مراجعة الاتفاق إلى شركة المدار.",
+          state: "completed",
+        },
+        {
+          title: "تمت الموافقة",
+          time: "منذ يوم",
+          description: "وافقت شركة المدار على الاتفاق وأصبح نشطًا.",
+          state: "completed",
+        },
+        {
+          title: "المرحلة الأولى قيد التنفيذ",
+          time: "الآن",
+          description: "الفريلانسر يعمل على الهيكل والتصميم الأولي.",
+          status: "قيد التنفيذ الآن",
+          state: "current",
+        },
+        {
+          title: "مراجعة التسليم",
+          description: "بعد رفع التسليم، ستراجعه شركة المدار.",
+          state: "upcoming",
+        },
+        {
+          title: "صرف الدفعة أو مراجعة AI",
+          description:
+            "بعد القبول يتم صرف الدفعة، أو يتم فتح مراجعة AI عند الخلاف.",
+          state: "upcoming",
+        },
+      ],
+    },
   },
 } as const satisfies ClientPortalContentMap;
