@@ -452,4 +452,53 @@ export const clientPortalContent = {
       copyright: "© 2026 Dhaman",
     },
   },
+  deliveryPreview: {
+    title: "مراجعة تسليم المرحلة",
+    description:
+      "راجع التسليم المرفوع، قارنه بشروط القبول، ثم اختر الإجراء المناسب.",
+    hero: {
+      eyebrow: "تسليم مرحلة",
+      title: "المرحلة الأولى: الهيكل والتصميم الأولي",
+      meta: "تصميم صفحة هبوط لشركة ناشئة · حمزة → شركة المدار",
+      amount: "$150",
+      amountLabel: "قيمة المرحلة",
+      uploadedAt: "رُفع منذ ساعتين",
+      reviewDeadline: "مهلة 3 أيام عمل",
+      badges: [
+        {
+          label: "بانتظار مراجعتك",
+          tone: "warning",
+        },
+        {
+          label: "Client Review",
+          tone: "blue",
+        },
+        {
+          label: "دفعة محمية",
+          tone: "green",
+        },
+        {
+          label: "AI Review متاح عند الخلاف",
+          tone: "purple",
+        },
+      ],
+      actions: [
+        {
+          label: "قبول التسليم وصرف الدفعة",
+          icon: "check",
+          variant: "accept",
+        },
+        {
+          label: "طلب تعديل",
+          variant: "secondary",
+        },
+        {
+          label: "فتح AI Review",
+          icon: "bot",
+          variant: "ai",
+        },
+      ],
+      note: "عند قبول التسليم، تصبح دفعة المرحلة جاهزة للصرف للفريلانسر.",
+    },
+  },
 } as const satisfies ClientPortalContentMap;

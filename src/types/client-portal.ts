@@ -6,6 +6,7 @@ import type {
 export interface ClientPortalContentMap {
   portal: PortalReviewContent;
   tracking: PortalTrackingContent;
+  deliveryPreview: PortalDeliveryPreviewContent;
 }
 
 export interface PortalReviewContent {
@@ -242,6 +243,32 @@ export interface PortalTrackingFooter {
   };
   links: string[];
   copyright: string;
+}
+
+export interface PortalDeliveryPreviewContent {
+  title: string;
+  description: string;
+  hero: PortalDeliveryPreviewHero;
+}
+
+export interface PortalDeliveryPreviewHero {
+  eyebrow: string;
+  title: string;
+  meta: string;
+  amount: string;
+  amountLabel: string;
+  uploadedAt: string;
+  reviewDeadline: string;
+  badges: Array<{
+    label: string;
+    tone: "warning" | "blue" | "green" | "purple";
+  }>;
+  actions: Array<{
+    label: string;
+    icon?: "check" | "bot";
+    variant: "accept" | "secondary" | "ai";
+  }>;
+  note: string;
 }
 
 export interface ClientPortalOverview {

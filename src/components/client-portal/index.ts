@@ -6,6 +6,7 @@ export { TrackingSection } from "./TrackingSection";
 export { AgreementHero } from "./AgreementHero";
 export { AiDisputeSection } from "./AiDisputeSection";
 export { DecisionSection } from "./DecisionSection";
+export { DeliveryPreviewSection } from "./DeliveryPreviewSection";
 export { MilestonesSection } from "./MilestonesSection";
 export { PaymentSummaryCard } from "./PaymentSummaryCard";
 export { PolicySection } from "./PolicySection";
