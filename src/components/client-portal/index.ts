@@ -1,4 +1,5 @@
 export { PortalSection } from "./PortalSection";
+export { TrackingSection } from "./TrackingSection";
 export { AgreementHero } from "./AgreementHero";
 export { AiDisputeSection } from "./AiDisputeSection";
 export { DecisionSection } from "./DecisionSection";

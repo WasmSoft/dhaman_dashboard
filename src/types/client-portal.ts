@@ -5,6 +5,7 @@ import type {
 
 export interface ClientPortalContentMap {
   portal: PortalReviewContent;
+  tracking: PortalTrackingContent;
 }
 
 export interface PortalReviewContent {
@@ -80,6 +81,35 @@ export interface PortalSecurityNotice {
   title: string;
   description: string;
   disclaimer: string;
+}
+
+export interface PortalTrackingContent {
+  title: string;
+  description: string;
+  activeProject: PortalTrackingProject;
+  statusRows: PortalTrackingStatusRow[];
+}
+
+export interface PortalTrackingProject {
+  eyebrow: string;
+  title: string;
+  freelancer: string;
+  client: string;
+  totalLabel: string;
+  total: string;
+  stagesLabel: string;
+  progressLabel: string;
+  progressValue: string;
+  stageLabels: string[];
+  badges: PortalAgreementBadge[];
+  primaryAction: string;
+  secondaryAction: string;
+}
+
+export interface PortalTrackingStatusRow {
+  label: string;
+  value: string;
+  tone: "purple" | "amber";
 }
 
 export interface ClientPortalOverview {

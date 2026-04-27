@@ -167,4 +167,58 @@ export const clientPortalContent = {
     },
     footerText: "© 2026 Dhaman · جميع الحقوق محفوظة",
   },
+  tracking: {
+    title: "متابعة المشروع",
+    description: "تابع مراحل الاتفاق، حالة الدفعات، والإجراءات المطلوبة منك.",
+    activeProject: {
+      eyebrow: "المشروع النشط",
+      title: "تصميم صفحة هبوط لشركة ناشئة",
+      freelancer: "حمزة",
+      client: "شركة المدار",
+      totalLabel: "إجمالي الاتفاق",
+      total: "$450",
+      stagesLabel: "1 من 3 مراحل",
+      progressLabel: "تقدم الاتفاق",
+      progressValue: "33%",
+      stageLabels: ["المرحلة الأولى", "المرحلة الثانية", "المرحلة الثالثة"],
+      badges: [
+        {
+          label: "اتفاق نشط",
+          className:
+            "border-emerald-400/25 bg-emerald-400/[0.12] text-[#4ade80]",
+        },
+        {
+          label: "دفعات محمية",
+          className: "border-[#6d5dfc]/30 bg-[#6d5dfc]/15 text-[#a78bfa]",
+        },
+        {
+          label: "المرحلة الأولى قيد التنفيذ",
+          className: "border-amber-400/30 bg-amber-400/15 text-[#fbbf24]",
+        },
+        {
+          label: "AI Review متاح عند الخلاف",
+          className: "border-blue-400/30 bg-blue-400/15 text-[#60a5fa]",
+        },
+      ],
+      primaryAction: "عرض تفاصيل الاتفاق",
+      secondaryAction: "نسخ رابط البوابة",
+    },
+    statusRows: [
+      {
+        label: "الحالة",
+        value: "قيد التنفيذ",
+        tone: "purple",
+      },
+      {
+        label: "الإجراء التالي",
+        value: "بانتظار تسليم الفريلانسر",
+        tone: "amber",
+      },
+      {
+        label: "الدفعة",
+        value: "$150 محجوزة",
+        tone: "purple",
+      },
+    ],
+  },
 } as const satisfies ClientPortalContentMap;
