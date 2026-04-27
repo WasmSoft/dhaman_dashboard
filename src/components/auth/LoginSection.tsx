@@ -175,7 +175,7 @@ export function LoginSection() {
                   />
                   <span>{login.rememberLabel}</span>
                 </label>
-                <Link href="/login" className="font-medium text-violet-300 hover:text-violet-200">
+                <Link href="/" className="font-medium text-violet-300 hover:text-violet-200">
                   {login.forgotPasswordLabel}
                 </Link>
               </div>
