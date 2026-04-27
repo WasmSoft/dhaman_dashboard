@@ -6,6 +6,7 @@ import type {
 export interface ClientPortalContentMap {
   portal: PortalReviewContent;
   tracking: PortalTrackingContent;
+  deliveryPreview: PortalDeliveryPreviewContent;
 }
 
 export interface PortalReviewContent {
@@ -242,6 +243,146 @@ export interface PortalTrackingFooter {
   };
   links: string[];
   copyright: string;
+}
+
+export interface PortalDeliveryPreviewContent {
+  title: string;
+  description: string;
+  hero: PortalDeliveryPreviewHero;
+  stageDetails: PortalDeliveryPreviewStageDetails;
+  submission: PortalDeliveryPreviewSubmission;
+  contextSummary: PortalDeliveryPreviewContextSummary;
+  review: PortalDeliveryPreviewReview;
+}
+
+export interface PortalDeliveryPreviewHero {
+  eyebrow: string;
+  title: string;
+  meta: string;
+  amount: string;
+  amountLabel: string;
+  uploadedAt: string;
+  reviewDeadline: string;
+  badges: Array<{
+    label: string;
+    tone: "warning" | "blue" | "green" | "purple";
+  }>;
+  actions: Array<{
+    label: string;
+    icon?: "check" | "bot";
+    variant: "accept" | "secondary" | "ai";
+  }>;
+  note: string;
+}
+
+export interface PortalDeliveryPreviewStageDetails {
+  title: string;
+  rows: Array<{
+    label: string;
+    value: string;
+    tone?: "green" | "purple" | "warning";
+  }>;
+  note: string;
+}
+
+export interface PortalDeliveryPreviewSubmission {
+  title: string;
+  description: string;
+  freelancer: {
+    name: string;
+    uploadedAt: string;
+    avatarLabel: string;
+  };
+  attachments: Array<{
+    title: string;
+    meta: string;
+    kind: "link" | "file";
+    actions: Array<{
+      label: string;
+      icon: "external-link" | "copy" | "download";
+    }>;
+  }>;
+  summary: {
+    label: string;
+    text: string;
+  };
+  notes: {
+    label: string;
+    text: string;
+  };
+}
+
+export interface PortalDeliveryPreviewContextSummary {
+  payment: {
+    title: string;
+    rows: Array<{
+      label: string;
+      value: string;
+      tone: "green" | "warning" | "purple";
+    }>;
+  };
+  deadline: {
+    title: string;
+    value: string;
+    unit: string;
+    description: string;
+    note: string;
+  };
+  policies: {
+    title: string;
+    items: string[];
+    actionLabel: string;
+  };
+  project: {
+    title: string;
+    rows: Array<{
+      label: string;
+      value: string;
+      tone?: "green";
+    }>;
+  };
+  security: {
+    title: string;
+    description: string;
+    badge: string;
+  };
+}
+
+export interface PortalDeliveryPreviewReview {
+  criteria: {
+    title: string;
+    description: string;
+    note: string;
+    items: Array<{
+      label: string;
+      status: string;
+      state: "completed" | "review";
+    }>;
+  };
+  decision: {
+    title: string;
+    description: string;
+    note: string;
+    options: Array<{
+      title: string;
+      description: string;
+      actionLabel: string;
+      tone: "accept" | "revision" | "ai";
+    }>;
+  };
+  flow: {
+    title: string;
+    cards: Array<{
+      title: string;
+      tone: "accept" | "revision" | "ai";
+      steps: string[];
+    }>;
+  };
+  notice: {
+    title: string;
+    description: string;
+    disclaimer: string;
+  };
 }
 
 export interface ClientPortalOverview {
