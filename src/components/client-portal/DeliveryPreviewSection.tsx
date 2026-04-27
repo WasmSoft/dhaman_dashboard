@@ -1,6 +1,9 @@
 import {
+  ArrowLeft,
   Bot,
+  Check,
   CheckCircle2,
+  CircleCheck,
   Clock3,
   Copy,
   Download,
@@ -9,7 +12,11 @@ import {
   Info,
   Layers3,
   MessageSquareText,
+  RefreshCw,
+  ShieldCheck,
+  Sparkles,
   TriangleAlert,
+  Zap,
 } from "lucide-react";
 
 import { Button } from "@/components/shared";
@@ -17,6 +24,7 @@ import { clientPortalContent } from "@/constants";
 import { cn } from "@/lib/utils";
 import type {
   PortalDeliveryPreviewHero,
+  PortalDeliveryPreviewReview,
   PortalDeliveryPreviewStageDetails,
   PortalDeliveryPreviewSubmission,
 } from "@/types";
@@ -39,6 +47,48 @@ const actionClassNames = {
 const actionIcons = {
   check: CheckCircle2,
   bot: Bot,
+} as const;
+
+const criteriaClassNames = {
+  completed: {
+    card: "border-emerald-400/25 bg-emerald-400/[0.04]",
+    status: "text-[#4ade80]",
+    checkbox: "border-[#22c55e] bg-[#22c55e] text-white",
+    statusIcon: CircleCheck,
+  },
+  review: {
+    card: "border-amber-400/20 bg-[#1a1d2e]",
+    status: "text-[#fbbf24]",
+    checkbox: "border-white/15 bg-transparent text-transparent",
+    statusIcon: TriangleAlert,
+  },
+} as const;
+
+const decisionClassNames = {
+  accept: {
+    button:
+      "border-transparent bg-gradient-to-br from-[#16a34a] to-[#22c55e] text-white shadow-[0_2px_6px_rgba(34,197,94,0.3)] hover:from-[#15803d] hover:to-[#16a34a]",
+    icon: "text-[#4ade80]",
+    Icon: CircleCheck,
+  },
+  revision: {
+    button:
+      "border-amber-400/30 bg-amber-400/15 text-[#fbbf24] hover:bg-amber-400/20 hover:text-[#fde68a]",
+    icon: "text-[#fbbf24]",
+    Icon: RefreshCw,
+  },
+  ai: {
+    button:
+      "border-[#6d5dfc]/30 bg-[#6d5dfc]/[0.12] text-[#a78bfa] hover:bg-[#6d5dfc]/20 hover:text-[#c4b5fd]",
+    icon: "text-[#a78bfa]",
+    Icon: Sparkles,
+  },
+} as const;
+
+const flowClassNames = {
+  accept: "border-emerald-400/15 text-[#22c55e]",
+  revision: "border-amber-400/15 text-[#f59e0b]",
+  ai: "border-[#a78bfa]/15 text-[#a78bfa]",
 } as const;
 
 export function DeliveryPreviewSection() {
@@ -68,6 +118,7 @@ export function DeliveryPreviewSection() {
           <StageDetailsCard details={deliveryPreview.stageDetails} />
           <SubmissionCard submission={deliveryPreview.submission} />
         </div>
+        <DeliveryReviewSection review={deliveryPreview.review} />
       </section>
     </main>
   );
@@ -372,4 +423,264 @@ function AttachmentActionIcon({
   }
 
   return <ExternalLink className="size-3" aria-hidden="true" />;
+}
+
+function DeliveryReviewSection({
+  review,
+}: {
+  review: PortalDeliveryPreviewReview;
+}) {
+  return (
+    <section className="mt-0 text-start" aria-label={review.criteria.title}>
+      <AcceptanceCriteriaCard criteria={review.criteria} />
+      <DecisionOptionsCard decision={review.decision} />
+      <DecisionFlowCard flow={review.flow} />
+      <ReviewNotice notice={review.notice} />
+    </section>
+  );
+}
+
+function AcceptanceCriteriaCard({
+  criteria,
+}: {
+  criteria: PortalDeliveryPreviewReview["criteria"];
+}) {
+  return (
+    <section className="rounded-[16px] border border-white/[0.07] bg-[#131627] p-5 sm:p-6">
+      <ReviewSectionHeader
+        icon={CircleCheck}
+        title={criteria.title}
+        description={criteria.description}
+        iconClassName="text-[#4ade80]"
+      />
+
+      <div className="mt-4 space-y-2.5">
+        {criteria.items.map((item) => (
+          <CriteriaRow key={item.label} item={item} />
+        ))}
+      </div>
+
+      <ReviewNote>{criteria.note}</ReviewNote>
+    </section>
+  );
+}
+
+function CriteriaRow({
+  item,
+}: {
+  item: PortalDeliveryPreviewReview["criteria"]["items"][number];
+}) {
+  const styles = criteriaClassNames[item.state];
+  const StatusIcon = styles.statusIcon;
+
+  return (
+    <article
+      className={cn(
+        "flex flex-col gap-3 rounded-[11px] border p-3.5 sm:flex-row sm:items-center",
+        styles.card,
+      )}
+    >
+      <span
+        className={cn(
+          "flex size-5 shrink-0 items-center justify-center rounded-[6px] border text-white",
+          styles.checkbox,
+        )}
+        aria-hidden="true"
+      >
+        {item.state === "completed" ? <Check className="size-3" /> : null}
+      </span>
+
+      <div className="min-w-0 flex-1">
+        <h3 className="text-[13px] font-bold leading-[1.5] text-white">
+          {item.label}
+        </h3>
+        <p
+          className={cn(
+            "mt-1 flex items-center gap-1.5 text-[11px] font-medium leading-[1.5]",
+            styles.status,
+          )}
+        >
+          <StatusIcon className="size-2.5 shrink-0" aria-hidden="true" />
+          {item.status}
+        </p>
+      </div>
+
+      <Button
+        type="button"
+        variant="outline"
+        size="icon-sm"
+        aria-label={`إضافة ملاحظة على ${item.label}`}
+        className="border-white/[0.07] bg-[#131627] text-[#7f86a8] hover:bg-[#20243a] hover:text-white"
+      >
+        <MessageSquareText className="size-3" aria-hidden="true" />
+      </Button>
+    </article>
+  );
+}
+
+function DecisionOptionsCard({
+  decision,
+}: {
+  decision: PortalDeliveryPreviewReview["decision"];
+}) {
+  return (
+    <section className="rounded-[16px] border border-emerald-400/15 bg-[#131627] p-5 sm:p-6">
+      <ReviewSectionHeader
+        icon={Zap}
+        title={decision.title}
+        description={decision.description}
+        iconClassName="text-[#4ade80]"
+      />
+
+      <div className="mt-4 space-y-2.5">
+        {decision.options.map((option) => (
+          <DecisionOption key={option.title} option={option} />
+        ))}
+      </div>
+
+      <ReviewNote>{decision.note}</ReviewNote>
+    </section>
+  );
+}
+
+function DecisionOption({
+  option,
+}: {
+  option: PortalDeliveryPreviewReview["decision"]["options"][number];
+}) {
+  const styles = decisionClassNames[option.tone];
+  const Icon = styles.Icon;
+
+  return (
+    <article className="flex flex-col gap-3 rounded-[13px] border border-white/[0.07] bg-[#1a1d2e] p-4 sm:flex-row sm:items-center">
+      <div className="flex size-[42px] shrink-0 items-center justify-center rounded-[11px] border border-white/[0.07] bg-[#131627]">
+        <Icon className={cn("size-[18px]", styles.icon)} aria-hidden="true" />
+      </div>
+
+      <div className="min-w-0 flex-1">
+        <h3 className="text-[13px] font-extrabold leading-[1.5] text-white">
+          {option.title}
+        </h3>
+        <p className="mt-1 text-[11px] leading-[1.5] text-[#7f86a8]">
+          {option.description}
+        </p>
+      </div>
+
+      <Button
+        type="button"
+        variant="outline"
+        className={cn(
+          "h-9 w-full rounded-[10px] px-4 text-[12px] font-extrabold sm:w-auto",
+          styles.button,
+        )}
+      >
+        {option.actionLabel}
+      </Button>
+    </article>
+  );
+}
+
+function DecisionFlowCard({
+  flow,
+}: {
+  flow: PortalDeliveryPreviewReview["flow"];
+}) {
+  return (
+    <section className="rounded-[16px] border border-white/[0.07] bg-[#131627] p-5 sm:p-6">
+      <ReviewSectionHeader
+        icon={ArrowLeft}
+        title={flow.title}
+        iconClassName="text-[#60a5fa]"
+      />
+
+      <div className="mt-5 space-y-2.5">
+        {flow.cards.map((card) => (
+          <article
+            key={card.title}
+            className={cn(
+              "rounded-[12px] border bg-[#1a1d2e] p-4",
+              flowClassNames[card.tone],
+            )}
+          >
+            <h3 className="text-[12px] font-extrabold leading-[1.5]">
+              {card.title}
+            </h3>
+            <div className="mt-3 flex flex-wrap items-center gap-2 text-[#7f86a8]">
+              {card.steps.map((step, index) => (
+                <span
+                  key={`${card.title}-${step}`}
+                  className="contents"
+                >
+                  <span className="rounded-[8px] border border-white/[0.07] bg-[#131627] px-3 py-1.5 text-[11px] font-medium leading-[1.5] text-[#b8bdd8]">
+                    {step}
+                  </span>
+                  {index < card.steps.length - 1 ? (
+                    <ArrowLeft className="size-3.5 shrink-0" aria-hidden="true" />
+                  ) : null}
+                </span>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ReviewNotice({
+  notice,
+}: {
+  notice: PortalDeliveryPreviewReview["notice"];
+}) {
+  return (
+    <aside className="flex gap-3 rounded-[14px] border border-emerald-400/15 bg-emerald-400/[0.05] p-5 text-start sm:p-6">
+      <ShieldCheck className="mt-0.5 size-[18px] shrink-0 text-[#4ade80]" aria-hidden="true" />
+      <div className="space-y-1.5">
+        <h2 className="text-[13px] font-extrabold leading-[1.5] text-[#4ade80]">
+          {notice.title}
+        </h2>
+        <p className="text-[12px] leading-[1.6] text-[#b8bdd8]">
+          {notice.description}
+        </p>
+        <p className="text-[11px] leading-[1.5] text-[#7f86a8]">
+          {notice.disclaimer}
+        </p>
+      </div>
+    </aside>
+  );
+}
+
+function ReviewSectionHeader({
+  icon: Icon,
+  title,
+  description,
+  iconClassName,
+}: {
+  icon: typeof Layers3;
+  title: string;
+  description?: string;
+  iconClassName?: string;
+}) {
+  return (
+    <header>
+      <h2 className="flex items-center gap-2 text-[15px] font-extrabold leading-[1.5] text-white">
+        <Icon className={cn("size-[15px]", iconClassName)} aria-hidden="true" />
+        {title}
+      </h2>
+      {description ? (
+        <p className="mt-3 text-[12px] leading-[1.6] text-[#7f86a8]">
+          {description}
+        </p>
+      ) : null}
+    </header>
+  );
+}
+
+function ReviewNote({ children }: { children: string }) {
+  return (
+    <p className="mt-4 flex items-start gap-1.5 text-[11px] leading-[1.5] text-[#7f86a8]">
+      <Info className="mt-0.5 size-[11px] shrink-0" aria-hidden="true" />
+      {children}
+    </p>
+  );
 }
