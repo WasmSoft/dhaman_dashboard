@@ -2,6 +2,7 @@ import { Copy, Eye } from "lucide-react";
 
 import { Button } from "@/components/shared";
 import { TrackingDetailsSection } from "@/components/client-portal/TrackingDetailsSection";
+import { TrackingProgressSection } from "@/components/client-portal/TrackingProgressSection";
 import { clientPortalContent } from "@/constants";
 import { cn } from "@/lib/utils";
 
@@ -109,6 +110,7 @@ export function TrackingSection() {
             requiredAction={tracking.requiredAction}
             agreementTimeline={tracking.agreementTimeline}
           />
+          <TrackingProgressSection progressDetails={tracking.progressDetails} />
         </div>
       </section>
     </main>

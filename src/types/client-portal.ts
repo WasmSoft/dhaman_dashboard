@@ -90,6 +90,7 @@ export interface PortalTrackingContent {
   paymentSummary: PortalTrackingPaymentSummary;
   requiredAction: PortalTrackingRequiredAction;
   agreementTimeline: PortalTrackingTimeline;
+  progressDetails: PortalTrackingProgressDetails;
 }
 
 export interface PortalTrackingProject {
@@ -144,6 +145,60 @@ export interface PortalTrackingTimelineStep {
   description: string;
   status?: string;
   state: "completed" | "current" | "upcoming";
+}
+
+export interface PortalTrackingProgressDetails {
+  milestones: PortalTrackingMilestonesSection;
+  policies: PortalTrackingPoliciesSection;
+  dispute: PortalTrackingDisputeSection;
+}
+
+export interface PortalTrackingMilestonesSection {
+  title: string;
+  description: string;
+  items: PortalTrackingMilestone[];
+}
+
+export interface PortalTrackingMilestone {
+  order: number;
+  title: string;
+  status: string;
+  escrowStatus: string;
+  amount: string;
+  dueLabel: string;
+  deliveryLabel?: string;
+  deliveryStatus?: string;
+  acceptanceTitle?: string;
+  acceptanceCriteria?: string[];
+  revisionPrefix?: string;
+  revisionHighlight?: string;
+  revisionSuffix?: string;
+  defaultOpen?: boolean;
+}
+
+export interface PortalTrackingPoliciesSection {
+  title: string;
+  description: string;
+  actionLabel: string;
+  items: PortalTrackingPolicy[];
+}
+
+export interface PortalTrackingPolicy {
+  title: string;
+  description: string;
+  tone: "warning" | "danger" | "blue" | "purple";
+}
+
+export interface PortalTrackingDisputeSection {
+  title: string;
+  description: string;
+  steps: PortalTrackingDisputeStep[];
+}
+
+export interface PortalTrackingDisputeStep {
+  order: number;
+  label: string;
+  tone: "danger" | "purple" | "blue" | "green";
 }
 
 export interface ClientPortalOverview {

@@ -287,5 +287,88 @@ export const clientPortalContent = {
         },
       ],
     },
+    progressDetails: {
+      milestones: {
+        title: "مراحل المشروع",
+        description: "كل مرحلة لها مبلغ، موعد، وشروط قبول واضحة.",
+        items: [
+          {
+            order: 1,
+            title: "المرحلة الأولى: الهيكل والتصميم الأولي",
+            status: "قيد التنفيذ",
+            escrowStatus: "محجوزة",
+            amount: "$150",
+            dueLabel: "بعد يومين",
+            deliveryLabel: "حالة التسليم",
+            deliveryStatus: "بانتظار التسليم",
+            acceptanceTitle: "شروط القبول",
+            acceptanceCriteria: [
+              "تسليم Wireframe واضح للصفحة",
+              "تحديد أقسام الصفحة الرئيسية",
+              "اعتماد الاتجاه البصري الأولي",
+            ],
+            revisionPrefix: "التعديلات المسموحة: ",
+            revisionHighlight: "تعديلان",
+            revisionSuffix: " ستتمكن من المراجعة بعد رفع التسليم",
+            defaultOpen: true,
+          },
+          {
+            order: 2,
+            title: "المرحلة الثانية: تصميم الواجهة النهائية",
+            status: "قادمة",
+            escrowStatus: "بانتظار إكمال المرحلة السابقة",
+            amount: "$200",
+            dueLabel: "بعد 7 أيام",
+          },
+          {
+            order: 3,
+            title: "المرحلة الثالثة: التسليم النهائي",
+            status: "قادمة",
+            escrowStatus: "بانتظار إكمال المرحلة السابقة",
+            amount: "$100",
+            dueLabel: "بعد 11 يوم",
+          },
+        ],
+      },
+      policies: {
+        title: "سياسات الاتفاق",
+        description:
+          "هذه السياسات تنظّم التأخير، الإلغاء، الطلبات الإضافية، والمراجعة.",
+        actionLabel: "عرض تفاصيل السياسات",
+        items: [
+          {
+            title: "سياسة التأخير",
+            description: "يجب مراجعة التسليم خلال 3 أيام عمل.",
+            tone: "warning",
+          },
+          {
+            title: "سياسة الإلغاء",
+            description: "يمكن الإلغاء قبل بدء المرحلة الأولى.",
+            tone: "danger",
+          },
+          {
+            title: "الطلبات الإضافية",
+            description: "أي طلب خارج النطاق يتحول إلى Change Request.",
+            tone: "blue",
+          },
+          {
+            title: "المراجعة والاعتراض",
+            description: "يجب ربط الاعتراض بشرط قبول واضح.",
+            tone: "purple",
+          },
+        ],
+      },
+      dispute: {
+        title: "ماذا يحدث عند وجود خلاف؟",
+        description:
+          "إذا كان هناك اعتراض على التسليم، يقارن ضمان بين شروط القبول، التسليم المرفوع، وسياسات الاتفاق. بعدها يقترح قرارًا واضحًا مثل صرف الدفعة، طلب تعديل، تعليق الدفعة، أو إنشاء Change Request.",
+        steps: [
+          { order: 1, label: "اعتراض", tone: "danger" },
+          { order: 2, label: "تحليل AI", tone: "purple" },
+          { order: 3, label: "توصية", tone: "blue" },
+          { order: 4, label: "قرار", tone: "green" },
+        ],
+      },
+    },
   },
 } as const satisfies ClientPortalContentMap;
