@@ -1,5 +1,6 @@
 export { PortalSection } from "./PortalSection";
 export { TrackingDetailsSection } from "./TrackingDetailsSection";
+export { TrackingFinalSection } from "./TrackingFinalSection";
 export { TrackingProgressSection } from "./TrackingProgressSection";
 export { TrackingSection } from "./TrackingSection";
 export { AgreementHero } from "./AgreementHero";

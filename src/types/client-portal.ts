@@ -91,6 +91,8 @@ export interface PortalTrackingContent {
   requiredAction: PortalTrackingRequiredAction;
   agreementTimeline: PortalTrackingTimeline;
   progressDetails: PortalTrackingProgressDetails;
+  finalSummary: PortalTrackingFinalSummary;
+  footer: PortalTrackingFooter;
 }
 
 export interface PortalTrackingProject {
@@ -199,6 +201,47 @@ export interface PortalTrackingDisputeStep {
   order: number;
   label: string;
   tone: "danger" | "purple" | "blue" | "green";
+}
+
+export interface PortalTrackingFinalSummary {
+  agreement: {
+    title: string;
+    rows: Array<{
+      label: string;
+      value: string;
+      tone?: "default" | "green";
+    }>;
+  };
+  nextStep: {
+    title: string;
+    description: string;
+    expectation: string;
+    note: string;
+  };
+  actions: {
+    title: string;
+    items: Array<{
+      label: string;
+      icon: "eye" | "copy" | "help" | "review";
+      variant: "primary" | "secondary" | "ghost";
+      disabled?: boolean;
+    }>;
+  };
+  security: {
+    title: string;
+    description: string;
+    tokenLabel: string;
+  };
+}
+
+export interface PortalTrackingFooter {
+  notice: {
+    title: string;
+    description: string;
+    disclaimer: string;
+  };
+  links: string[];
+  copyright: string;
 }
 
 export interface ClientPortalOverview {

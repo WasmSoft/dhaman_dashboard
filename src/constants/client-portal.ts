@@ -370,5 +370,86 @@ export const clientPortalContent = {
         ],
       },
     },
+    finalSummary: {
+      agreement: {
+        title: "ملخص الاتفاق",
+        rows: [
+          {
+            label: "المشروع",
+            value: "تصميم صفحة هبوط لشركة ناشئة",
+          },
+          {
+            label: "الفريلانسر",
+            value: "حمزة",
+          },
+          {
+            label: "العميل",
+            value: "شركة المدار",
+          },
+          {
+            label: "الحالة",
+            value: "نشط",
+            tone: "green",
+          },
+          {
+            label: "عدد المراحل",
+            value: "3",
+          },
+          {
+            label: "قيمة الاتفاق",
+            value: "$450",
+          },
+        ],
+      },
+      nextStep: {
+        title: "الخطوة التالية",
+        description: "بانتظار تسليم المرحلة الأولى من الفريلانسر.",
+        expectation: "متوقع خلال يومين",
+        note: "لا يوجد إجراء مطلوب منك الآن",
+      },
+      actions: {
+        title: "الإجراءات المتاحة",
+        items: [
+          {
+            label: "عرض تفاصيل الاتفاق",
+            icon: "eye",
+            variant: "primary",
+          },
+          {
+            label: "نسخ رابط البوابة",
+            icon: "copy",
+            variant: "secondary",
+          },
+          {
+            label: "التواصل للدعم",
+            icon: "help",
+            variant: "secondary",
+          },
+          {
+            label: "مراجعة التسليم غير متاح بعد",
+            icon: "review",
+            variant: "ghost",
+            disabled: true,
+          },
+        ],
+      },
+      security: {
+        title: "بوابة آمنة",
+        description:
+          "هذا الرابط مخصص لمتابعة هذا الاتفاق فقط. لا تحتاج إلى إنشاء حساب في هذه المرحلة.",
+        tokenLabel: "Token Protected",
+      },
+    },
+    footer: {
+      notice: {
+        title: "متابعة محمية وواضحة",
+        description:
+          "ضمان يساعد الطرفين على توثيق المراحل، الدفعات، والتسليمات بطريقة واضحة تقلل الخلافات.",
+        disclaimer:
+          "هذا النظام ينظم الاتفاقات والدفعات داخل تجربة المنتج، ولا يمثل استشارة قانونية.",
+      },
+      links: ["سياسة الخصوصية", "الشروط والأحكام"],
+      copyright: "© 2026 Dhaman",
+    },
   },
 } as const satisfies ClientPortalContentMap;
