@@ -15,13 +15,13 @@ import { DashboardIcon } from "./DashboardIcon";
 
 const statusToneClasses = {
   success: "bg-emerald-500/15 text-emerald-300",
-  purple: "bg-violet-500/20 text-violet-300",
+  purple: "bg-[#6f52ff]/20 text-[#a898ff]",
   blue: "bg-blue-500/20 text-blue-300",
   muted: "bg-slate-500/20 text-slate-400",
 } as const;
 
 const progressToneClasses = {
-  purple: { bar: "bg-violet-400", icon: "bg-violet-500/15 text-violet-300" },
+  purple: { bar: "bg-[#6f52ff]", icon: "bg-[#6f52ff]/15 text-[#a898ff]" },
   amber: { bar: "bg-amber-400", icon: "bg-amber-500/15 text-amber-300" },
   emerald: { bar: "bg-emerald-400", icon: "bg-emerald-500/15 text-emerald-300" },
 } as const;
@@ -35,7 +35,7 @@ function MetricCards() {
         <article key={metric.key} className="rounded-[12px] border border-[#252a42] bg-[#15192b] p-5 text-start shadow-[0_18px_45px_rgba(4,7,20,0.18)]">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-[#c7cce0]">
-              <span className="grid size-[30px] place-items-center rounded-[9px] bg-[#22264a] text-violet-300">
+              <span className="grid size-[30px] place-items-center rounded-[9px] bg-[#22264a] text-[#a898ff]">
                 <DashboardIcon name={metric.icon} className="size-[15px]" />
               </span>
               <span className="text-[13px] font-medium">{metric.label}</span>
@@ -92,14 +92,14 @@ function OverviewChart() {
           {chartBars.map((bar) => (
             <div key={bar.month} className="flex h-[301px] flex-col items-center justify-end gap-2">
               {"label" in bar && bar.label ? (
-                <span className="mb-1 rounded-lg bg-violet-500 px-3 py-2 text-[11px] font-bold text-white shadow-[0_0_24px_rgba(139,92,246,0.65)]">
+                <span className="mb-1 rounded-lg bg-[#6f52ff] px-3 py-2 text-[11px] font-bold text-white shadow-[0_0_22px_rgba(111,82,255,0.48)]">
                   {bar.label}
                 </span>
               ) : null}
               <span
                 className={cn(
                   "w-full max-w-[36.16px] rounded-t-[6px] bg-[#28275b]",
-                  "active" in bar && bar.active && "bg-gradient-to-b from-violet-300 to-violet-600 shadow-[0_0_26px_rgba(139,92,246,0.55)]",
+                  "active" in bar && bar.active && "bg-gradient-to-b from-[#9b87ff] to-[#6f52ff] shadow-[0_0_24px_rgba(111,82,255,0.45)]",
                 )}
                 style={{ height: `${bar.value}%` }}
               />
@@ -108,7 +108,7 @@ function OverviewChart() {
         </div>
         <div className="mt-2 grid min-w-[500px] grid-cols-12 gap-[6px] text-center text-[11px] text-[#737b99]">
           {chartBars.map((bar) => (
-            <span key={bar.month} className={cn("active" in bar && bar.active && "font-bold text-violet-300")}>{bar.month}</span>
+            <span key={bar.month} className={cn("active" in bar && bar.active && "font-bold text-[#a898ff]")}>{bar.month}</span>
           ))}
         </div>
       </div>
@@ -122,7 +122,7 @@ function AgreementsPanel() {
   return (
     <aside className="w-full space-y-[14px]">
       <div className="grid grid-cols-2 gap-[10px]">
-        <Button className="h-[46.6px] rounded-[10px] bg-violet-500 text-sm font-bold text-white shadow-[0_12px_28px_rgba(111,82,255,0.35)] hover:bg-violet-400 xl:w-[155px]">
+        <Button className="h-[46.6px] rounded-[10px] bg-[#6f52ff] text-sm font-bold text-white shadow-[0_12px_28px_rgba(111,82,255,0.26)] hover:bg-[#7b63ff] xl:w-[155px]">
           <Plus className="size-[15px]" />
           إنشاء اتفاق
         </Button>
@@ -135,7 +135,7 @@ function AgreementsPanel() {
       <article className="min-h-[347px] rounded-[14px] border border-[#252a42] bg-[#15192b] p-[16.8px]">
         <div className="mb-[14px] flex h-[21px] items-center justify-between gap-4">
           <h2 className="text-[16px] font-bold text-white">اتفاقاتي الحالية</h2>
-          <button className="text-[12px] font-medium text-violet-300">+ إضافة جديد</button>
+          <button className="text-[12px] font-medium text-[#a898ff]">+ إضافة جديد</button>
         </div>
         <div className="space-y-[8px]">
           {agreements.map((agreement) => (
@@ -223,7 +223,7 @@ function ReviewsPanel() {
     <article className="min-h-[308.4px] w-full rounded-[14px] border border-[#252a42] bg-[#15192b] p-[16.8px]">
       <div className="mb-[14px] flex h-[21px] items-center justify-between gap-4">
          <h2 className="flex items-center gap-2 text-[16px] font-bold text-white">
-          <Pencil className="size-4 text-violet-300" />
+          <Pencil className="size-4 text-[#a898ff]" />
           مراجعات AI
         </h2>
         <MoreHorizontal className="size-4 text-[#737b99]" />
