@@ -1,4 +1,5 @@
 export { PortalSection } from "./PortalSection";
+export { PaymentSetupSection } from "./PaymentSetupSection";
 export { TrackingDetailsSection } from "./TrackingDetailsSection";
 export { TrackingFinalSection } from "./TrackingFinalSection";
 export { TrackingProgressSection } from "./TrackingProgressSection";

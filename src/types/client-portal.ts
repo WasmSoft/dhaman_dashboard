@@ -5,6 +5,7 @@ import type {
 
 export interface ClientPortalContentMap {
   portal: PortalReviewContent;
+  paymentSetup: PortalPaymentSetupContent;
   tracking: PortalTrackingContent;
   deliveryPreview: PortalDeliveryPreviewContent;
 }
@@ -82,6 +83,33 @@ export interface PortalSecurityNotice {
   title: string;
   description: string;
   disclaimer: string;
+}
+
+export interface PortalPaymentSetupContent {
+  title: string;
+  description: string;
+  eyebrow: string;
+  project: {
+    title: string;
+    meta: string;
+  };
+  stats: PortalPaymentSetupStat[];
+  badges: PortalAgreementBadge[];
+  actions: PortalPaymentSetupAction[];
+  notice: string;
+}
+
+export interface PortalPaymentSetupStat {
+  label: string;
+  value: string;
+  description: string;
+  tone: "green" | "default";
+}
+
+export interface PortalPaymentSetupAction {
+  label: string;
+  icon: "lock" | "file" | "arrow";
+  variant: "primary" | "secondary" | "ghost";
 }
 
 export interface PortalTrackingContent {
