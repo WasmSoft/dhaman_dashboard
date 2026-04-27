@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import type { CSSProperties, ReactNode } from "react";
 import { useState } from "react";
 import { Bell, CircleHelp, Mail, Menu, Search, Shield } from "lucide-react";
@@ -30,6 +31,7 @@ import { DashboardIcon } from "./DashboardIcon";
 
 function DashboardSidebar() {
   const { dashboard } = dashboardContent;
+  const pathname = usePathname();
 
   return (
     <Sidebar
@@ -39,7 +41,7 @@ function DashboardSidebar() {
     >
       <SidebarHeader className="h-[70.8px] justify-center border-b border-[#1d2135] px-[18px] py-2">
         <div className="flex w-full items-center justify-start gap-[10px] text-white">
-          <div className="grid size-[34px] place-items-center rounded-[11px] bg-violet-500 text-white shadow-[0_0_24px_rgba(124,88,255,0.5)]">
+          <div className="grid size-[34px] place-items-center rounded-[11px] bg-[#6f52ff] text-white shadow-[0_0_24px_rgba(111,82,255,0.42)]">
             <Shield className="size-[18px]" fill="currentColor" />
           </div>
           <strong className="text-[15px] font-bold leading-none group-data-[collapsible=icon]:hidden">{dashboard.brandName}</strong>
@@ -58,15 +60,18 @@ function DashboardSidebar() {
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu className="gap-0.5">
-                {group.items.map((item) => (
+                {group.items.map((item) => {
+                  const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+
+                  return (
                   <SidebarMenuItem key={item.label}>
                     <SidebarMenuButton
                       asChild
-                      isActive={"active" in item ? item.active : false}
+                      isActive={isActive}
                       tooltip={item.label}
                       className={cn(
                         "h-[39px] w-[193.2px] rounded-[10px] px-3 text-[13px] font-medium leading-none text-[#a7aecb] hover:bg-[#24204f] hover:text-white data-[active=true]:bg-[#24204f] data-[active=true]:text-white group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:px-2",
-                        "active" in item && item.active && "shadow-[inset_0_0_0_1px_rgba(124,88,255,0.1)]",
+                        isActive && "shadow-[inset_0_0_0_1px_rgba(124,88,255,0.1)]",
                       )}
                     >
                       <Link href={item.href}>
@@ -75,20 +80,25 @@ function DashboardSidebar() {
                       </Link>
                     </SidebarMenuButton>
                     {"badge" in item && item.badge ? (
-                      <SidebarMenuBadge className="start-3 end-auto top-[9.7px] size-[19.6px] rounded-full bg-violet-500 px-0 text-[11px] font-bold leading-none text-white">
+                      <SidebarMenuBadge className="start-3 end-auto top-[9.7px] size-[19.6px] rounded-full bg-[#6f52ff] px-0 text-[11px] font-bold leading-none text-white">
                         {item.badge}
                       </SidebarMenuBadge>
                     ) : null}
                   </SidebarMenuItem>
-                ))}
+                  );
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         ))}
       </SidebarContent>
 
-      <div className="mx-[15px] mb-5 mt-auto hidden h-[53.5px] w-[201.2px] items-center justify-center rounded-[10px] bg-gradient-to-l from-violet-600 to-violet-400 text-white shadow-[0_18px_38px_rgba(111,82,255,0.28)] group-data-[collapsible=icon]:hidden md:flex">
-        <div className="text-[22px] leading-none">⚡</div>
+      <div className="mx-[15px] mb-5 mt-auto hidden h-[53.5px] w-[201.2px] items-center justify-center rounded-[10px] bg-gradient-to-l from-[#6f52ff] to-[#8b74ff] text-white shadow-[0_16px_34px_rgba(111,82,255,0.24)] group-data-[collapsible=icon]:hidden md:flex">
+        <div className="text-center">
+          <div className="text-[18px] leading-none">⚡</div>
+          <strong className="mt-1 block text-[12px] leading-none">ترقية إلى Pro!</strong>
+          <span className="mt-1 block text-[10px] text-white/70">وصول غير محدود لجميع ميزات</span>
+        </div>
       </div>
       <SidebarRail />
     </Sidebar>
@@ -128,7 +138,7 @@ function DashboardHeader() {
         </Button>
         <Button size="icon" variant="secondary" className="relative size-[34px] rounded-[10px] border border-[#252a42] bg-[#1d2135] text-[#a7aecb] hover:bg-[#262b49] hover:text-white">
           <Bell className="size-[15px]" />
-          <span className="absolute end-2 top-2 size-1.5 rounded-full bg-violet-400" />
+          <span className="absolute end-2 top-2 size-1.5 rounded-full bg-[#8b74ff]" />
         </Button>
         <div className="grid size-[34px] place-items-center rounded-full bg-blue-500 text-sm font-bold text-white">ح</div>
       </div>

@@ -11,8 +11,8 @@ export const dashboardContent = {
       {
         label: "القائمة الرئيسية",
         items: [
-          { label: "لوحة التحكم", href: "/dashboard", icon: "grid", active: true },
-          { label: "الاتفاقات", href: "/agreements", icon: "file", badge: "8" },
+          { label: "لوحة التحكم", href: "/dashboard", icon: "grid" },
+          { label: "الاتفاقات", href: "/agreements", icon: "file", badge: "24" },
           { label: "التسليمات", href: "/deliveries", icon: "check" },
           { label: "الدفعات", href: "/payments", icon: "clock" },
         ],
