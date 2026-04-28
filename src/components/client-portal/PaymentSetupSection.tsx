@@ -1,6 +1,7 @@
 import { ArrowRight, FileText, Info, LockKeyhole } from "lucide-react";
 
 import { Button } from "@/components/shared/button";
+import { PaymentSetupDetailsSection } from "@/components/client-portal/PaymentSetupDetailsSection";
 import { clientPortalContent } from "@/constants";
 import { cn } from "@/lib/utils";
 import type { PortalPaymentSetupAction } from "@/types";
@@ -136,6 +137,8 @@ export function PaymentSetupSection() {
             </div>
           </div>
         </div>
+
+        <PaymentSetupDetailsSection details={paymentSetup.details} />
       </section>
     </main>
   );
