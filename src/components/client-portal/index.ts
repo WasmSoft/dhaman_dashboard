@@ -7,6 +7,7 @@ export { TrackingFinalSection } from "./TrackingFinalSection";
 export { TrackingProgressSection } from "./TrackingProgressSection";
 export { TrackingSection } from "./TrackingSection";
 export { AgreementHero } from "./AgreementHero";
+export { AgreementSummarySection } from "./AgreementSummarySection";
 export { AiDisputeSection } from "./AiDisputeSection";
 export { DecisionSection } from "./DecisionSection";
 export { DeliveryPreviewSection } from "./DeliveryPreviewSection";
