@@ -1,6 +1,7 @@
 import { ArrowRight, FileText, Info, LockKeyhole } from "lucide-react";
 
 import { Button } from "@/components/shared/button";
+import { FundMilestoneDetailsSection } from "@/components/client-portal/FundMilestoneDetailsSection";
 import { clientPortalContent } from "@/constants";
 import { cn } from "@/lib/utils";
 import type { PortalFundMilestoneAction } from "@/types";
@@ -133,6 +134,8 @@ export function FundMilestoneSection() {
             <span>{fundMilestone.notice}</span>
           </p>
         </div>
+
+        <FundMilestoneDetailsSection details={fundMilestone.details} />
       </section>
     </main>
   );

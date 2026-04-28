@@ -242,12 +242,87 @@ export interface PortalFundMilestoneContent {
   badges: PortalAgreementBadge[];
   actions: PortalFundMilestoneAction[];
   notice: string;
+  details: PortalFundMilestoneDetails;
 }
 
 export interface PortalFundMilestoneAction {
   label: string;
   icon: "lock" | "arrow" | "file";
   variant: "primary" | "secondary" | "ghost";
+}
+
+export interface PortalFundMilestoneDetails {
+  selectedMilestone: {
+    title: string;
+    badges: PortalAgreementBadge[];
+    amount: string;
+    rows: Array<{
+      label: string;
+      value: string;
+      tone?: "default" | "muted" | "warning" | "green";
+    }>;
+    note: string;
+  };
+  amountSummary: {
+    title: string;
+    rows: Array<{
+      label: string;
+      value: string;
+      tone?: "default" | "muted" | "green";
+    }>;
+    totalLabel: string;
+    total: string;
+    totalHint: string;
+    note: string;
+  };
+  paymentMethod: {
+    title: string;
+    method: string;
+    detail: string;
+    status: string;
+    warning: string;
+  };
+  impact: {
+    title: string;
+    description: string;
+    items: Array<{
+      title: string;
+      description: string;
+      tone: "purple" | "warning" | "green" | "blue";
+    }>;
+    note: string;
+  };
+  statusChange: {
+    title: string;
+    beforeLabel: string;
+    beforeStatus: string;
+    afterLabel: string;
+    afterStatus: string;
+    amount: string;
+    note: string;
+  };
+  checklist: {
+    title: string;
+    items: string[];
+    confirmation: string;
+  };
+  reservation: {
+    title: string;
+    rows: Array<{
+      label: string;
+      value: string;
+      tone?: "green" | "purple";
+    }>;
+    warning: string;
+    primaryAction: string;
+    secondaryAction: string;
+    note: string;
+  };
+  footer: {
+    title: string;
+    description: string;
+    disclaimer: string;
+  };
 }
 
 export interface PortalTrackingContent {
