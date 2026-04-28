@@ -232,6 +232,238 @@ export const clientPortalContent = {
     ],
     notice:
       "سيتم حجز دفعة المرحلة الأولى حتى يتم تسليمها ومراجعتها حسب شروط الاتفاق.",
+    details: {
+      summary: {
+        title: "ملخص الدفع",
+        rows: [
+          { label: "إجمالي الاتفاق", value: "$450" },
+          { label: "عملة الدفع", value: "USD", tone: "muted" },
+          { label: "عدد المراحل", value: "3 مراحل", tone: "muted" },
+          { label: "هيكل الدفع", value: "الدفع على مراحل", tone: "muted" },
+          {
+            label: "الدفعة الحالية المطلوبة",
+            value: "$150",
+            tone: "green",
+          },
+          { label: "المبلغ المتبقي", value: "$300", tone: "muted" },
+        ],
+        stages: [
+          {
+            label: "المرحلة الأولى",
+            amount: "$150",
+            status: "مطلوبة الآن",
+            tone: "purple",
+            current: true,
+          },
+          {
+            label: "المرحلة الثانية",
+            amount: "$200",
+            status: "لاحقًا",
+            tone: "blue",
+          },
+          {
+            label: "المرحلة الثالثة",
+            amount: "$100",
+            status: "لاحقًا",
+            tone: "green",
+          },
+        ],
+        note:
+          "لا يتم صرف أي دفعة للفريلانسر إلا بعد تسليم المرحلة ومراجعتها أو حسب توصية AI عند وجود خلاف.",
+      },
+      milestones: {
+        title: "خطة دفعات المراحل",
+        description: "كل دفعة مرتبطة بمرحلة واضحة وشروط قبول محددة.",
+        items: [
+          {
+            order: 1,
+            title: "المرحلة الأولى: الاتجاه والتصميم الأولي",
+            status: "مطلوبة الآن",
+            amount: "$150",
+            dueLabel: "خلال 5 أيام",
+            description:
+              "Wireframe واتجاه بصري أولي مع مراجعة واحدة قبل اعتماد المرحلة.",
+            acceptanceCriteria: [
+              "تسليم Wireframe واضح للصفحة",
+              "تحديد أقسام الصفحة الرئيسية",
+              "اعتماد الاتجاه البصري الأولي",
+            ],
+            tone: "purple",
+            current: true,
+          },
+          {
+            order: 2,
+            title: "المرحلة الثانية: تصميم الواجهة النهائية",
+            status: "لاحقًا",
+            amount: "$200",
+            dueLabel: "خلال 7 أيام",
+            description:
+              "تصميم واجهة الصفحة الرئيسية وحالات الأقسام الأساسية.",
+            acceptanceCriteria: [
+              "واجهة رئيسية كاملة في Figma",
+              "حالات واضحة للأزرار والروابط",
+              "تنظيم مكونات الصفحة بصريًا",
+            ],
+            tone: "blue",
+          },
+          {
+            order: 3,
+            title: "المرحلة الثالثة: التسليم النهائي",
+            status: "لاحقًا",
+            amount: "$100",
+            dueLabel: "خلال 11 يوم",
+            description:
+              "تسليم ملف Figma النهائي وتجهيز الملاحظات والنسخ المتجاوبة.",
+            acceptanceCriteria: [
+              "ملف Figma منظم ومسمى بوضوح",
+              "تصميم Desktop وMobile",
+              "تسليم رابط قابل للمراجعة",
+            ],
+            tone: "green",
+          },
+        ],
+        aiReview: {
+          title: "ماذا يحدث عند وجود خلاف؟",
+          description:
+            "إذا اختلف الطرفان، يقارن ضمان بين شروط القبول، التسليم، وسياسات الاتفاق ثم يقترح قرارًا واضحًا.",
+          steps: [
+            { label: "اعتراض العميل", icon: "flag", tone: "danger" },
+            { label: "تحليل AI للشروط", icon: "bot", tone: "purple" },
+            { label: "توصية واضحة", icon: "shield", tone: "blue" },
+            { label: "صرف أو مراجعة", icon: "check", tone: "green" },
+          ],
+        },
+      },
+      paymentMethod: {
+        title: "طريقة الدفع",
+        options: [
+          {
+            label: "بطاقة بنكية",
+            detail: "Visa / Mastercard",
+            icon: "card",
+            selected: true,
+          },
+          {
+            label: "Apple Pay",
+            detail: "غير متاح حاليًا",
+            icon: "apple",
+            disabled: true,
+          },
+          {
+            label: "تحويل بنكي",
+            detail: "قريبًا",
+            icon: "bank",
+            disabled: true,
+          },
+        ],
+        warning: "هذه واجهة محاكاة للدفع في نسخة MVP.",
+        fields: [
+          { label: "رقم البطاقة", value: "4242 4242 4242 4242" },
+          { label: "تاريخ الانتهاء", value: "12 / 27" },
+          { label: "رمز الأمان", value: "CVC" },
+          { label: "اسم حامل البطاقة", value: "شركة المدار" },
+        ],
+      },
+      checklist: {
+        title: "تأكيد قبل الدفع",
+        items: [
+          "راجعت قيمة الدفعة الأولى",
+          "أفهم أن الدفعة مرتبطة بالمرحلة الأولى",
+          "أفهم أن الصرف يتم بعد مراجعة التسليم",
+          "أوافق على سياسات الاتفاق المرتبطة بالدفع",
+        ],
+        confirmation: "أؤكد رغبتي في حجز دفعة المرحلة الأولى بقيمة $150.",
+      },
+      reservation: {
+        title: "تأكيد حجز الدفعة",
+        rows: [
+          { label: "المبلغ", value: "$150", tone: "green" },
+          { label: "طريقة الدفع", value: "بطاقة بنكية" },
+          { label: "الحالة بعد الدفع", value: "Reserved", tone: "purple" },
+        ],
+        primaryAction: "تأكيد وحجز الدفعة",
+        secondaryAction: "العودة للبوابة",
+        warning: "يرجى تأكيد جميع البنود في قائمة التحقق أعلاه قبل المتابعة.",
+        note:
+          "بعد تأكيد الحجز، سيتم تحديث حالة الاتفاق وإشعار الفريلانسر ببدء المرحلة الأولى.",
+      },
+      footer: {
+        title: "دفع محمي وواضح",
+        description:
+          "ضمان يساعد الطرفين على ربط الدفعات بالمراحل والتسليمات، لتقليل الخلافات وتوضيح متى يتم الصرف.",
+        disclaimer:
+          "هذه واجهة محاكاة للدفع في نسخة MVP، ولا تمثل Escrow قانوني أو عملية دفع حقيقية في هذه المرحلة.",
+        links: ["سياسة الخصوصية", "الشروط والأحكام"],
+        copyright: "© 2026 Dhaman",
+      },
+    },
+    paymentOutcome: {
+      operationSummary: {
+        title: "ملخص العملية",
+        rows: [
+          {
+            label: "المشروع",
+            value: "تصميم صفحة هبوط",
+            tone: "muted",
+          },
+          {
+            label: "الدفعة الحالية",
+            value: "$150",
+            tone: "green",
+          },
+          {
+            label: "المرحلة",
+            value: "الأولى",
+            tone: "muted",
+          },
+          {
+            label: "الحالة بعد الدفع",
+            value: "Reserved",
+            tone: "purple",
+          },
+          {
+            label: "إجمالي الاتفاق",
+            value: "$450",
+            tone: "muted",
+          },
+          {
+            label: "المتبقي لاحقًا",
+            value: "$300",
+            tone: "subtle",
+          },
+        ],
+      },
+      protection: {
+        title: "حماية الدفعة",
+        description:
+          "لا يتم صرف الدفعة تلقائيًا. يتم ربطها بتسليم المرحلة ومراجعتك.",
+        badge: "Protected Payment",
+      },
+      afterPayment: {
+        title: "بعد الدفع",
+        steps: [
+          "تتغير حالة الدفعة إلى Reserved",
+          "يبدأ الفريلانسر تنفيذ المرحلة",
+          "تستلم إشعارًا عند رفع التسليم",
+          "تراجع التسليم وتقرر الصرف أو طلب تعديل",
+        ],
+      },
+      policies: {
+        title: "سياسات مرتبطة",
+        items: [
+          "مراجعة العميل خلال 3 أيام عمل",
+          "الاعتراض يجب أن يرتبط بشرط قبول",
+          "الطلبات الإضافية تتحول إلى Change Request",
+        ],
+        actionLabel: "عرض السياسات",
+      },
+      securityNote: {
+        title: "ملاحظة أمان",
+        description:
+          "هذه واجهة دفع تجريبية للـ MVP. في النسخة الفعلية سيتم ربطها بمزود دفع آمن.",
+        badge: "Demo Payment",
+      },
+    },
   },
   tracking: {
     title: "متابعة المشروع",

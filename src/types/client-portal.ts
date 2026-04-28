@@ -97,6 +97,8 @@ export interface PortalPaymentSetupContent {
   badges: PortalAgreementBadge[];
   actions: PortalPaymentSetupAction[];
   notice: string;
+  details: PortalPaymentSetupDetails;
+  paymentOutcome: PortalPaymentSetupOutcome;
 }
 
 export interface PortalPaymentSetupStat {
@@ -110,6 +112,118 @@ export interface PortalPaymentSetupAction {
   label: string;
   icon: "lock" | "file" | "arrow";
   variant: "primary" | "secondary" | "ghost";
+}
+
+export interface PortalPaymentSetupDetails {
+  summary: {
+    title: string;
+    rows: Array<{
+      label: string;
+      value: string;
+      tone?: "default" | "muted" | "green";
+    }>;
+    stages: Array<{
+      label: string;
+      amount: string;
+      status: string;
+      tone: "purple" | "blue" | "green";
+      current?: boolean;
+    }>;
+    note: string;
+  };
+  milestones: {
+    title: string;
+    description: string;
+    items: Array<{
+      order: number;
+      title: string;
+      status: string;
+      amount: string;
+      dueLabel: string;
+      description: string;
+      acceptanceCriteria: string[];
+      tone: "purple" | "blue" | "green";
+      current?: boolean;
+    }>;
+    aiReview: {
+      title: string;
+      description: string;
+      steps: Array<{
+        label: string;
+        icon: "flag" | "bot" | "shield" | "check";
+        tone: "danger" | "purple" | "blue" | "green";
+      }>;
+    };
+  };
+  paymentMethod: {
+    title: string;
+    options: Array<{
+      label: string;
+      detail: string;
+      icon: "card" | "apple" | "bank";
+      selected?: boolean;
+      disabled?: boolean;
+    }>;
+    warning: string;
+    fields: Array<{
+      label: string;
+      value: string;
+    }>;
+  };
+  checklist: {
+    title: string;
+    items: string[];
+    confirmation: string;
+  };
+  reservation: {
+    title: string;
+    rows: Array<{
+      label: string;
+      value: string;
+      tone?: "green" | "purple";
+    }>;
+    primaryAction: string;
+    secondaryAction: string;
+    warning: string;
+    note: string;
+  };
+  footer: {
+    title: string;
+    description: string;
+    disclaimer: string;
+    links: string[];
+    copyright: string;
+  };
+}
+
+export interface PortalPaymentSetupOutcome {
+  operationSummary: {
+    title: string;
+    rows: Array<{
+      label: string;
+      value: string;
+      tone?: "muted" | "green" | "purple" | "subtle";
+    }>;
+  };
+  protection: {
+    title: string;
+    description: string;
+    badge: string;
+  };
+  afterPayment: {
+    title: string;
+    steps: string[];
+  };
+  policies: {
+    title: string;
+    items: string[];
+    actionLabel: string;
+  };
+  securityNote: {
+    title: string;
+    description: string;
+    badge: string;
+  };
 }
 
 export interface PortalTrackingContent {
