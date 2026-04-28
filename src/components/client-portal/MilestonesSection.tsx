@@ -23,7 +23,7 @@ export function MilestonesSection({ milestones }: MilestonesSectionProps) {
       <div className="mb-4 flex items-center justify-start gap-2">
         <ClipboardList className="size-4 text-[#a78bfa]" aria-hidden="true" />
         <div>
-          <h2 className="text-[15px] font-extrabold text-white">مراحل التسليم</h2>
+          <h2 className="text-[15px] font-extrabold text-white">مراحل الاتفاق</h2>
           <p className="mt-1 text-[11px] text-[#7f86a8]">
             افتح كل مرحلة لمراجعة المطلوب وشروط القبول قبل اتخاذ القرار.
           </p>

@@ -21,7 +21,7 @@ export function AiDisputeSection({ steps }: AiDisputeSectionProps) {
         تعليق الدفعة، أو تحويل الطلب إلى Change Request.
       </p>
 
-      <div className="mt-4 flex flex-col gap-2 sm:flex-row-reverse sm:flex-wrap sm:items-center">
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
         {steps.map((step, index) => (
           <div key={step.label} className="flex items-center gap-2">
             <div className="inline-flex items-center gap-2 rounded-[10px] border border-[#6d5dfc]/20 bg-[#6d5dfc]/10 px-3.5 py-2 text-xs font-bold text-[#b8bdd8]">
