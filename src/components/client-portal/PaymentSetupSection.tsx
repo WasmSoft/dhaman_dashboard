@@ -51,37 +51,10 @@ export function PaymentSetupSection() {
             {paymentSetup.eyebrow}
           </p>
 
-          <div className="relative z-10 mt-5 grid gap-6 lg:grid-cols-[230px_minmax(0,1fr)] lg:items-start">
-            <div className="grid grid-cols-2 gap-2.5 sm:w-[230px]">
-              {paymentSetup.stats.map((stat) => (
-                <article
-                  key={stat.label}
-                  className={cn(
-                    "min-h-[102px] rounded-[14px] border px-3 py-3 text-center",
-                    stat.tone === "green"
-                      ? "border-emerald-400/25 bg-emerald-400/[0.08]"
-                      : "border-white/[0.08] bg-white/[0.04]",
-                  )}
-                >
-                  <p className="text-[10px] leading-[15px] text-[#7f86a8]">
-                    {stat.label}
-                  </p>
-                  <p
-                    className={cn(
-                      "mt-1 text-[22px] font-black leading-[33px]",
-                      stat.tone === "green" ? "text-[#4ade80]" : "text-white",
-                    )}
-                  >
-                    {stat.value}
-                  </p>
-                  <p className="text-[10px] leading-[15px] text-[#7f86a8]">
-                    {stat.description}
-                  </p>
-                </article>
-              ))}
-            </div>
+          <div className="boxs relative z-10 mt-5 grid gap-6 lg:grid-cols-[minmax(0,1fr)_230px] lg:items-start">
+            
 
-            <div className="text-start lg:pt-5">
+            <div className="text-start lg:pt-5 w-full">
               <h2 className="text-xl font-black leading-[30px] text-white">
                 {paymentSetup.project.title}
               </h2>
@@ -132,6 +105,34 @@ export function PaymentSetupSection() {
                 <Info className="mt-0.5 size-3 shrink-0" aria-hidden="true" />
                 <span>{paymentSetup.notice}</span>
               </p>
+            </div>
+            <div className="grid grid-cols-2 gap-2.5 sm:w-[230px]">
+              {paymentSetup.stats.map((stat) => (
+                <article
+                  key={stat.label}
+                  className={cn(
+                    "min-h-[102px] rounded-[14px] border px-3 py-3 text-center",
+                    stat.tone === "green"
+                      ? "border-emerald-400/25 bg-emerald-400/[0.08]"
+                      : "border-white/[0.08] bg-white/[0.04]",
+                  )}
+                >
+                  <p className="text-[10px] leading-[15px] text-[#7f86a8]">
+                    {stat.label}
+                  </p>
+                  <p
+                    className={cn(
+                      "mt-1 text-[22px] font-black leading-[33px]",
+                      stat.tone === "green" ? "text-[#4ade80]" : "text-white",
+                    )}
+                  >
+                    {stat.value}
+                  </p>
+                  <p className="text-[10px] leading-[15px] text-[#7f86a8]">
+                    {stat.description}
+                  </p>
+                </article>
+              ))}
             </div>
           </div>
         </div>
