@@ -98,6 +98,7 @@ export interface PortalPaymentSetupContent {
   actions: PortalPaymentSetupAction[];
   notice: string;
   details: PortalPaymentSetupDetails;
+  paymentOutcome: PortalPaymentSetupOutcome;
 }
 
 export interface PortalPaymentSetupStat {
@@ -192,6 +193,36 @@ export interface PortalPaymentSetupDetails {
     disclaimer: string;
     links: string[];
     copyright: string;
+  };
+}
+
+export interface PortalPaymentSetupOutcome {
+  operationSummary: {
+    title: string;
+    rows: Array<{
+      label: string;
+      value: string;
+      tone?: "muted" | "green" | "purple" | "subtle";
+    }>;
+  };
+  protection: {
+    title: string;
+    description: string;
+    badge: string;
+  };
+  afterPayment: {
+    title: string;
+    steps: string[];
+  };
+  policies: {
+    title: string;
+    items: string[];
+    actionLabel: string;
+  };
+  securityNote: {
+    title: string;
+    description: string;
+    badge: string;
   };
 }
 
