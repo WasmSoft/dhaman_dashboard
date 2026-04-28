@@ -3,7 +3,7 @@ import type { DashboardContentMap } from "@/types";
 export const dashboardContent = {
   dashboard: {
     brandName: "Dhaman",
-    greeting: "مرحباً حمزة 👋",
+    greeting: "مرحباً 👋",
     subtitle: "تابع اتفاقاتك، مدفوعاتك، ومراجعات الذكاء الاصطناعي",
     currentDate: "الأحد، 26 أبريل 2026",
     searchPlaceholder: "بحث...",
