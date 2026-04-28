@@ -15,7 +15,7 @@ export function PolicySection({ policies }: PolicySectionProps) {
         <ShieldAlert className="size-4 text-[#a78bfa]" aria-hidden="true" />
         <div>
           <h2 className="text-[15px] font-extrabold text-white">
-            سياسات الدفع والخلاف
+            سياسات الاتفاق
           </h2>
           <p className="mt-1 text-[11px] text-[#7f86a8]">
             قواعد مختصرة توضّح ما يحدث عند الاعتماد، الاعتراض، أو طلب تعديل.

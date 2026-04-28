@@ -54,7 +54,7 @@ export function PortalSection() {
       </header>
 
       <div className="mx-auto w-full max-w-[900px] px-4 py-8 sm:px-6 lg:px-0">
-        <section className="text-center">
+        <section className="delivery text-center">
           <h1 id="portal-title" className="text-[26px] font-black leading-normal">
             {portal.title}
           </h1>
@@ -66,7 +66,7 @@ export function PortalSection() {
         <div className="mt-6 space-y-5">
           <AgreementHero agreement={portal.agreement} />
 
-          <section className="grid gap-4 lg:grid-cols-[360px_minmax(0,1fr)]">
+          {/* <section className="summary card grid gap-4 lg:grid-cols-[360px_minmax(0,1fr)]">
             <PaymentSummaryCard
               total={portal.agreement.total}
               currency={portal.agreement.currency}
@@ -74,18 +74,24 @@ export function PortalSection() {
               payments={portal.payments}
             />
             <ProjectSummaryCard project={portal.project} />
-          </section>
+          </section> */}
 
           <MilestonesSection milestones={portal.milestones} />
           <PolicySection policies={portal.policies} />
           <AiDisputeSection steps={portal.aiReviewSteps} />
           <DecisionSection agreement={portal.agreement} />
 
-          <aside className="flex flex-col gap-3 rounded-[14px] border border-emerald-400/15 bg-emerald-400/[0.05] p-5 text-start sm:flex-row sm:items-start sm:justify-end">
+          <aside className="flex flex-col gap-3 rounded-[14px] border border-emerald-400/15 bg-emerald-400/[0.05] p-5 text-start sm:flex-row sm:items-start sm:justify-start">
             <div>
+              <div className="flex gap-1">
+                <CheckCircle2
+              className="size-4 shrink-0 text-[#4ade80]"
+              aria-hidden="true"
+            />
               <h2 className="text-[13px] font-extrabold text-[#4ade80]">
                 {portal.securityNotice.title}
               </h2>
+              </div>
               <p className="mt-1.5 text-xs leading-5 text-[#b8bdd8]">
                 {portal.securityNotice.description}
               </p>
@@ -93,10 +99,7 @@ export function PortalSection() {
                 {portal.securityNotice.disclaimer}
               </p>
             </div>
-            <CheckCircle2
-              className="size-4 shrink-0 text-[#4ade80]"
-              aria-hidden="true"
-            />
+            
           </aside>
         </div>
 
