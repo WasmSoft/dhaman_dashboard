@@ -10,6 +10,8 @@ export { AgreementHero } from "./AgreementHero";
 export { AiDisputeSection } from "./AiDisputeSection";
 export { DecisionSection } from "./DecisionSection";
 export { DeliveryPreviewSection } from "./DeliveryPreviewSection";
+export { FundMilestoneDetailsSection } from "./FundMilestoneDetailsSection";
+export { FundMilestoneSection } from "./FundMilestoneSection";
 export { MilestonesSection } from "./MilestonesSection";
 export { PaymentSummaryCard } from "./PaymentSummaryCard";
 export { PolicySection } from "./PolicySection";
