@@ -5,6 +5,7 @@ import { FundMilestoneDetailsSection } from "@/components/client-portal/FundMile
 import { clientPortalContent } from "@/constants";
 import { cn } from "@/lib/utils";
 import type { PortalFundMilestoneAction } from "@/types";
+import { FundMileStoneOutcomeSection } from "./FundMilestoneOutcomeSection";
 
 const actionIcons = {
   lock: LockKeyhole,
@@ -136,6 +137,7 @@ export function FundMilestoneSection() {
         </div>
 
         <FundMilestoneDetailsSection details={fundMilestone.details} />
+        <FundMileStoneOutcomeSection outcome={fundMilestone.fundOutcome}/>
       </section>
     </main>
   );

@@ -633,6 +633,75 @@ export const clientPortalContent = {
           "هذه واجهة محاكاة ولا تمثل Escrow قانوني أو عملية دفع حقيقية في هذه المرحلة.",
       },
     },
+
+    fundOutcome: {
+      operationSummary: {
+        title: "ملخص العملية",
+        rows: [
+          {
+            label: "المشروع",
+            value: "تصميم صفحة هبوط",
+            tone: "muted",
+          },
+          {
+            label: "الدفعة الحالية",
+            value: "$150",
+            tone: "green",
+          },
+          {
+            label: "المرحلة",
+            value: "الأولى",
+            tone: "muted",
+          },
+          {
+            label: "الحالة بعد الدفع",
+            value: "Reserved",
+            tone: "purple",
+          },
+          {
+            label: "إجمالي الاتفاق",
+            value: "$450",
+            tone: "muted",
+          },
+          {
+            label: "المتبقي لاحقًا",
+            value: "$300",
+            tone: "subtle",
+          },
+        ],
+      },
+      protection: {
+        title: "حماية الدفعة",
+        description:
+          "لا يتم صرف الدفعة تلقائيًا. يتم ربطها بتسليم المرحلة ومراجعتك.",
+        badge: "Protected Payment",
+      },
+      afterPayment: {
+        title: "ماذا يحدث بعدها",
+        steps: [
+          "تأكيد حجز الدفعة",
+          "بدء تنفيذ المرحلة",
+          "رفع التسليم من الفريلانسر",
+          "مراجعتك للتسليم",
+          "الصرف أو طلب تعديل أو AI Review",
+        ],
+      },
+      policies: {
+        title: "سياسات مرتبطة",
+        items: [
+          "مراجعة العميل خلال 3 أيام عمل",
+          "الاعتراض يجب أن يرتبط بشرط قبول",
+          "الطلبات الإضافية تتحول إلى Change Request",
+        ],
+        actionLabel: "عرض السياسات",
+      },
+      securityNote: {
+        title: "ملاحظة أمان",
+        description:
+          "هذه واجهة دفع تجريبية للـ MVP. في النسخة الفعلية سيتم ربطها بمزود دفع آمن.",
+        badge: "Demo Payment",
+      },
+    },
   },
   tracking: {
     title: "متابعة المشروع",
