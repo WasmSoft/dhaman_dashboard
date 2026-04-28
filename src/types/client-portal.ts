@@ -6,6 +6,7 @@ import type {
 export interface ClientPortalContentMap {
   portal: PortalReviewContent;
   paymentSetup: PortalPaymentSetupContent;
+  fundMilestone: PortalFundMilestoneContent;
   tracking: PortalTrackingContent;
   deliveryPreview: PortalDeliveryPreviewContent;
 }
@@ -224,6 +225,29 @@ export interface PortalPaymentSetupOutcome {
     description: string;
     badge: string;
   };
+}
+
+export interface PortalFundMilestoneContent {
+  title: string;
+  description: string;
+  eyebrow: string;
+  milestone: {
+    title: string;
+    meta: string;
+    amount: string;
+    amountLabel: string;
+    currentStatus: string;
+    nextStatus: string;
+  };
+  badges: PortalAgreementBadge[];
+  actions: PortalFundMilestoneAction[];
+  notice: string;
+}
+
+export interface PortalFundMilestoneAction {
+  label: string;
+  icon: "lock" | "arrow" | "file";
+  variant: "primary" | "secondary" | "ghost";
 }
 
 export interface PortalTrackingContent {

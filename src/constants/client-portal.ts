@@ -465,6 +465,56 @@ export const clientPortalContent = {
       },
     },
   },
+  fundMilestone: {
+    title: "حجز دفعة المرحلة",
+    description: "راجع تفاصيل الدفعة والمرحلة قبل تأكيد الحجز.",
+    eyebrow: "تمويل دفعة محمية",
+    milestone: {
+      title: "المرحلة الأولى: الهيكل والتصميم الأولي",
+      meta: "تصميم صفحة هبوط لشركة ناشئة · حمزة → شركة المدار",
+      amount: "$150",
+      amountLabel: "قيمة الدفعة",
+      currentStatus: "بانتظار الحجز",
+      nextStatus: "Reserved",
+    },
+    badges: [
+      {
+        label: "دفعة مطلوبة الآن",
+        className: "border-amber-400/30 bg-amber-400/15 text-[#fbbf24]",
+      },
+      {
+        label: "محاكاة دفع آمن",
+        className: "border-[#2f80ed]/30 bg-[#2f80ed]/15 text-[#60a5fa]",
+      },
+      {
+        label: "تصبح Reserved بعد التأكيد",
+        className: "border-[#6d5dfc]/30 bg-[#6d5dfc]/15 text-[#a78bfa]",
+      },
+      {
+        label: "مرتبطة بشروط قبول",
+        className: "border-emerald-400/25 bg-emerald-400/[0.12] text-[#4ade80]",
+      },
+    ],
+    actions: [
+      {
+        label: "تأكيد حجز الدفعة",
+        icon: "lock",
+        variant: "primary",
+      },
+      {
+        label: "العودة لإعداد الدفع",
+        icon: "arrow",
+        variant: "secondary",
+      },
+      {
+        label: "عرض الاتفاق",
+        icon: "file",
+        variant: "ghost",
+      },
+    ],
+    notice:
+      "سيتم ربط هذه الدفعة بالمرحلة الأولى، ولن يتم صرفها إلا بعد مراجعة التسليم أو حسب توصية AI عند الخلاف.",
+  },
   tracking: {
     title: "متابعة المشروع",
     description: "تابع مراحل الاتفاق، حالة الدفعات، والإجراءات المطلوبة منك.",
