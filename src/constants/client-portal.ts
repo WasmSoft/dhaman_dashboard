@@ -35,6 +35,30 @@ export const clientPortalContent = {
         },
       ],
     },
+    parties: [
+      {
+        name: "حمزة",
+        role: "Freelancer",
+        email: "hamza@email.com",
+        responsibility: "تنفيذ العمل وتسليم المراحل",
+        initial: "ح",
+        className:
+          "border-[#6d5dfc]/15 bg-[#6d5dfc]/[0.06]",
+        avatarClassName: "bg-[#6d5dfc]/20",
+        avatarTextClassName: "text-[#a78bfa]",
+      },
+      {
+        name: "شركة المدار",
+        role: "Client",
+        email: "client@almadar.com",
+        responsibility: "مراجعة التسليمات واعتماد الدفعات",
+        initial: "م",
+        className:
+          "border-[#2f80ed]/15 bg-[#2f80ed]/[0.06]",
+        avatarClassName: "bg-[#2f80ed]/20",
+        avatarTextClassName: "text-[#60a5fa]",
+      },
+    ],
     project: {
       title: "تصميم صفحة هبوط لشركة ناشئة",
       description:
@@ -65,18 +89,24 @@ export const clientPortalContent = {
         amount: "$150",
         percent: 33,
         description: "Wireframe واتجاه بصري أولي مع مراجعة واحدة.",
+        colorClassName: "text-[#a78bfa]",
+        dotClassName: "bg-[#a78bfa]",
       },
       {
         label: "المرحلة الثانية",
-        amount: "$150",
-        percent: 33,
+        amount: "$200",
+        percent: 44,
         description: "تصميم واجهة الصفحة الرئيسية وتفاصيل الأقسام الأساسية.",
+        colorClassName: "text-[#60a5fa]",
+        dotClassName: "bg-[#60a5fa]",
       },
       {
         label: "المرحلة الثالثة",
-        amount: "$150",
-        percent: 34,
+        amount: "$100",
+        percent: 23,
         description: "تسليم ملف Figma النهائي وتجهيز الحالات المتجاوبة.",
+        colorClassName: "text-[#4ade80]",
+        dotClassName: "bg-[#4ade80]",
       },
     ],
     milestones: [

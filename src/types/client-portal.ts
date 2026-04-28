@@ -12,6 +12,7 @@ export interface PortalReviewContent {
   title: string;
   description: string;
   agreement: PortalAgreement;
+  parties: PortalParty[];
   project: PortalProjectSummary;
   payments: PortalPayment[];
   milestones: PortalMilestone[];
@@ -36,6 +37,17 @@ export interface PortalAgreement {
   badges: PortalAgreementBadge[];
 }
 
+export interface PortalParty {
+  name: string;
+  role: string;
+  email: string;
+  responsibility: string;
+  initial: string;
+  className: string;
+  avatarClassName: string;
+  avatarTextClassName: string;
+}
+
 export interface PortalProjectSummary {
   title: string;
   description: string;
@@ -55,6 +67,8 @@ export interface PortalPayment {
   amount: string;
   percent: number;
   description: string;
+  colorClassName?: string;
+  dotClassName?: string;
 }
 
 export interface PortalMilestone {

@@ -7,13 +7,12 @@ import {
 } from "lucide-react";
 
 import { clientPortalContent } from "@/constants";
+import { AgreementSummarySection } from "@/components/client-portal/AgreementSummarySection";
 import { AgreementHero } from "@/components/client-portal/AgreementHero";
 import { AiDisputeSection } from "@/components/client-portal/AiDisputeSection";
 import { DecisionSection } from "@/components/client-portal/DecisionSection";
 import { MilestonesSection } from "@/components/client-portal/MilestonesSection";
-import { PaymentSummaryCard } from "@/components/client-portal/PaymentSummaryCard";
 import { PolicySection } from "@/components/client-portal/PolicySection";
-import { ProjectSummaryCard } from "@/components/client-portal/ProjectSummaryCard";
 
 export function PortalSection() {
   const { portal } = clientPortalContent;
@@ -65,17 +64,12 @@ export function PortalSection() {
 
         <div className="mt-6 space-y-5">
           <AgreementHero agreement={portal.agreement} />
-
-          {/* <section className="summary card grid gap-4 lg:grid-cols-[360px_minmax(0,1fr)]">
-            <PaymentSummaryCard
-              total={portal.agreement.total}
-              currency={portal.agreement.currency}
-              stagesLabel={portal.agreement.stagesLabel}
-              payments={portal.payments}
-            />
-            <ProjectSummaryCard project={portal.project} />
-          </section> */}
-
+          <AgreementSummarySection
+            agreement={portal.agreement}
+            parties={portal.parties}
+            project={portal.project}
+            payments={portal.payments}
+          />
           <MilestonesSection milestones={portal.milestones} />
           <PolicySection policies={portal.policies} />
           <AiDisputeSection steps={portal.aiReviewSteps} />

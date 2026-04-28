@@ -1,6 +1,7 @@
 export { PortalSection } from "./PortalSection";
 export { TrackingSection } from "./TrackingSection";
 export { AgreementHero } from "./AgreementHero";
+export { AgreementSummarySection } from "./AgreementSummarySection";
 export { AiDisputeSection } from "./AiDisputeSection";
 export { DecisionSection } from "./DecisionSection";
 export { MilestonesSection } from "./MilestonesSection";
