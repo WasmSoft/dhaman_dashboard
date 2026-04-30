@@ -11,14 +11,56 @@ import type { ApiErrorShape } from "@/types";
 import { getAppLocale } from "@/lib/locale";
 
 const ACCESS_TOKEN_STORAGE_KEY = "dhaman_access_token";
+const API_PREFIX = "/api/v1";
+
+// AR: هذه الدالة توحّد رابط الـ API حتى يعمل المشروع محليًا وفي الإنتاج سواء أُرسل الجذر فقط أو الجذر مع /api/v1.
+// EN: This helper normalizes the API URL so the app works locally and in production whether the env provides just the backend root or the root with /api/v1.
+export function normalizeApiBaseUrl(rawUrl: string) {
+  const trimmedUrl = rawUrl.trim();
+
+  if (!trimmedUrl) {
+    return "";
+  }
+
+  try {
+    const url = new URL(trimmedUrl);
+    const normalizedPathname = url.pathname.replace(/\/+$/, "");
+
+    if (!normalizedPathname || normalizedPathname === "/") {
+      url.pathname = API_PREFIX;
+      return url.toString();
+    }
+
+    if (normalizedPathname.endsWith(API_PREFIX)) {
+      url.pathname = normalizedPathname;
+      return url.toString();
+    }
+
+    url.pathname = `${normalizedPathname}${API_PREFIX}`;
+    return url.toString();
+  } catch {
+    const normalizedPath = trimmedUrl.replace(/\/+$/, "");
+
+    if (!normalizedPath || normalizedPath === "/") {
+      return API_PREFIX;
+    }
+
+    if (normalizedPath.endsWith(API_PREFIX)) {
+      return normalizedPath;
+    }
+
+    return `${normalizedPath}${API_PREFIX}`;
+  }
+}
 
 function resolveApiBaseUrl() {
-  return (
+  const rawUrl =
     process.env.NEXT_PUBLIC_API_BASE_URL ??
     process.env.NEXT_PUBLIC_API_URL ??
     process.env.API_BASE_URL ??
-    ""
-  );
+    "";
+
+  return normalizeApiBaseUrl(rawUrl);
 }
 
 function resolveWithCredentials() {
