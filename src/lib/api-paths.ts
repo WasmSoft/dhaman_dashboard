@@ -71,6 +71,24 @@ export const API_PATHS = {
     GENERATE_FOR_AGREEMENT: (agreementId: PathParam) =>
       `/agreements/${encodePathParam(agreementId)}/generate-plan`,
   },
+  CHANGE_REQUESTS: {
+    LIST: (agreementId: PathParam) =>
+      `/agreements/${encodePathParam(agreementId)}/change-requests`,
+    CREATE: (agreementId: PathParam) =>
+      `/agreements/${encodePathParam(agreementId)}/change-requests`,
+    DETAILS: (id: PathParam) =>
+      `/change-requests/${encodePathParam(id)}`,
+    UPDATE: (id: PathParam) =>
+      `/change-requests/${encodePathParam(id)}`,
+    SEND: (id: PathParam) =>
+      `/change-requests/${encodePathParam(id)}/send`,
+    PORTAL_APPROVE: (token: PathParam, id: PathParam) =>
+      `/portal/${encodePathParam(token)}/change-requests/${encodePathParam(id)}/approve`,
+    PORTAL_DECLINE: (token: PathParam, id: PathParam) =>
+      `/portal/${encodePathParam(token)}/change-requests/${encodePathParam(id)}/decline`,
+    PORTAL_FUND: (token: PathParam, id: PathParam) =>
+      `/portal/${encodePathParam(token)}/change-requests/${encodePathParam(id)}/fund`,
+  },
   EMAIL_NOTIFICATIONS: {
     PREVIEW: "/email-notifications/preview",
     LOGS: "/emails/logs",

@@ -23,3 +23,4 @@ export { MilestonesSection } from "./MilestonesSection";
 export { PaymentSummaryCard } from "./PaymentSummaryCard";
 export { PolicySection } from "./PolicySection";
 export { ProjectSummaryCard } from "./ProjectSummaryCard";
+export { ChangeRequestPortalSection } from "./ChangeRequestPortalSection";
