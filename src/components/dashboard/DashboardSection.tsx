@@ -1,3 +1,5 @@
+"use client";
+
 import {
   CalendarDays,
   Download,
@@ -11,7 +13,10 @@ import { Button } from "@/components/shared";
 import { dashboardContent } from "@/constants";
 import { cn } from "@/lib/utils";
 
+import { DashboardActionsRequired } from "./DashboardActionsRequired";
 import { DashboardIcon } from "./DashboardIcon";
+import { DashboardOverviewCards } from "./DashboardOverviewCards";
+import { DashboardRecentActivity } from "./DashboardRecentActivity";
 
 const statusToneClasses = {
   success: "bg-emerald-500/15 text-emerald-300",
@@ -25,40 +30,6 @@ const progressToneClasses = {
   amber: { bar: "bg-amber-400", icon: "bg-amber-500/15 text-amber-300" },
   emerald: { bar: "bg-emerald-400", icon: "bg-emerald-500/15 text-emerald-300" },
 } as const;
-
-function MetricCards() {
-  const { metrics } = dashboardContent.dashboard;
-
-  return (
-    <section className="grid gap-3 md:grid-cols-3">
-      {metrics.map((metric) => (
-        <article key={metric.key} className="rounded-[12px] border border-[#252a42] bg-[#15192b] p-5 text-start shadow-[0_18px_45px_rgba(4,7,20,0.18)]">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2 text-[#c7cce0]">
-              <span className="grid size-[30px] place-items-center rounded-[9px] bg-[#22264a] text-[#a898ff]">
-                <DashboardIcon name={metric.icon} className="size-[15px]" />
-              </span>
-              <span className="text-[13px] font-medium">{metric.label}</span>
-            </div>
-            <MoreHorizontal className="size-4 text-[#58607c]" />
-          </div>
-          <strong className="mt-4 block text-[25px] font-extrabold tracking-[-0.02em] text-white">{metric.value}</strong>
-          <div className="mt-3 flex items-center gap-2 text-[11px] text-[#737b99]">
-            <span
-              className={cn(
-                "rounded-md px-2 py-1 font-bold",
-                metric.trendTone === "positive" ? "bg-emerald-500/15 text-emerald-300" : "bg-red-500/15 text-red-300",
-              )}
-            >
-              {metric.trend}
-            </span>
-            <span>من الشهر الماضي</span>
-          </div>
-        </article>
-      ))}
-    </section>
-  );
-}
 
 function OverviewChart() {
   const { chartBars } = dashboardContent.dashboard;
@@ -274,11 +245,13 @@ export function DashboardSection() {
       </section>
 
       <div className="w-full space-y-[16px]">
-        <MetricCards />
+        <DashboardOverviewCards />
+        <DashboardActionsRequired />
         <section className="grid w-full gap-[14px] xl:grid-cols-[minmax(320px,0.72fr)_minmax(541.6px,1.28fr)] xl:items-start">
           <AgreementsPanel />
           <OverviewChart />
         </section>
+        <DashboardRecentActivity />
         <section className="grid w-full gap-[14px] xl:grid-cols-[minmax(320px,0.72fr)_minmax(541.6px,1.28fr)] xl:items-start">
           <ReviewsPanel />
           <TransactionsTable />

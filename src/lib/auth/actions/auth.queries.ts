@@ -9,5 +9,6 @@ export function currentUserQueryOptions() {
   return queryOptions({
     queryKey: authQueryKeys.currentUser(),
     queryFn: getCurrentUser,
+    retry: false,
   });
 }

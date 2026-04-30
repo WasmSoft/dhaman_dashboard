@@ -2,7 +2,7 @@
 // EN: AI Review page — displays stats, review table with filters, and detail sidebar side-by-side.
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Clock,
   Eye,
@@ -27,12 +27,16 @@ import { Input } from "@/components/shared/input";
 import { ScoreBar } from "@/components/shared/score-bar";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { aiReviewContent } from "@/constants";
+import { useAiReviewsQuery } from "@/hooks/ai-review";
+import { mapApiReviewsToRows } from "@/lib/ai-review/helpers";
 import type {
   AIReviewFilterTab,
   AIReviewBadgeLabel,
   AIReviewResultLabel,
   AIPayStatusLabel,
   AIReviewRow,
+  AIReviewStat,
+  AIReviewFilterDropdown,
 } from "@/types";
 
 type StatusTone = "success" | "purple" | "blue" | "amber" | "red" | "muted" | "cyan";
@@ -264,14 +268,83 @@ function ReviewDetailSidebar({
 
 export function AIReviewSection() {
   const { aiReview } = aiReviewContent;
+
+  // AR: جلب بيانات المراجعات من API.
+  // EN: Fetch reviews data from API.
+  const { data: apiData, isLoading } = useAiReviewsQuery();
+
+  // AR: تحويل بيانات API إلى صفوف عرض الجدول، أو استخدام البيانات الثابتة كاحتياط.
+  // EN: Map API data to table rows, or use static data as fallback.
+  const apiRows = useMemo(
+    () => (apiData?.reviews ? mapApiReviewsToRows(apiData.reviews) : undefined),
+    [apiData],
+  );
+
+  // AR: استخدام بيانات API عند توفرها، وإلا استخدام البيانات الثابتة.
+  // EN: Use API data when available, otherwise use static data.
+  const rows: AIReviewRow[] = apiRows ?? aiReview.rows;
+
+  // AR: إحصائيات محسوبة من بيانات API أو ثابتة.
+  // EN: Stats computed from API data or static fallback.
+  const stats: AIReviewStat[] = useMemo(() => {
+    if (!apiRows) return aiReview.stats;
+    return [
+      {
+        key: "active",
+        value: String(apiRows.length),
+        label: "مراجعات مفتوحة",
+        description: "تحتاج متابعة",
+        status: "نشط",
+      },
+      {
+        key: "pending",
+        value: String(apiRows.filter((r) => r.reviewBadge === "بانتظار AI").length),
+        label: "بانتظار التوصية",
+        description: "AI يحلل التسليم والاعتراض",
+        status: "تحليل",
+      },
+      {
+        key: "outOfScope",
+        value: String(apiRows.filter((r) => r.aiResult === "خارج النطاق").length),
+        label: "طلبات خارج النطاق",
+        description: "اعتراضات لا تطابق شروط القبول",
+        status: "تنبيه",
+      },
+      {
+        key: "frozen",
+        value: "$0",
+        label: "دفعات متأثرة",
+        description: "تحت المراجعة أو التعليق",
+        status: "مجمّد",
+      },
+    ];
+  }, [apiRows, aiReview.stats]);
+
+  // AR: تبويبات محسوبة من بيانات API أو ثابتة.
+  // EN: Filter tabs computed from API data or static fallback.
+  const filterTabs: { label: AIReviewFilterTab; count: number }[] = useMemo(() => {
+    if (!apiRows) return aiReview.filterTabs;
+    return [
+      { label: "الكل", count: apiRows.length },
+      { label: "تم الحل", count: apiRows.filter((r) => r.reviewBadge === "تم الحل").length },
+      { label: "خارج النطاق", count: apiRows.filter((r) => r.aiResult === "خارج النطاق").length },
+      { label: "توصية جاهزة", count: apiRows.filter((r) => r.reviewBadge === "توصية جاهزة").length },
+      { label: "بانتظار AI", count: apiRows.filter((r) => r.reviewBadge === "بانتظار AI").length },
+      { label: "مفتوحة", count: apiRows.filter((r) => r.reviewBadge === "مفتوحة").length },
+    ];
+  }, [apiRows, aiReview.filterTabs]);
+
+  const filterDropdowns: AIReviewFilterDropdown[] = aiReview.filterDropdowns;
+
   const [activeTab, setActiveTab] = useState<AIReviewFilterTab>("الكل");
-  // AR: الصف الأول محدد افتراضياً لمطابقة التصميم. EN: First row selected by default to match the design.
-  const [selectedRow, setSelectedRow] = useState<AIReviewRow | null>(aiReview.rows[0]);
+  const [selectedRow, setSelectedRow] = useState<AIReviewRow | null>(
+    rows.length > 0 ? rows[0] : null,
+  );
 
   const filteredRows =
     activeTab === "الكل"
-      ? aiReview.rows
-      : aiReview.rows.filter((row) => {
+      ? rows
+      : rows.filter((row) => {
           if (activeTab === "مفتوحة") return row.reviewBadge === "مفتوحة";
           if (activeTab === "بانتظار AI") return row.reviewBadge === "بانتظار AI";
           if (activeTab === "توصية جاهزة") return row.reviewBadge === "توصية جاهزة";
@@ -312,11 +385,15 @@ export function AIReviewSection() {
             <Search className="pointer-events-none absolute start-3 top-1/2 size-3 -translate-y-1/2 text-[#636b8a]" />
           </div>
         </div>
+        {/* AR: مؤشر تحميل البيانات. EN: Data loading indicator. */}
+        {isLoading && (
+          <span className="text-[12px] text-[#636b8a]">جاري تحميل المراجعات...</span>
+        )}
       </div>
 
       {/* AR: بطاقات الإحصائيات الأربع. EN: Four stats cards. */}
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {aiReview.stats.map((stat) => (
+        {stats.map((stat) => (
           <div
             key={stat.key}
             className={cn(
@@ -356,7 +433,7 @@ export function AIReviewSection() {
 
       {/* AR: تبويبات الفلترة. EN: Filter tabs. */}
       <div className="mb-4 flex flex-wrap gap-2">
-        {aiReview.filterTabs.map((tab) => (
+        {filterTabs.map((tab) => (
           <button
             key={tab.label}
             type="button"
@@ -385,7 +462,7 @@ export function AIReviewSection() {
 
       {/* AR: قوائم الفلترة المنسدلة. EN: Dropdown filter chips. */}
       <div className="mb-4 flex flex-wrap gap-2">
-        {aiReview.filterDropdowns.map((dropdown) => (
+        {filterDropdowns.map((dropdown) => (
           <button
             key={dropdown.key}
             type="button"
@@ -425,7 +502,6 @@ export function AIReviewSection() {
                   )}
                   onClick={() => setSelectedRow(row)}
                 >
-                  {/* الإجراء */}
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <button
@@ -452,7 +528,6 @@ export function AIReviewSection() {
                     </div>
                   </td>
 
-                  {/* آخر تحديث */}
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1 text-[13px] text-[#8b90a8]">
                       {row.updatedAt}
@@ -460,7 +535,6 @@ export function AIReviewSection() {
                     </div>
                   </td>
 
-                  {/* التطابق */}
                   <td className="px-4 py-3">
                     {row.matchScore !== null ? (
                       <ScoreBar score={row.matchScore} />
@@ -469,14 +543,12 @@ export function AIReviewSection() {
                     )}
                   </td>
 
-                  {/* المبلغ */}
                   <td className="px-4 py-3">
                     <span className="text-[14px] font-semibold text-white">
                       {row.amount}
                     </span>
                   </td>
 
-                  {/* حالة الدفعة */}
                   <td className="px-4 py-3">
                     <StatusBadge
                       label={row.payStatus}
@@ -485,7 +557,6 @@ export function AIReviewSection() {
                     />
                   </td>
 
-                  {/* نتيجة AI */}
                   <td className="px-4 py-3">
                     <StatusBadge
                       label={row.aiResult}
@@ -495,7 +566,6 @@ export function AIReviewSection() {
                     />
                   </td>
 
-                  {/* حالة المراجعة */}
                   <td className="px-4 py-3">
                     <StatusBadge
                       label={row.reviewBadge}
@@ -504,7 +574,6 @@ export function AIReviewSection() {
                     />
                   </td>
 
-                  {/* المرحلة / الاعتراض */}
                   <td className="px-4 py-3">
                     <div className="flex flex-col gap-0.5">
                       <span className="line-clamp-1 text-[12px] font-semibold leading-tight text-white">
@@ -516,7 +585,6 @@ export function AIReviewSection() {
                     </div>
                   </td>
 
-                  {/* المشروع / العميل */}
                   <td className="px-4 py-3">
                     <div className="flex flex-col gap-0.5">
                       <span className="line-clamp-1 text-[13px] font-semibold leading-tight text-white">

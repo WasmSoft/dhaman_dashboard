@@ -10,5 +10,9 @@ export function createDashboardInvalidationActions(queryClient: QueryClient) {
       queryClient.invalidateQueries({
         queryKey: dashboardQueryKeys.summary(),
       }),
+    invalidateAll: () =>
+      queryClient.invalidateQueries({
+        queryKey: dashboardQueryKeys.all,
+      }),
   };
 }

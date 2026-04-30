@@ -1,5 +1,11 @@
+export { PortalTimelineEvidence } from "./PortalTimelineEvidence";
+export { PortalTimelineSection } from "./PortalTimelineSection";
 export { PortalSection } from "./PortalSection";
 export { PaymentSetupDetailsSection } from "./PaymentSetupDetailsSection";
+export { PaymentConfirmationSection } from "./PaymentConfirmationSection";
+export { PaymentHistorySection } from "./PaymentHistorySection";
+export { ReleasePaymentSection } from "./ReleasePaymentSection";
+export { ChangeRequestPaymentSection } from "./ChangeRequestPaymentSection";
 export { PaymentSetupOutcomeSection } from "./PaymentSetupOutcomeSection";
 export { PaymentSetupSection } from "./PaymentSetupSection";
 export { TrackingDetailsSection } from "./TrackingDetailsSection";

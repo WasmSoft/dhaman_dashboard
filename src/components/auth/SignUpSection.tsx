@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { type FormEvent, useState } from "react";
 import {
   Check,
   Eye,
@@ -9,6 +13,7 @@ import {
 
 import { Button } from "@/components/shared";
 import { authContent } from "@/constants";
+import { useSignUpMutation } from "@/hooks/auth";
 import { cn } from "@/lib/utils";
 import type { AuthField, SignUpTrustCard } from "@/types";
 
@@ -39,7 +44,13 @@ function BrandMark({ compact = false }: { compact?: boolean }) {
   );
 }
 
-function SignUpInput({ field }: { field: AuthField }) {
+function SignUpInput({
+  field,
+  required = true,
+}: {
+  field: AuthField;
+  required?: boolean;
+}) {
   const isPassword = field.type === "password";
 
   return (
@@ -49,6 +60,7 @@ function SignUpInput({ field }: { field: AuthField }) {
         <input
           id={field.id}
           name={field.id}
+          required={required}
           type={field.type}
           placeholder={field.placeholder}
           className={cn(
@@ -148,6 +160,41 @@ function SignUpPreview() {
 
 export function SignUpSection() {
   const { signUp } = authContent;
+  const router = useRouter();
+  const signUpMutation = useSignUpMutation();
+  const [formError, setFormError] = useState<string | null>(null);
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const password = String(formData.get("password") ?? "");
+    const confirmPassword = String(formData.get("confirmPassword") ?? "");
+
+    if (password !== confirmPassword) {
+      setFormError("كلمة المرور وتأكيدها غير متطابقين.");
+      return;
+    }
+
+    setFormError(null);
+    signUpMutation.mutate(
+      {
+        businessName: String(formData.get("businessName") ?? "").trim(),
+        confirmPassword,
+        email: String(formData.get("email") ?? "").trim(),
+        fullName: String(formData.get("fullName") ?? "").trim(),
+        password,
+      },
+      {
+        onError: (error) => {
+          setFormError(error.message || "تعذر إنشاء الحساب. حاول مرة أخرى.");
+        },
+        onSuccess: () => {
+          router.push("/dashboard");
+        },
+      },
+    );
+  }
 
   return (
     <main dir="rtl" className="min-h-screen bg-[#262b49] px-4 py-6 text-start text-white sm:px-6 lg:p-0">
@@ -164,22 +211,26 @@ export function SignUpSection() {
               <p className="max-w-sm text-sm leading-7 text-slate-500">{signUp.description}</p>
             </div>
 
-            <form className="mt-7 space-y-5">
+            <form className="mt-7 space-y-5" onSubmit={handleSubmit}>
               <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="نوع الحساب">
                 {signUp.roleOptions.map((option) => {
                   const isActive = "active" in option && option.active;
+                  const isDisabled = option.value !== "freelancer";
 
                   return (
                     <button
                       key={option.value}
                       type="button"
+                      disabled={isDisabled}
                       className={cn(
                         "inline-flex h-9 items-center gap-1.5 rounded-full border px-4 text-sm transition",
                         isActive
                           ? "border-violet-400 bg-violet-500/10 text-violet-200"
                           : "border-white/5 bg-transparent text-slate-500 hover:border-white/15 hover:text-slate-300",
+                        isDisabled && "cursor-not-allowed opacity-50 hover:border-white/5 hover:text-slate-500",
                       )}
                       aria-pressed={isActive ? "true" : "false"}
+                      title={isDisabled ? "العميل يدخل عبر رابط البوابة ولا يحتاج حساباً." : undefined}
                     >
                       {option.value === "freelancer" ? <UserRound className="size-4" /> : <UsersRound className="size-4" />}
                       {option.label}
@@ -190,7 +241,7 @@ export function SignUpSection() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <SignUpInput field={signUp.fields.fullName} />
-                <SignUpInput field={signUp.fields.businessName} />
+                <SignUpInput field={signUp.fields.businessName} required={false} />
               </div>
 
               <SignUpInput field={signUp.fields.email} />
@@ -203,16 +254,24 @@ export function SignUpSection() {
               <label className="flex items-center gap-2 text-sm text-slate-400">
                 <input
                   type="checkbox"
+                  required
                   className="size-4 rounded border-white/10 bg-[#232642] accent-violet-500"
                 />
                 <span>{signUp.termsLabel}</span>
               </label>
 
+              {formError ? (
+                <p className="rounded-xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm text-red-200" role="alert">
+                  {formError}
+                </p>
+              ) : null}
+
               <Button
                 type="submit"
+                disabled={signUpMutation.isPending}
                 className="h-12 w-full rounded-xl bg-violet-500 text-base font-bold text-white shadow-[0_16px_35px_rgba(111,82,255,0.35)] hover:bg-violet-400"
               >
-                {signUp.submitLabel}
+                {signUpMutation.isPending ? "جاري إنشاء الحساب..." : signUp.submitLabel}
               </Button>
             </form>
 

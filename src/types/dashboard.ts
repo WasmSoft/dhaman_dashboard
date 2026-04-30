@@ -1,3 +1,68 @@
+export type PaymentStatus =
+  | "WAITING"
+  | "RESERVED"
+  | "CLIENT_REVIEW"
+  | "AI_REVIEW"
+  | "READY_TO_RELEASE"
+  | "RELEASED"
+  | "ON_HOLD"
+  | "FAILED"
+  | "REFUNDED"
+  | "NOT_REQUIRED";
+
+export type AgreementStatus =
+  | "DRAFT"
+  | "SENT"
+  | "APPROVED"
+  | "ACTIVE"
+  | "COMPLETED"
+  | "CANCELLED"
+  | "DISPUTED";
+
+export type MilestoneStatus =
+  | "DRAFT"
+  | "ACTIVE"
+  | "IN_REVIEW"
+  | "ACCEPTED"
+  | "CHANGES_REQUESTED"
+  | "CANCELLED";
+
+export type DeliveryStatus =
+  | "NOT_SUBMITTED"
+  | "SUBMITTED"
+  | "IN_REVIEW"
+  | "ACCEPTED"
+  | "CHANGES_REQUESTED";
+
+export type AIReviewStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
+
+export type AIRecommendation =
+  | "ACCEPT"
+  | "REJECT"
+  | "PARTIAL"
+  | "NEEDS_HUMAN_REVIEW";
+
+export type ChangeRequestStatus =
+  | "PENDING"
+  | "APPROVED"
+  | "DECLINED"
+  | "PAID";
+
+export type TimelineEventType =
+  | "AGREEMENT_CREATED"
+  | "AGREEMENT_SENT"
+  | "AGREEMENT_APPROVED"
+  | "MILESTONE_CREATED"
+  | "PAYMENT_RESERVED"
+  | "PAYMENT_RELEASED"
+  | "DELIVERY_SUBMITTED"
+  | "CHANGE_REQUEST_CREATED"
+  | "CHANGE_REQUEST_APPROVED"
+  | "CHANGE_REQUEST_DECLINED"
+  | "AI_REVIEW_REQUESTED"
+  | "AI_REVIEW_COMPLETED"
+  | "EMAIL_SENT";
+
 export interface DashboardContentMap {
   dashboard: DashboardContent;
 }
@@ -98,3 +163,105 @@ export interface DashboardContent {
   reviews: readonly DashboardReviewItem[];
   transactions: readonly DashboardTransactionItem[];
 }
+
+// AR: أنواع نطاق تاريخ لوحة التحكم والاستعلامات والاستجابات للمرحلة النهائية.
+// EN: Dashboard date range, query inputs, and wire-shape response types for the Final Phase.
+export type DashboardDateRange = "7d" | "30d" | "90d" | "all";
+
+export interface DashboardOverviewQuery {
+  range?: DashboardDateRange;
+  currency?: string;
+}
+
+export interface DashboardActionsQuery {
+  limit?: number;
+  type?: "payments" | "deliveries" | "ai_reviews" | "change_requests" | "all";
+}
+
+export interface DashboardRecentActivityQuery {
+  limit?: number;
+  agreementId?: string;
+  type?: TimelineEventType;
+}
+
+export interface DashboardOverviewResponse {
+  metrics: DashboardOverviewMetric[];
+  paymentSummary: DashboardPaymentSummary;
+  agreementSummary: DashboardAgreementSummary;
+  clientSummary: { count: number };
+  range: DashboardDateRange;
+  currency: string;
+}
+
+export interface DashboardOverviewMetric {
+  key: string;
+  labelKey: string;
+  value: string;
+  icon: DashboardIconName;
+}
+
+export interface DashboardPaymentSummary {
+  protectedAmount: string;
+  releasedAmount: string;
+  pendingAmount: string;
+  byStatus: Record<PaymentStatus, string>;
+  currency: string;
+}
+
+export interface DashboardAgreementSummary {
+  total: number;
+  byStatus: Record<AgreementStatus, number>;
+  totalContractValue: string;
+}
+
+export interface DashboardActionsRequiredResponse {
+  items: DashboardActionItem[];
+  totalAvailable: number;
+}
+
+export interface DashboardActionItem {
+  id: string;
+  category: "payments" | "deliveries" | "ai_reviews" | "change_requests";
+  titleKey: string;
+  params: Record<string, string>;
+  agreementId: string;
+  targetRoute: string;
+}
+
+export interface DashboardRecentActivityResponse {
+  events: DashboardActivityEvent[];
+  hasMore: boolean;
+}
+
+export interface DashboardActivityEvent {
+  id: string;
+  type: TimelineEventType;
+  titleKey: string;
+  descriptionKey: string;
+  params: Record<string, string>;
+  actorRole: "FREELANCER" | "CLIENT" | "SYSTEM";
+  agreementId: string;
+  createdAt: string;
+}
+
+export type DashboardErrorCode =
+  | "DASHBOARD_RANGE_INVALID"
+  | "DASHBOARD_AGGREGATION_FAILED"
+  | "AGREEMENT_NOT_FOUND"
+  | "VALIDATION_ERROR"
+  | "UNAUTHORIZED";
+
+export interface DashboardErrorBody {
+  code: DashboardErrorCode;
+  message: string;
+  requestId?: string;
+  correlationId?: string;
+}
+
+// AR: دورة حياة البطاقة — كل سطح يمر بإحدى هذه الحالات.
+// EN: Card lifecycle — each surface is in exactly one of these states.
+export type DashboardCardLifecycle<TData> =
+  | { state: "loading" }
+  | { state: "empty" }
+  | { state: "error"; code: DashboardErrorCode; retry: () => void }
+  | { state: "data"; data: TData };

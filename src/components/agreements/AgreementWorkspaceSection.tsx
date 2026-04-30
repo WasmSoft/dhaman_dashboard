@@ -4,6 +4,7 @@ import { ArrowRight, CalendarClock, CheckCircle2, CircleDollarSign, ClipboardLis
 import { Button } from "@/components/shared";
 import { agreementsContent } from "@/constants";
 import { cn } from "@/lib/utils";
+import { AgreementTimelineSection } from "@/components/agreements/AgreementTimelineSection";
 import type { AgreementWorkspaceActivityItem, AgreementWorkspaceMetricTone, AgreementWorkspaceMilestone, AgreementWorkspacePaymentTone } from "@/types";
 
 const metricToneClasses: Record<AgreementWorkspaceMetricTone, { icon: string; text: string; ring: string }> = {
@@ -350,7 +351,11 @@ function WorkspaceSidebar() {
   );
 }
 
-export function AgreementWorkspaceSection() {
+export function AgreementWorkspaceSection({
+  agreementId,
+}: {
+  agreementId?: string;
+}) {
   return (
     <>
       <WorkspaceHeader />
@@ -362,6 +367,11 @@ export function AgreementWorkspaceSection() {
           <MilestonesSection />
           <PaymentsSection />
           <ActivitySection />
+          {/* AR: السجل الزمني الحي للاتفاقية — يعرض أحداث الأدلة الفعلية من الخادم.
+              EN: Live agreement timeline — displays actual evidence events from the backend. */}
+          {agreementId ? (
+            <AgreementTimelineSection agreementId={agreementId} />
+          ) : null}
         </div>
       </section>
     </>

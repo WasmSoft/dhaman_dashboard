@@ -22,7 +22,7 @@ export function AgreementHero({ agreement }: AgreementHeroProps) {
               {agreement.title}
             </h2>
             <div className="flex flex-wrap gap-2">
-              {agreement.badges.map((badge) => (
+              {agreement.badges?.map((badge) => (
                 <span
                   key={badge.label}
                   className={badge.className}

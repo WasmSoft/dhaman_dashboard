@@ -10,6 +10,7 @@ import {
 import type React from "react";
 
 import { Button } from "@/components/shared/button";
+import { PortalTimelineEvidence } from "@/components/client-portal/PortalTimelineEvidence";
 import { cn } from "@/lib/utils";
 import type { PortalPaymentSetupOutcome } from "@/types";
 
@@ -77,8 +78,10 @@ function PillBadge({
 
 export function PaymentSetupOutcomeSection({
   outcome,
+  portalToken,
 }: {
   outcome: PortalPaymentSetupOutcome;
+  portalToken?: string;
 }) {
   return (
     <section className="mt-6 space-y-0" aria-label="ملخص ما بعد الدفع">
@@ -191,6 +194,23 @@ export function PaymentSetupOutcomeSection({
           {outcome.securityNote.badge}
         </PillBadge>
       </OutcomeCard>
+
+      {/* AR: أدلة السجل الزمني للدفع — آمنة للعميل.
+          EN: Payment timeline evidence — client-safe. */}
+      {portalToken ? (
+        <div className="mt-6">
+          <PortalTimelineEvidence
+            portalToken={portalToken}
+            eventTypes={[
+              "PAYMENT_RESERVED",
+              "PAYMENT_CLIENT_REVIEW",
+              "PAYMENT_READY_TO_RELEASE",
+              "PAYMENT_RELEASED",
+            ]}
+            maxItems={3}
+          />
+        </div>
+      ) : null}
     </section>
   );
 }

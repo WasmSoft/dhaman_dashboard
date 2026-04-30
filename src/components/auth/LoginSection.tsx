@@ -1,8 +1,13 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { type FormEvent, useState } from "react";
 import { Check, Eye, Shield } from "lucide-react";
 
 import { Button } from "@/components/shared";
 import { authContent } from "@/constants";
+import { useLoginMutation } from "@/hooks/auth";
 import { cn } from "@/lib/utils";
 import type { AuthField, LoginActivityItem, LoginMetric } from "@/types";
 
@@ -46,6 +51,7 @@ function LoginInput({ field }: { field: AuthField }) {
         <input
           id={field.id}
           name={field.id}
+          required
           type={field.type}
           placeholder={field.placeholder}
           className={cn(
@@ -148,6 +154,30 @@ function LoginPreview() {
 
 export function LoginSection() {
   const { login } = authContent;
+  const router = useRouter();
+  const loginMutation = useLoginMutation();
+  const [formError, setFormError] = useState<string | null>(null);
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const email = String(formData.get("email") ?? "").trim();
+    const password = String(formData.get("password") ?? "");
+
+    setFormError(null);
+    loginMutation.mutate(
+      { email, password },
+      {
+        onError: (error) => {
+          setFormError(error.message || "تعذر تسجيل الدخول. حاول مرة أخرى.");
+        },
+        onSuccess: () => {
+          router.push("/dashboard");
+        },
+      },
+    );
+  }
 
   return (
     <main dir="rtl" className="min-h-screen bg-[#262b49] px-4 py-6 text-start text-white sm:px-6 lg:p-0">
@@ -163,7 +193,7 @@ export function LoginSection() {
               <p className="text-sm leading-7 text-slate-500">{login.description}</p>
             </div>
 
-            <form className="mt-7 space-y-4">
+            <form className="mt-7 space-y-4" onSubmit={handleSubmit}>
               <LoginInput field={login.fields.email} />
               <LoginInput field={login.fields.password} />
 
@@ -180,11 +210,18 @@ export function LoginSection() {
                 </Link>
               </div>
 
+              {formError ? (
+                <p className="rounded-xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm text-red-200" role="alert">
+                  {formError}
+                </p>
+              ) : null}
+
               <Button
                 type="submit"
+                disabled={loginMutation.isPending}
                 className="h-12 w-full rounded-xl bg-violet-500 text-base font-bold text-white shadow-[0_16px_35px_rgba(111,82,255,0.35)] hover:bg-violet-400"
               >
-                {login.submitLabel}
+                {loginMutation.isPending ? "جاري تسجيل الدخول..." : login.submitLabel}
               </Button>
             </form>
 

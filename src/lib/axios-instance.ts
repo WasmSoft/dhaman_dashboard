@@ -8,6 +8,8 @@ import axios, {
 
 import type { ApiErrorShape } from "@/types";
 
+import { getAppLocale } from "@/lib/locale";
+
 const ACCESS_TOKEN_STORAGE_KEY = "dhaman_access_token";
 
 function resolveApiBaseUrl() {
@@ -92,22 +94,37 @@ function normalizeApiError(error: unknown) {
   }
 
   const axiosError = error as AxiosError<{
+    error?: {
+      code?: string;
+      details?: unknown;
+      fieldErrors?: unknown;
+      localizedMessage?: string;
+      message?: string;
+    };
     message?: string;
     code?: string;
     errors?: unknown;
   }>;
 
   const statusCode = axiosError.response?.status ?? null;
+  const responseData = axiosError.response?.data;
+  const responseError = responseData?.error;
   const message =
-    axiosError.response?.data?.message ??
+    responseError?.localizedMessage ??
+    responseError?.message ??
+    responseData?.message ??
     axiosError.message ??
     "Request failed";
 
   return new ApiError({
     message,
     statusCode,
-    code: axiosError.response?.data?.code,
-    details: axiosError.response?.data?.errors ?? axiosError.response?.data,
+    code: responseError?.code ?? responseData?.code,
+    details:
+      responseError?.fieldErrors ??
+      responseError?.details ??
+      responseData?.errors ??
+      responseData,
   });
 }
 
@@ -130,6 +147,12 @@ function applyRequestDefaults(config: InternalAxiosRequestConfig) {
   // EN: We attach the Bearer token automatically only when available and not overridden manually.
   if (accessToken && !headers.get("Authorization")) {
     headers.set("Authorization", `Bearer ${accessToken}`);
+  }
+
+  // AR: نضيف Accept-Language من مصدر اللغة المركزي حتى يعيد الخادم الرسائل المترجمة.
+  // EN: Attach Accept-Language from the central locale source so the backend returns localized messages.
+  if (!headers.get("Accept-Language")) {
+    headers.set("Accept-Language", getAppLocale());
   }
 
   config.headers = headers;

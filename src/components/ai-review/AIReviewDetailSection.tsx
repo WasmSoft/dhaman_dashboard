@@ -28,6 +28,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/shared/button";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { TimelineEvidencePanel } from "@/components/timeline-events";
 import { ScoreBar } from "@/components/shared/score-bar";
 import { aiReviewContent } from "@/constants";
 import type {
@@ -158,9 +159,10 @@ function DeliverableFileItem({ file }: { file: AIReviewDeliverableFile }) {
 
 interface AIReviewDetailSectionProps {
   row: AIReviewRow;
+  agreementId?: string;
 }
 
-export function AIReviewDetailSection({ row }: AIReviewDetailSectionProps) {
+export function AIReviewDetailSection({ row, agreementId }: AIReviewDetailSectionProps) {
   const labels = aiReviewContent.detailPage;
   const d = row.detail;
 
@@ -528,6 +530,16 @@ export function AIReviewDetailSection({ row }: AIReviewDetailSectionProps) {
                 اعتماد التوصية
               </Button>
             </div>
+
+            {/* AR: أدلة السجل الزمني المرتبطة بمراجعة AI.
+                EN: Timeline evidence related to the AI review. */}
+            {agreementId ? (
+              <TimelineEvidencePanel
+                agreementId={agreementId}
+                eventTypes={["AI_REVIEW_REQUESTED", "AI_REVIEW_COMPLETED"]}
+                maxItems={3}
+              />
+            ) : null}
           </div>
         </aside>
       </div>

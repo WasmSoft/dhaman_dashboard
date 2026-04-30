@@ -1,13 +1,18 @@
 import { Copy, Eye } from "lucide-react";
 
 import { Button } from "@/components/shared";
+import { PortalTimelineSection } from "@/components/client-portal/PortalTimelineSection";
 import { TrackingDetailsSection } from "@/components/client-portal/TrackingDetailsSection";
 import { TrackingFinalSection } from "@/components/client-portal/TrackingFinalSection";
 import { TrackingProgressSection } from "@/components/client-portal/TrackingProgressSection";
 import { clientPortalContent } from "@/constants";
 import { cn } from "@/lib/utils";
 
-export function TrackingSection() {
+export function TrackingSection({
+  portalToken,
+}: {
+  portalToken?: string;
+}) {
   const { tracking } = clientPortalContent;
   const { activeProject } = tracking;
 
@@ -111,6 +116,11 @@ export function TrackingSection() {
             requiredAction={tracking.requiredAction}
             agreementTimeline={tracking.agreementTimeline}
           />
+          {/* AR: السجل الزمني لبوابة العميل — يعرض الأحداث الآمنة للعميل فقط.
+              EN: Client portal timeline — displays client-safe events only. */}
+          {portalToken ? (
+            <PortalTimelineSection portalToken={portalToken} />
+          ) : null}
           <TrackingProgressSection progressDetails={tracking.progressDetails} />
           <TrackingFinalSection
             finalSummary={tracking.finalSummary}

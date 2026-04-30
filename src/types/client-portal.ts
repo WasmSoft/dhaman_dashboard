@@ -6,6 +6,10 @@ import type {
 export interface ClientPortalContentMap {
   portal: PortalReviewContent;
   paymentSetup: PortalPaymentSetupContent;
+  paymentConfirmation: PortalPaymentConfirmationContent;
+  paymentHistory: PortalPaymentHistoryContent;
+  releasePayment: PortalReleasePaymentContent;
+  changeRequestPayment: PortalChangeRequestPaymentContent;
   fundMilestone: PortalFundMilestoneContent;
   tracking: PortalTrackingContent;
   deliveryPreview: PortalDeliveryPreviewContent;
@@ -238,6 +242,558 @@ export interface PortalPaymentSetupOutcome {
     title: string;
     description: string;
     badge: string;
+  };
+}
+
+export interface PortalPaymentConfirmationContent {
+  title: string;
+  description: string;
+  hero: {
+    eyebrow: string;
+    heading: string;
+    meta: string;
+    description: string;
+    amountLabel: string;
+    amount: string;
+    amountStatus: string;
+    badges: PortalAgreementBadge[];
+    primaryAction: string;
+    secondaryActions: PortalPaymentConfirmationAction[];
+  };
+  receipt: {
+    title: string;
+    receiptId: string;
+    rows: Array<{
+      label: string;
+      value: string;
+    }>;
+    totals: Array<{
+      label: string;
+      value: string;
+      tone?: "default" | "muted" | "green";
+    }>;
+    badges: string[];
+    note: string;
+  };
+  fundedMilestone: {
+    title: string;
+    amount: string;
+    heading: string;
+    project: string;
+    rows: Array<{
+      label: string;
+      value: string;
+      tone?: "default" | "muted" | "green" | "purple";
+    }>;
+    acceptanceCriteria: string[];
+    note: string;
+  };
+  protection: {
+    title: string;
+    beforeLabel: string;
+    beforeStatus: string;
+    currentLabel: string;
+    currentStatus: string;
+    note: string;
+    items: Array<{
+      title: string;
+      description: string;
+    }>;
+  };
+  nextSteps: {
+    title: string;
+    steps: Array<{
+      title: string;
+      description: string;
+      state: "completed" | "current" | "upcoming";
+    }>;
+  };
+  receiptActions: {
+    title: string;
+    items: PortalPaymentConfirmationActionCard[];
+  };
+  portalPreview: {
+    title: string;
+    stats: Array<{
+      value: string;
+      label: string;
+      tone: "green" | "blue" | "purple" | "default";
+    }>;
+    note: string;
+    statusLabel: string;
+  };
+  trustFooter: {
+    title: string;
+    description: string;
+    disclaimer: string;
+    links: string[];
+    copyright: string;
+  };
+  quickSummary: {
+    operationSummary: {
+      title: string;
+      rows: Array<{
+        label: string;
+        value: string;
+        tone?: "default" | "muted" | "green" | "purple";
+      }>;
+    };
+    paymentMethod: {
+      title: string;
+      rows: Array<{
+        label: string;
+        value: string;
+        tone?: "default" | "green";
+      }>;
+    };
+    agreementSummary: {
+      title: string;
+      rows: Array<{
+        label: string;
+        value: string;
+        tone?: "default" | "green";
+      }>;
+    };
+    nextStep: {
+      title: string;
+      description: string;
+      note: string;
+      actionLabel: string;
+    };
+    demoNote: {
+      title: string;
+      description: string;
+      badge: string;
+    };
+  };
+}
+
+export interface PortalPaymentConfirmationAction {
+  label: string;
+  icon: "receipt" | "copy" | "arrow";
+  variant: "primary" | "secondary" | "ghost";
+}
+
+export interface PortalPaymentConfirmationActionCard {
+  title: string;
+  description: string;
+  actionLabel: string;
+  icon: "download" | "copy" | "share" | "arrow";
+}
+
+export interface PortalPaymentHistoryContent {
+  title: string;
+  description: string;
+  hero: {
+    eyebrow: string;
+    projectTitle: string;
+    parties: string;
+    badges: PortalAgreementBadge[];
+    stats: Array<{
+      value: string;
+      label: string;
+      tone: "purple" | "blue" | "green" | "amber";
+    }>;
+    actions: Array<{
+      label: string;
+      icon: "arrow" | "download" | "copy";
+      variant: "primary" | "secondary" | "ghost";
+    }>;
+    note: string;
+  };
+  summaryCards: Array<{
+    value: string;
+    label: string;
+    description: string;
+    tone: "purple" | "blue" | "green" | "amber";
+    icon: "wallet" | "lock" | "check" | "clock";
+  }>;
+  sidebar: {
+    financialSummary: {
+      title: string;
+      rows: Array<{
+        label: string;
+        value: string;
+      }>;
+      progress: {
+        reservedLabel: string;
+        remainingLabel: string;
+        reservedPercent: number;
+      };
+    };
+    currentStatus: {
+      title: string;
+      description: string;
+      badge: string;
+      actionLabel: string;
+    };
+    receiptShortcuts: {
+      title: string;
+      items: Array<{
+        label: string;
+        icon: "download" | "copy";
+      }>;
+    };
+    releaseRules: {
+      title: string;
+      items: string[];
+    };
+    demoNote: {
+      title: string;
+      description: string;
+      badge: string;
+    };
+  };
+  paymentsWorkspace: {
+    filters: {
+      chips: string[];
+      searchPlaceholder: string;
+      selects: string[];
+    };
+    operations: {
+      title: string;
+      count: string;
+      columns: string[];
+      rows: Array<{
+        action: string;
+        stage: string;
+        amount: string;
+        status: string;
+        statusTone: "purple" | "blue" | "amber";
+        paymentMethod: string;
+        receipt: string;
+        date: string;
+        actionLabel: string;
+      }>;
+    };
+    selectedReceipt: {
+      title: string;
+      selectedLabel: string;
+      rows: Array<{
+        label: string;
+        value: string;
+      }>;
+      amount: string;
+      amountLabel: string;
+      note: string;
+      actions: Array<{
+        label: string;
+        icon: "download" | "copy" | "external" | "arrow";
+      }>;
+      disclaimer: string;
+    };
+    stageStatuses: {
+      title: string;
+      description: string;
+      items: Array<{
+        order: string;
+        stage: string;
+        description: string;
+        amount: string;
+        status: string;
+        statusTone: "purple" | "amber";
+      }>;
+    };
+    timeline: {
+      title: string;
+      items: Array<{
+        state: "completed" | "current" | "upcoming";
+        title: string;
+        description: string;
+        meta: string;
+      }>;
+    };
+    footerNotice: {
+      title: string;
+      description: string;
+      disclaimer: string;
+      links: string[];
+      copyright: string;
+    };
+  };
+}
+
+export interface PortalReleasePaymentContent {
+  title: string;
+  description: string;
+  hero: {
+    title: string;
+    meta: string;
+    eyebrow: string;
+    badges: PortalAgreementBadge[];
+    note: string;
+    amount: string;
+    amountLabel: string;
+    stageLabel: string;
+    fromStatus: string;
+    toStatus: string;
+    actions: Array<{
+      label: string;
+      icon: "check" | "arrow" | "history";
+      variant: "primary" | "secondary" | "ghost";
+    }>;
+  };
+  acceptedDelivery: {
+    title: string;
+    statusLabel: string;
+    rows: Array<{
+      label: string;
+      value: string;
+      icon: "user" | "clock" | "link" | "file";
+    }>;
+    notes: Array<{
+      title: string;
+      description: string;
+    }>;
+    actions: string[];
+  };
+  releaseSummary: {
+    title: string;
+    amount: string;
+    currency: string;
+    rows: Array<{
+      label: string;
+      value: string;
+    }>;
+    transition: {
+      fromLabel: string;
+      fromStatus: string;
+      toLabel: string;
+      toStatus: string;
+      note: string;
+    };
+  };
+  acceptanceConditions: {
+    title: string;
+    description: string;
+    items: string[];
+    note: string;
+  };
+  releaseDecision: {
+    title: string;
+    amount: string;
+    heading: string;
+    description: string;
+    outcome: string;
+    noteLabel: string;
+    notePlaceholder: string;
+    noteCount: string;
+  };
+  confirmationChecklist: {
+    title: string;
+    items: string[];
+    finalConfirmation: string;
+    warning: string;
+  };
+  confirmRelease: {
+    title: string;
+    summary: Array<{
+      label: string;
+      value: string;
+    }>;
+    primaryAction: string;
+    secondaryActions: string[];
+    note: string;
+  };
+  afterConfirmation: {
+    title: string;
+    steps: Array<{
+      state: "now" | "upcoming";
+      title: string;
+      description: string;
+    }>;
+  };
+  footerNotice: {
+    title: string;
+    description: string;
+    disclaimer: string;
+    links: string[];
+    copyright: string;
+  };
+  recap: {
+    releaseSummary: {
+      title: string;
+      rows: Array<{
+        label: string;
+        value: string;
+      }>;
+    };
+    delivery: {
+      title: string;
+      rows: Array<{
+        label: string;
+        value: string;
+      }>;
+      action: string;
+    };
+    progress: {
+      title: string;
+      rows: Array<{
+        label: string;
+        value: string;
+      }>;
+      progressLabel: string;
+    };
+    rules: {
+      title: string;
+      items: string[];
+    };
+    demo: {
+      title: string;
+      description: string;
+      badge: string;
+    };
+  };
+}
+
+export interface PortalChangeRequestPaymentContent {
+  title: string;
+  description: string;
+  hero: {
+    eyebrow: string;
+    title: string;
+    meta: string;
+    project: string;
+    badges: PortalAgreementBadge[];
+    note: string;
+    amount: string;
+    amountLabel: string;
+    status: string;
+    duration: string;
+    originalPayment: string;
+    actions: Array<{
+      label: string;
+      icon: "check" | "reject" | "arrow";
+      variant: "primary" | "secondary" | "ghost";
+    }>;
+  };
+  whyChangeRequest: {
+    title: string;
+    aiLabel: string;
+    description: string;
+    items: string[];
+  };
+  scopeComparison: {
+    title: string;
+    original: {
+      title: string;
+      subtitle: string;
+      items: string[];
+      status: string;
+      amount: string;
+    };
+    requested: {
+      title: string;
+      subtitle: string;
+      items: string[];
+      status: string;
+      amount: string;
+      duration: string;
+    };
+  };
+  requestDetails: {
+    title: string;
+    rows: Array<{
+      label: string;
+      value: string;
+    }>;
+    reason: string;
+    deliveries: string[];
+    acceptanceCriteria: string[];
+  };
+  paymentSummary: {
+    title: string;
+    rows: Array<{
+      label: string;
+      value: string;
+    }>;
+    totalLabel: string;
+    total: string;
+    note: string;
+  };
+  paymentMethod: {
+    title: string;
+    description: string;
+    method: string;
+    cardNumber: string;
+    cardHolder: string;
+    status: string;
+    action: string;
+    cardPreview: {
+      brand: string;
+      maskedNumber: string;
+      holder: string;
+    };
+    note: string;
+  };
+  flow: {
+    title: string;
+    description: string;
+    steps: string[];
+  };
+  statusUpdate: {
+    title: string;
+    amount: string;
+    beforeLabel: string;
+    beforeStatus: string;
+    afterLabel: string;
+    afterStatus: string;
+    note: string;
+  };
+  checklist: {
+    title: string;
+    items: string[];
+    confirmation: string;
+  };
+  confirmPayment: {
+    title: string;
+    rows: Array<{
+      label: string;
+      value: string;
+    }>;
+    primaryAction: string;
+    secondaryActions: string[];
+  };
+  afterPayment: {
+    title: string;
+    steps: string[];
+  };
+  footerNotice: {
+    title: string;
+    description: string;
+    disclaimer: string;
+    links: string[];
+    copyright: string;
+  };
+  recap: {
+    requestSummary: {
+      title: string;
+      rows: Array<{
+        label: string;
+        value: string;
+      }>;
+    };
+    originalPayment: {
+      title: string;
+      rows: Array<{
+        label: string;
+        value: string;
+      }>;
+      badge: string;
+    };
+    afterPayment: {
+      title: string;
+      items: string[];
+    };
+    policy: {
+      title: string;
+      description: string;
+    };
+    demo: {
+      title: string;
+      description: string;
+      badge: string;
+    };
   };
 }
 
@@ -649,6 +1205,8 @@ export interface ClientPortalOverview {
 export interface ClientPortalAgreement {
   id: string;
   title: string;
+  sender?: string;
+  badges?: Array<{ label: string; className: string }>;
   status: "draft" | "active" | "expired";
   updatedAt: string;
 }
@@ -657,3 +1215,4 @@ export type ClientPortalAgreementsParams = PaginatedQueryParams;
 
 export type ClientPortalAgreementsResponse =
   ApiListResponse<ClientPortalAgreement>;
+

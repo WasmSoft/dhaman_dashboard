@@ -194,3 +194,66 @@ export interface AIReviewContentMap {
   };
   detailPage: AIReviewDetailPageLabels;
 }
+
+// ─── API Integration Types ───────────────────────────────────────────────────
+// AR: أنواع طلبات واستجابات API لمراجعات الذكاء الاصطناعي.
+// EN: API request/response types for AI Review endpoints.
+
+export type AIReviewApiStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
+
+export type AIReviewApiRecommendation =
+  | "ACCEPT"
+  | "REJECT"
+  | "PARTIAL"
+  | "NEEDS_HUMAN_REVIEW";
+
+export type AIReviewApiRole = "CLIENT" | "FREELANCER";
+
+export interface AIReviewApiItem {
+  id: string;
+  agreementId: string;
+  milestoneId: string;
+  deliveryId: string | null;
+  status: AIReviewApiStatus;
+  matchScore: number | null;
+  recommendation: AIReviewApiRecommendation | null;
+  reasoning: string | null;
+  completedCriteria: string[] | null;
+  missingCriteria: string[] | null;
+  outOfScopeItems: string[] | null;
+  objection: string;
+  requestedByRole: AIReviewApiRole;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AIReviewApiListResponse {
+  reviews: AIReviewApiItem[];
+  total: number;
+}
+
+export interface AIReviewApiDetailResponse {
+  data: AIReviewApiItem;
+}
+
+export interface AcceptRecommendationApiResponse {
+  review: AIReviewApiItem;
+  paymentStatus: string;
+  changeRequestsCreated: number;
+}
+
+export interface OpenAiReviewPayload {
+  objection: string;
+  relatedCriteria?: string[];
+}
+
+export interface GetAiReviewsParams {
+  agreementId?: string;
+  status?: AIReviewApiStatus;
+  page?: number;
+  limit?: number;
+}
+
+export interface AcceptRecommendationPayload {
+  createChangeRequests?: boolean;
+}

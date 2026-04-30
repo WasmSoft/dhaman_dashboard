@@ -105,14 +105,10 @@ export interface SignUpPageContent {
 
 export interface AuthUser {
   id: string;
+  name: string;
   email: string;
-  fullName: string;
-  role: "client" | "admin";
-}
-
-export interface AuthTokens {
-  accessToken: string;
-  refreshToken?: string;
+  role: "FREELANCER" | "ADMIN";
+  avatarUrl: string | null;
 }
 
 export interface LoginPayload {
@@ -122,12 +118,23 @@ export interface LoginPayload {
 
 export interface SignUpPayload {
   fullName: string;
+  businessName?: string;
   email: string;
   password: string;
   confirmPassword?: string;
 }
 
+export interface RegisterPayload {
+  name: string;
+  email: string;
+  password: string;
+}
+
 export interface AuthSessionResponse {
+  accessToken: string;
   user: AuthUser;
-  tokens?: AuthTokens;
+}
+
+export interface AuthLogoutResponse {
+  message: string;
 }

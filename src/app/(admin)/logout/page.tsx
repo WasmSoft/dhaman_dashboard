@@ -1,6 +1,5 @@
-import { NotFoundState } from "@/components/shared";
-import { adminNotReadyPages } from "@/constants";
+import { LogoutSection } from "@/components/auth";
 
 export default function LogoutPage() {
-  return <NotFoundState {...adminNotReadyPages.logout} />;
+  return <LogoutSection />;
 }

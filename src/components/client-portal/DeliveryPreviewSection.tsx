@@ -24,6 +24,7 @@ import {
 import type { ReactNode } from "react";
 
 import { Button } from "@/components/shared";
+import { PortalTimelineEvidence } from "@/components/client-portal/PortalTimelineEvidence";
 import { clientPortalContent } from "@/constants";
 import { cn } from "@/lib/utils";
 import type {
@@ -102,7 +103,11 @@ const summaryValueClassNames = {
   purple: "text-[#a78bfa]",
 } as const;
 
-export function DeliveryPreviewSection() {
+export function DeliveryPreviewSection({
+  portalToken,
+}: {
+  portalToken?: string;
+}) {
   const { deliveryPreview } = clientPortalContent;
 
   return (
@@ -131,6 +136,21 @@ export function DeliveryPreviewSection() {
         </div>
         <DeliveryReviewSection review={deliveryPreview.review} />
         <DeliveryContextSummarySection summary={deliveryPreview.contextSummary} />
+        {/* AR: أدلة السجل الزمني للتسليم — آمنة للعميل.
+            EN: Delivery timeline evidence — client-safe. */}
+        {portalToken ? (
+          <div className="mt-8">
+            <PortalTimelineEvidence
+              portalToken={portalToken}
+              eventTypes={[
+                "DELIVERY_SUBMITTED",
+                "DELIVERY_ACCEPTED",
+                "DELIVERY_CHANGES_REQUESTED",
+              ]}
+              maxItems={3}
+            />
+          </div>
+        ) : null}
       </section>
     </main>
   );

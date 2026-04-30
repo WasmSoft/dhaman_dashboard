@@ -1,12 +1,15 @@
+'use client';
+
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { ArrowRight, Bot, CalendarDays, CheckCircle2, Circle, ClipboardList, CreditCard, FileText, LockKeyhole, Save, Sparkles, UsersRound } from "lucide-react";
 
 import { Button } from "@/components/shared";
 import { Input } from "@/components/shared/input";
 import { agreementsContent } from "@/constants";
 import { cn } from "@/lib/utils";
-import type { CreateAgreementStep } from "@/types";
+import type { CreateAgreementStep, GeneratedPlan } from "@/types";
+import { AiPlanSection } from "./AiPlanSection";
 
 const stepClasses: Record<CreateAgreementStep["status"], string> = {
   active: "border-[#6f52ff]/35 bg-[#6f52ff]/10 text-white",
@@ -115,7 +118,7 @@ function ClientDetailsCard() {
   );
 }
 
-function PaymentDetailsCard() {
+function PaymentDetailsCard({ incorporatedMilestones }: { incorporatedMilestones?: import('@/types').GeneratedMilestone[] }) {
   const section = agreementsContent.createAgreementPage.sections.payment;
 
   return (
@@ -144,11 +147,19 @@ function PaymentDetailsCard() {
         <div>
           <FieldLabel>{section.milestonesLabel}</FieldLabel>
           <div className="flex flex-wrap gap-2">
-            {section.milestones.map((milestone, index) => (
-              <button key={milestone} className={cn("h-9 min-w-10 rounded-[9px] border border-[#252a42] bg-[#1d2135] px-3 text-[12px] font-bold text-[#8a91ac]", index === 0 && "border-[#6f52ff] bg-[#6f52ff]/10 text-[#a898ff]")} type="button">
-                {milestone}
-              </button>
-            ))}
+            {incorporatedMilestones && incorporatedMilestones.length > 0 ? (
+              incorporatedMilestones.map((m, index) => (
+                <button key={index} className={cn("h-9 min-w-10 rounded-[9px] border border-[#252a42] bg-[#1d2135] px-3 text-[12px] font-bold text-[#8a91ac]", index === 0 && "border-[#6f52ff] bg-[#6f52ff]/10 text-[#a898ff]")} type="button">
+                  {m.title} — {m.amount.toLocaleString('ar-SA')} ر.س
+                </button>
+              ))
+            ) : (
+              section.milestones.map((milestone, index) => (
+                <button key={milestone} className={cn("h-9 min-w-10 rounded-[9px] border border-[#252a42] bg-[#1d2135] px-3 text-[12px] font-bold text-[#8a91ac]", index === 0 && "border-[#6f52ff] bg-[#6f52ff]/10 text-[#a898ff]")} type="button">
+                  {milestone}
+                </button>
+              ))
+            )}
           </div>
         </div>
       </div>
@@ -156,7 +167,7 @@ function PaymentDetailsCard() {
   );
 }
 
-function PoliciesCard() {
+function PoliciesCard({ incorporatedPolicies }: { incorporatedPolicies?: import('@/types').GeneratedPolicies }) {
   const section = agreementsContent.createAgreementPage.sections.policies;
 
   return (
@@ -168,7 +179,20 @@ function PoliciesCard() {
           </button>
         ))}
       </div>
-      <p className="mt-4 rounded-[10px] bg-[#1d2135] px-4 py-3 text-[12px] leading-6 text-[#737b99]">{section.note}</p>
+      {incorporatedPolicies ? (
+        <div className="mt-4 space-y-2 rounded-[10px] bg-[#1d2135] px-4 py-3">
+          {[
+            { label: 'سياسة التأخير', text: incorporatedPolicies.delay },
+            { label: 'سياسة الإلغاء', text: incorporatedPolicies.cancellation },
+            { label: 'الطلبات الإضافية', text: incorporatedPolicies.extraRequest },
+            { label: 'سياسة المراجعة', text: incorporatedPolicies.review },
+          ].map((p) => (
+            <p key={p.label} className="text-[12px] leading-6 text-[#737b99]"><span className="font-bold text-[#a7aecb]">{p.label}:</span> {p.text}</p>
+          ))}
+        </div>
+      ) : (
+        <p className="mt-4 rounded-[10px] bg-[#1d2135] px-4 py-3 text-[12px] leading-6 text-[#737b99]">{section.note}</p>
+      )}
     </FormCard>
   );
 }
@@ -233,6 +257,17 @@ function CreateAgreementSidebar() {
 export function CreateAgreementSection() {
   const content = agreementsContent.createAgreementPage;
 
+  // AR: حالة الخطة المدمجة في نموذج الاتفاقية.
+  // EN: State for the plan incorporated into the agreement form.
+  const [incorporatedPlan, setIncorporatedPlan] = useState<GeneratedPlan | null>(null);
+
+  // AR: تملأ هذه الدالة حقول نموذج الاتفاقية من الخطة المولَّدة.
+  // EN: Populates the agreement form fields from the generated plan.
+  function handleIncorporate(plan: GeneratedPlan) {
+    setIncorporatedPlan(plan);
+    console.log('Plan incorporated:', plan);
+  }
+
   return (
     <>
       <CreateAgreementHeader />
@@ -241,8 +276,9 @@ export function CreateAgreementSection() {
         <div dir="rtl" className="min-w-0 flex-1 space-y-4">
           <ProjectDetailsCard />
           <ClientDetailsCard />
-          <PaymentDetailsCard />
-          <PoliciesCard />
+          <PaymentDetailsCard incorporatedMilestones={incorporatedPlan?.milestones} />
+          <PoliciesCard incorporatedPolicies={incorporatedPlan?.policies} />
+          <AiPlanSection onIncorporate={handleIncorporate} />
           <div className="flex flex-col gap-3 pb-10 sm:flex-row sm:items-center sm:justify-between">
             <p className="max-w-sm text-[12px] leading-6 text-[#737b99]">{content.footerNote}</p>
             <div className="flex flex-wrap gap-2">

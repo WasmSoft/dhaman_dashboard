@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, CalendarClock, Check, CheckCircle2, CircleHelp, 
 
 import { Button } from "@/components/shared";
 import { Input } from "@/components/shared/input";
+import { TimelineEvidencePanel } from "@/components/timeline-events";
 import { agreementsContent } from "@/constants";
 import { cn } from "@/lib/utils";
 
@@ -291,7 +292,11 @@ function DeliverySidebar() {
   );
 }
 
-export function AgreementDeliverySection() {
+export function AgreementDeliverySection({
+  agreementId,
+}: {
+  agreementId?: string;
+}) {
   return (
     <>
       <DeliveryHeader />
@@ -306,6 +311,15 @@ export function AgreementDeliverySection() {
           <NotesCard />
           <ConfirmationCard />
           <DeliveryFooter />
+          {/* AR: أدلة السجل الزمني المرتبطة بالتسليم.
+              EN: Timeline evidence related to the delivery. */}
+          {agreementId ? (
+            <TimelineEvidencePanel
+              agreementId={agreementId}
+              eventTypes={["DELIVERY_SUBMITTED", "DELIVERY_ACCEPTED", "DELIVERY_CHANGES_REQUESTED"]}
+              maxItems={3}
+            />
+          ) : null}
         </div>
       </section>
     </>

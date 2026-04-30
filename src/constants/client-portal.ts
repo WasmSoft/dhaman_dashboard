@@ -495,6 +495,1019 @@ export const clientPortalContent = {
       },
     },
   },
+  paymentConfirmation: {
+    title: "تم حجز الدفعة بنجاح",
+    description:
+      "تم حجز دفعة المرحلة الأولى وربطها بشروط التسليم والمراجعة داخل بوابة المشروع.",
+    hero: {
+      eyebrow: "تأكيد الحجز",
+      heading: "تم حجز دفعة المرحلة الأولى",
+      meta: "تصميم صفحة هبوط لشركة ناشئة · حمزة → شركة المدار",
+      description:
+        "تم حجز مبلغ $150 كدفعة محمية للمرحلة الأولى. لن يتم صرفها تلقائيًا، وستبقى Reserved حتى يتم رفع التسليم ومراجعته.",
+      amountLabel: "المبلغ المحجوز",
+      amount: "$150",
+      amountStatus: "Reserved",
+      badges: [
+        {
+          label: "تم بنجاح",
+          className:
+            "border-emerald-400/25 bg-emerald-400/[0.12] text-[#4ade80]",
+        },
+        {
+          label: "Reserved",
+          className: "border-[#6d5dfc]/30 bg-[#6d5dfc]/15 text-[#a78bfa]",
+        },
+        {
+          label: "دفعة محمية",
+          className: "border-[#2f80ed]/30 bg-[#2f80ed]/15 text-[#60a5fa]",
+        },
+        {
+          label: "محاكاة دفع آمن",
+          className: "border-white/[0.08] bg-white/[0.05] text-[#b8bdd8]",
+        },
+      ],
+      primaryAction: "العودة لبوابة المشروع",
+      secondaryActions: [
+        {
+          label: "عرض الإيصال",
+          icon: "receipt",
+          variant: "secondary",
+        },
+        {
+          label: "نسخ رقم العملية",
+          icon: "copy",
+          variant: "ghost",
+        },
+      ],
+    },
+    receipt: {
+      title: "ملخص الإيصال",
+      receiptId: "DHMN-PAY-2026-0048",
+      rows: [
+        { label: "رقم الإيصال", value: "DHMN-PAY-2026-0048" },
+        { label: "مرجع العملية", value: "TXN-8K29-M1" },
+        { label: "تاريخ الدفع", value: "26 أبريل 2026" },
+        { label: "وقت الدفع", value: "02:45 PM" },
+        { label: "طريقة الدفع", value: "Visa •••• 4242" },
+        { label: "حامل البطاقة", value: "شركة المدار" },
+      ],
+      totals: [
+        { label: "قيمة المرحلة", value: "$150" },
+        { label: "رسوم ضمان (ديمو)", value: "$0", tone: "muted" },
+        { label: "الإجمالي المحجوز", value: "$150", tone: "green" },
+      ],
+      badges: ["تم الحجز بنجاح", "Reserved"],
+      note:
+        "هذه واجهة إيصال تجريبية ضمن نسخة MVP، ولا تمثل عملية دفع حقيقية أو Escrow قانوني في هذه المرحلة.",
+    },
+    fundedMilestone: {
+      title: "تفاصيل المرحلة الممولة",
+      amount: "$150",
+      heading: "المرحلة الأولى: الهيكل والتصميم الأولي",
+      project: "تصميم صفحة هبوط لشركة ناشئة",
+      rows: [
+        { label: "حالة المرحلة", value: "قيد التنفيذ" },
+        { label: "حالة الدفعة", value: "Reserved", tone: "purple" },
+        { label: "التسليم المتوقع", value: "خلال 5 أيام", tone: "green" },
+        { label: "حد التعديلات", value: "تعديلان", tone: "muted" },
+      ],
+      acceptanceCriteria: [
+        "تسليم Wireframe واضح للصفحة",
+        "تحديد أقسام الصفحة الرئيسية",
+        "اعتماد الاتجاه البصري الأولي",
+      ],
+      note:
+        "سيتم استخدام هذه الشروط عند مراجعة التسليم قبل صرف الدفعة أو طلب التعديل أو فتح AI Review.",
+    },
+    protection: {
+      title: "حالة حماية الدفعة",
+      beforeLabel: "قبل",
+      beforeStatus: "بانتظار الحجز",
+      currentLabel: "الآن",
+      currentStatus: "Reserved",
+      note:
+        "أصبحت الدفعة الآن محجوزة ومحميّة داخل تجربة ضمان، وليست مصروفة بعد للفريلانسر.",
+      items: [
+        {
+          title: "ليست مصروفة بعد",
+          description: "لا يتم صرفها مباشرة للفريلانسر.",
+        },
+        {
+          title: "مرتبطة بمرحلة",
+          description: "الدفعة تخص المرحلة الأولى فقط.",
+        },
+        {
+          title: "تدعم AI Review",
+          description: "عند الخلاف يمكن تحليل التسليم والاعتراض.",
+        },
+        {
+          title: "تنتظر التسليم",
+          description: "الفريلانسر يبدأ العمل ويرفع التسليم لاحقًا.",
+        },
+      ],
+    },
+    nextSteps: {
+      title: "ماذا يحدث الآن؟",
+      steps: [
+        {
+          title: "تم حجز الدفعة",
+          description: "دفعة المرحلة الأولى أصبحت Reserved.",
+          state: "completed",
+        },
+        {
+          title: "يبدأ الفريلانسر التنفيذ",
+          description: "سيتم إشعار حمزة بأن المرحلة يمكن أن تبدأ.",
+          state: "current",
+        },
+        {
+          title: "يتم رفع التسليم",
+          description: "عند الانتهاء، سيرفع الفريلانسر رابط أو ملف التسليم للمراجعة.",
+          state: "upcoming",
+        },
+        {
+          title: "تراجع التسليم",
+          description: "ستراجع التسليم بناءً على شروط القبول.",
+          state: "upcoming",
+        },
+        {
+          title: "الصرف أو المراجعة",
+          description:
+            "يمكنك قبول الصرف، طلب تعديل، أو فتح AI Review عند وجود خلاف واضح.",
+          state: "upcoming",
+        },
+      ],
+    },
+    receiptActions: {
+      title: "إجراءات الإيصال",
+      items: [
+        {
+          title: "تحميل الإيصال",
+          description: "احفظ نسخة من ملخص العملية.",
+          actionLabel: "تحميل PDF",
+          icon: "download",
+        },
+        {
+          title: "نسخ ملخص العملية",
+          description: "انسخ رقم العملية والمبلغ والحالة.",
+          actionLabel: "نسخ الملخص",
+          icon: "copy",
+        },
+        {
+          title: "مشاركة الإيصال",
+          description: "شارك ملخص العملية مع فريقك.",
+          actionLabel: "مشاركة",
+          icon: "share",
+        },
+        {
+          title: "العودة لبوابة المشروع",
+          description: "تابع حالة المرحلة والدفعات.",
+          actionLabel: "العودة للبوابة",
+          icon: "arrow",
+        },
+      ],
+    },
+    portalPreview: {
+      title: "كيف سيظهر هذا في بوابة المشروع؟",
+      stats: [
+        { value: "$150", label: "محجوز", tone: "green" },
+        { value: "$0", label: "تحت المراجعة", tone: "blue" },
+        { value: "$0", label: "مصروف", tone: "purple" },
+        { value: "$300", label: "متبقي لاحقًا", tone: "default" },
+      ],
+      note:
+        "المرحلة الأولى أصبحت قيد التنفيذ والدفعة مرتبطة بها حتى تظهر لاحقًا للمراجعة أو الصرف.",
+      statusLabel: "Payment status: Reserved",
+    },
+    trustFooter: {
+      title: "إيصال واضح ودفعة محمية",
+      description:
+        "تم ربط هذه الدفعة بمرحلة محددة وشروط قبول واضحة، مما يساعد الطرفين على متابعة التنفيذ والمراجعة بوضوح.",
+      disclaimer:
+        "هذه واجهة محاكاة ولا تمثل Escrow قانوني أو عملية دفع حقيقية في هذه المرحلة.",
+      links: ["سياسة الخصوصية", "الشروط والأحكام"],
+      copyright: "© 2026 Dhaman",
+    },
+    quickSummary: {
+      operationSummary: {
+        title: "ملخص العملية",
+        rows: [
+          { label: "رقم الإيصال", value: "DHMN-PAY-2026-0048" },
+          { label: "المشروع", value: "تصميم صفحة هبوط" },
+          { label: "المرحلة", value: "الأولى" },
+          { label: "المبلغ", value: "$150", tone: "green" },
+          { label: "الحالة", value: "Reserved", tone: "purple" },
+        ],
+      },
+      paymentMethod: {
+        title: "طريقة الدفع",
+        rows: [
+          { label: "البطاقة", value: "Visa •••• 4242" },
+          { label: "النوع", value: "بطاقة بنكية" },
+          { label: "النتيجة", value: "ناجحة", tone: "green" },
+        ],
+      },
+      agreementSummary: {
+        title: "ملخص الاتفاق",
+        rows: [
+          { label: "إجمالي الاتفاق", value: "$450" },
+          { label: "حُجز الآن", value: "$150", tone: "green" },
+          { label: "المتبقي لاحقًا", value: "$300" },
+          { label: "عدد المراحل", value: "3" },
+        ],
+      },
+      nextStep: {
+        title: "الخطوة التالية",
+        description: "بانتظار بدء تنفيذ المرحلة الأولى من الفريلانسر.",
+        note: "تسليم متوقع خلال 5 أيام",
+        actionLabel: "فتح بوابة المشروع",
+      },
+      demoNote: {
+        title: "ملاحظة الديمو",
+        description:
+          "هذا إيصال تجريبي داخل MVP. في النسخة الفعلية سيتم ربط العملية بمزود دفع آمن وسجل عمليات واضح.",
+        badge: "Demo Receipt",
+      },
+    },
+  },
+  paymentHistory: {
+    title: "سجل الدفعات",
+    description:
+      "راجع كل عمليات الحجز، الصرف، والمراجعة المرتبطة بهذا الاتفاق.",
+    hero: {
+      eyebrow: "سجل الدفعات المحمية",
+      projectTitle: "تصميم صفحة هبوط لشركة ناشئة",
+      parties: "حمزة → شركة المدار",
+      badges: [
+        {
+          label: "اتفاق نشط",
+          className:
+            "border-emerald-400/25 bg-emerald-400/[0.12] text-[#4ade80]",
+        },
+        {
+          label: "دفعات محمية",
+          className: "border-[#2f80ed]/30 bg-[#2f80ed]/15 text-[#60a5fa]",
+        },
+        {
+          label: "3 مراحل",
+          className: "border-[#6d5dfc]/30 bg-[#6d5dfc]/15 text-[#a78bfa]",
+        },
+        {
+          label: "محاكاة دفع آمن",
+          className: "border-white/[0.08] bg-white/[0.05] text-[#7f86a8]",
+        },
+      ],
+      stats: [
+        { value: "$450", label: "إجمالي الاتفاق", tone: "purple" },
+        { value: "$150", label: "محجوز", tone: "blue" },
+        { value: "$0", label: "مصروف", tone: "green" },
+        { value: "$300", label: "متبقي", tone: "amber" },
+      ],
+      actions: [
+        {
+          label: "العودة لبوابة المشروع",
+          icon: "arrow",
+          variant: "primary",
+        },
+        {
+          label: "تحميل سجل الدفعات",
+          icon: "download",
+          variant: "secondary",
+        },
+        {
+          label: "نسخ ملخص السجل",
+          icon: "copy",
+          variant: "ghost",
+        },
+      ],
+      note:
+        "كل دفعة في ضمان مرتبطة بمرحلة محددة وشروط قبول واضحة.",
+    },
+    summaryCards: [
+      {
+        value: "$450",
+        label: "إجمالي الاتفاق",
+        description: "قيمة المشروع كاملة",
+        tone: "purple",
+        icon: "wallet",
+      },
+      {
+        value: "$150",
+        label: "محجوز",
+        description: "دفعة المرحلة الأولى",
+        tone: "blue",
+        icon: "lock",
+      },
+      {
+        value: "$0",
+        label: "مصروف",
+        description: "لم يتم صرف أي دفعة بعد",
+        tone: "green",
+        icon: "check",
+      },
+      {
+        value: "$300",
+        label: "متبقي لاحقًا",
+        description: "مراحل غير ممولة بعد",
+        tone: "amber",
+        icon: "clock",
+      },
+    ],
+    sidebar: {
+      financialSummary: {
+        title: "ملخص مالي",
+        rows: [
+          { label: "إجمالي الاتفاق", value: "$450" },
+          { label: "المحجوز", value: "$150" },
+          { label: "تحت المراجعة", value: "$0" },
+          { label: "المصروف", value: "$0" },
+          { label: "المتبقي", value: "$300" },
+        ],
+        progress: {
+          reservedLabel: "محجوز",
+          remainingLabel: "متبقي",
+          reservedPercent: 40,
+        },
+      },
+      currentStatus: {
+        title: "الحالة الحالية",
+        description:
+          "دفعة المرحلة الأولى محجوزة الآن، والمرحلة بانتظار التنفيذ والتسليم.",
+        badge: "Reserved",
+        actionLabel: "فتح بوابة المشروع",
+      },
+      receiptShortcuts: {
+        title: "اختصارات الإيصالات",
+        items: [
+          { label: "تحميل آخر إيصال", icon: "download" },
+          { label: "نسخ رقم آخر عملية", icon: "copy" },
+          { label: "تحميل سجل الدفعات", icon: "download" },
+        ],
+      },
+      releaseRules: {
+        title: "قواعد الصرف",
+        items: [
+          "الصرف بعد قبول التسليم",
+          "طلب التعديل يوقف الصرف مؤقتًا",
+          "الخلاف ينتقل إلى AI Review",
+          "الطلبات الإضافية تتحول إلى Change Request",
+        ],
+      },
+      demoNote: {
+        title: "ملاحظة الديمو",
+        description:
+          "هذا سجل دفعات تجريبي داخل MVP. في النسخة الفعلية سيتم ربط السجل برمز الدفع المعتمد.",
+        badge: "Demo Payment History",
+      },
+    },
+    paymentsWorkspace: {
+      filters: {
+        chips: [
+          "الكل",
+          "محجوزة",
+          "تحت المراجعة",
+          "جاهزة للصرف",
+          "مصروفة",
+          "معلقة",
+          "بانتظار الحجز",
+        ],
+        searchPlaceholder: "ابحث برقم الإيصال أو اسم المرحلة...",
+        selects: ["كل المراحل", "كل العمليات", "كل الطرق", "الأحدث"],
+      },
+      operations: {
+        title: "عمليات الدفع",
+        count: "4 عمليات",
+        columns: [
+          "العملية",
+          "المرحلة",
+          "المبلغ",
+          "الحالة",
+          "طريقة الدفع",
+          "رقم الإيصال",
+          "التاريخ",
+          "الإجراء",
+        ],
+        rows: [
+          {
+            action: "حجز دفعة",
+            stage: "المرحلة الأولى: الهيكل والتصميم الأولي",
+            amount: "$150",
+            status: "Reserved",
+            statusTone: "purple",
+            paymentMethod: "Visa •••• 4242",
+            receipt: "DHMN-PAY-2026-0048",
+            date: "26 أبريل 2026 — 02:45 PM",
+            actionLabel: "عرض الإيصال",
+          },
+          {
+            action: "تحديث حالة",
+            stage: "المرحلة الأولى: الهيكل والتصميم الأولي",
+            amount: "$150",
+            status: "Client Review",
+            statusTone: "blue",
+            paymentMethod: "Visa •••• 4242",
+            receipt: "DHMN-PAY-2026-0048",
+            date: "عند رفع التسليم",
+            actionLabel: "سيظهر لاحقًا",
+          },
+          {
+            action: "دفعة لاحقة",
+            stage: "المرحلة الثانية: تصميم الواجهة النهائية",
+            amount: "$200",
+            status: "بانتظار الحجز",
+            statusTone: "amber",
+            paymentMethod: "لم يتم الدفع",
+            receipt: "--",
+            date: "لاحقًا",
+            actionLabel: "غير متاحة بعد",
+          },
+          {
+            action: "دفعة لاحقة",
+            stage: "المرحلة الثالثة: التسليم النهائي",
+            amount: "$100",
+            status: "بانتظار الحجز",
+            statusTone: "amber",
+            paymentMethod: "لم يتم الدفع",
+            receipt: "--",
+            date: "لاحقًا",
+            actionLabel: "غير متاحة بعد",
+          },
+        ],
+      },
+      selectedReceipt: {
+        title: "معاينة الإيصال المحدد",
+        selectedLabel: "الصف 1 محدد",
+        rows: [
+          { label: "رقم الإيصال", value: "DHMN-PAY-2026-0048" },
+          { label: "مرجع العملية", value: "TXN-8K29-M1" },
+          { label: "العملية", value: "حجز دفعة المرحلة الأولى" },
+          { label: "المشروع", value: "تصميم صفحة هبوط لشركة ناشئة" },
+          { label: "المرحلة", value: "المرحلة الأولى: الهيكل والتصميم الأولي" },
+          { label: "طريقة الدفع", value: "Visa •••• 4242" },
+          { label: "حالة الدفعة", value: "Reserved" },
+          { label: "التاريخ", value: "26 أبريل 2026" },
+          { label: "الوقت", value: "02:45 PM" },
+        ],
+        amount: "$150",
+        amountLabel: "المبلغ",
+        note: "تم حجز الدفعة وربطها بتسليم المرحلة الأولى.",
+        actions: [
+          { label: "تحميل الإيصال", icon: "download" },
+          { label: "نسخ رقم العملية", icon: "copy" },
+          { label: "فتح المرحلة", icon: "external" },
+          { label: "العودة للبوابة", icon: "arrow" },
+        ],
+        disclaimer:
+          "هذا الإيصال تجريبي ضمن نسخة MVP ولا يمثل عملية دفع حقيقية.",
+      },
+      stageStatuses: {
+        title: "حالة دفعات المراحل",
+        description: "يعرض هذا القسم حالة كل دفعة مرتبطة بمراحل الاتفاق.",
+        items: [
+          {
+            order: "01",
+            stage: "المرحلة الأولى",
+            description: "تم حجز الدفعة وهي مرتبطة بتسليم المرحلة.",
+            amount: "$150",
+            status: "Reserved",
+            statusTone: "purple",
+          },
+          {
+            order: "02",
+            stage: "المرحلة الثانية",
+            description: "تصبح متاحة بعد إكمال المرحلة الأولى.",
+            amount: "$200",
+            status: "بانتظار الحجز",
+            statusTone: "amber",
+          },
+          {
+            order: "03",
+            stage: "المرحلة الثالثة",
+            description: "تصبح متاحة بعد إكمال المرحلة الثانية.",
+            amount: "$100",
+            status: "بانتظار الحجز",
+            statusTone: "amber",
+          },
+        ],
+      },
+      timeline: {
+        title: "تسلسل أحداث الدفع",
+        items: [
+          {
+            state: "completed",
+            title: "تمت الموافقة على الاتفاق",
+            description: "أصبح الاتفاق جاهزًا لحجز الدفعة الأولى.",
+            meta: "26 أبريل 2026 — 02:30 PM",
+          },
+          {
+            state: "completed",
+            title: "تم حجز دفعة المرحلة الأولى",
+            description: "تم حجز مبلغ $150 كدفعة محمية.",
+            meta: "26 أبريل 2026 — 02:45 PM",
+          },
+          {
+            state: "current",
+            title: "بانتظار تسليم المرحلة الأولى",
+            description: "سيتم تحديث السجل عند رفع التسليم.",
+            meta: "قادم",
+          },
+          {
+            state: "upcoming",
+            title: "مراجعة العميل للتسليم",
+            description: "ستنتقل الدفعة إلى Client Review عند رفع التسليم.",
+            meta: "قادم",
+          },
+        ],
+      },
+      footerNotice: {
+        title: "سجل واضح لكل دفعة",
+        description:
+          "يساعد سجل الدفعات على توثيق كل عملية حجز أو صرف أو مراجعة مرتبطة بالاتفاق.",
+        disclaimer:
+          "هذه واجهة محاكاة ولا تمثل كشف حساب بنكي أو Escrow قانوني.",
+        links: ["سياسة الخصوصية", "الشروط والأحكام"],
+        copyright: "© 2026 Dhaman",
+      },
+    },
+  },
+  releasePayment: {
+    title: "تأكيد صرف دفعة المرحلة",
+    description:
+      "أنت على وشك قبول التسليم وجعل دفعة المرحلة جاهزة للصرف للفريلانسر.",
+    hero: {
+      title: "تصميم صفحة هبوط لشركة ناشئة",
+      meta: "حمزة → شركة المدار · المرحلة الأولى: الهيكل والتصميم الأولي",
+      eyebrow: "تأكيد قبول التسليم",
+      badges: [
+        {
+          label: "تمت مراجعة التسليم",
+          className:
+            "border-emerald-400/25 bg-emerald-400/[0.12] text-[#4ade80]",
+        },
+        {
+          label: "Client Review",
+          className: "border-[#3b82f6]/25 bg-[#3b82f6]/12 text-[#67a8ff]",
+        },
+        {
+          label: "Ready to Release",
+          className: "border-[#8d63ff]/25 bg-[#8d63ff]/12 text-[#b58cff]",
+        },
+        {
+          label: "صرف دفعة محمية",
+          className: "border-amber-400/25 bg-amber-400/[0.12] text-[#f6c453]",
+        },
+      ],
+      note:
+        "عند تأكيد قبول التسليم، تصبح دفعة المرحلة الأولى جاهزة للصرف داخل نسخة MVP.",
+      amount: "$150",
+      amountLabel: "قيمة الصرف",
+      stageLabel: "المرحلة الأولى",
+      fromStatus: "Client Review",
+      toStatus: "Ready to Release",
+      actions: [
+        {
+          label: "تأكيد قبول التسليم",
+          icon: "check",
+          variant: "primary",
+        },
+        {
+          label: "العودة لمراجعة التسليم",
+          icon: "arrow",
+          variant: "secondary",
+        },
+        {
+          label: "عرض سجل الدفعات",
+          icon: "history",
+          variant: "ghost",
+        },
+      ],
+    },
+    acceptedDelivery: {
+      title: "ملخص التسليم المقبول",
+      statusLabel: "التسليم مقبول",
+      rows: [
+        { label: "مقدم من", value: "حمزة", icon: "user" },
+        { label: "وقت التقديم", value: "منذ 5 ساعات", icon: "clock" },
+        { label: "رابط التسليم", value: "Figma Wireframe", icon: "link" },
+        { label: "الملف المرفق", value: "landing-wireframe-v1.pdf", icon: "file" },
+      ],
+      notes: [
+        {
+          title: "ملاحظة الفريلانسر",
+          description:
+            "تم تجهيز الهيكل الأولي للصفحة، تحديد أقسام Hero والأقسام الأساسية للمراجعة.",
+        },
+        {
+          title: "نتيجة مراجعة العميل",
+          description:
+            "تمت مراجعة الهيكل الأولي، ويمكن الانتقال للمرحلة التالية من التصميم.",
+        },
+      ],
+      actions: ["فتح رابط التسليم", "تحميل الملف", "نسخ رابط التسليم"],
+    },
+    releaseSummary: {
+      title: "ملخص صرف الدفعة",
+      amount: "$150",
+      currency: "USD",
+      rows: [
+        { label: "المرحلة", value: "المرحلة الأولى" },
+        { label: "المبلغ", value: "$150" },
+        { label: "سبب الصرف", value: "قبول العميل للتسليم" },
+        { label: "الفريلانسر", value: "حمزة" },
+        { label: "الاتفاق", value: "تصميم صفحة هبوط لشركة ناشئة" },
+      ],
+      transition: {
+        fromLabel: "من",
+        fromStatus: "Client Review",
+        toLabel: "إلى",
+        toStatus: "Ready to Release",
+        note:
+          "في نسخة MVP، يمثل هذا انتقال الدفعة إلى حالة جاهزة للصرف قبل التحويل الفعلي.",
+      },
+    },
+    acceptanceConditions: {
+      title: "تأكيد شروط القبول",
+      description:
+        "تم قبول التسليم بناءً على شروط المرحلة المتفق عليها بالكامل.",
+      items: [
+        "تسليم Wireframe واضح للصفحة",
+        "تحديد أقسام الصفحة الرئيسية",
+        "اعتماد الاتجاه البصري الأولي",
+      ],
+      note:
+        "يمكن توثيق أي ملاحظات بسيطة للمرحلة التالية دون تعطيل قبول هذه المرحلة.",
+    },
+    releaseDecision: {
+      title: "قرار الصرف",
+      amount: "$150",
+      heading: "قبول التسليم وصرف دفعة المرحلة",
+      description: "التسليم يطابق شروط القبول المتفق عليها.",
+      outcome: "جعل الدفعة Ready to Release",
+      noteLabel: "ملاحظة اختيارية للفريلانسر",
+      notePlaceholder: "اكتب ملاحظة قصيرة للفريلانسر قبل تأكيد الصرف...",
+      noteCount: "77 / 300",
+    },
+    confirmationChecklist: {
+      title: "تأكيد قبل الصرف",
+      items: [
+        "راجعت رابط التسليم والملف المرفق",
+        "راجعت شروط قبول المرحلة",
+        "أفهم أن تأكيد القبول يجعل الدفعة جاهزة للصرف",
+        "لا يوجد طلب تعديل مفتوح على هذه المرحلة",
+        "أدرك أن هذه واجهة محاكاة صرف للـ MVP",
+      ],
+      finalConfirmation:
+        "أؤكد قبول تسليم المرحلة الأولى وجعل دفعتها جاهزة للصرف.",
+      warning:
+        "يجب قراءة والموافقة على جميع بنود التأكيد قبل تأكيد الصرف.",
+    },
+    confirmRelease: {
+      title: "تأكيد الصرف",
+      summary: [
+        { label: "الحالة بعد التأكيد", value: "Ready to Release" },
+        { label: "المرحلة", value: "المرحلة الأولى" },
+        { label: "المبلغ", value: "$150" },
+      ],
+      primaryAction: "تأكيد قبول التسليم وصرف الدفعة",
+      secondaryActions: ["العودة لمراجعة التسليم", "فتح بوابة المشروع"],
+      note:
+        "بعد التأكيد، سيتم تحديث حالة الدفعة وإشعار الفريلانسر بقبول التسليم.",
+    },
+    afterConfirmation: {
+      title: "ماذا يحدث بعد التأكيد؟",
+      steps: [
+        {
+          state: "now",
+          title: "يتم قبول التسليم",
+          description: "تُسجل موافقتك في سجل الاتفاق.",
+        },
+        {
+          state: "now",
+          title: "تتغير حالة الدفعة",
+          description:
+            "تنتقل الدفعة من Client Review إلى Ready to Release",
+        },
+        {
+          state: "upcoming",
+          title: "يتم إشعار الفريلانسر",
+          description: "يعرف الفريلانسر أن التسليم مقبول وأن الدفعة جاهزة.",
+        },
+        {
+          state: "upcoming",
+          title: "تبدأ المرحلة التالية",
+          description: "يمكن متابعة المشروع إلى المرحلة الثانية.",
+        },
+      ],
+    },
+    footerNotice: {
+      title: "قرار موثق وواضح",
+      description:
+        "سيتم توثيق قبول التسليم وتحديث حالة الدفعة في سجل الاتفاق لسهولة المتابعة بين الطرفين.",
+      disclaimer:
+        "هذه واجهة محاكاة ولا تمثل Escrow قانوني أو عملية دفع حقيقية في هذه المرحلة.",
+      links: ["سياسة الخصوصية", "الشروط والأحكام"],
+      copyright: "© 2026 Dhaman",
+    },
+    recap: {
+      releaseSummary: {
+        title: "ملخص الصرف",
+        rows: [
+          { label: "المشروع", value: "تصميم صفحة هبوط" },
+          { label: "المرحلة", value: "الأولى" },
+          { label: "الدفعة", value: "$150" },
+          { label: "من الحالة", value: "Client Review" },
+          { label: "إلى الحالة", value: "Ready to Release" },
+        ],
+      },
+      delivery: {
+        title: "التسليم",
+        rows: [
+          { label: "النوع", value: "رابط Figma + ملف PDF" },
+          { label: "مقدم من", value: "حمزة" },
+          { label: "وقت التقديم", value: "منذ 5 ساعات" },
+          { label: "نتيجة المراجعة", value: "مقبول" },
+        ],
+        action: "فتح التسليم",
+      },
+      progress: {
+        title: "تقدم الاتفاق",
+        rows: [
+          { label: "المراحل", value: "1 من 3" },
+          { label: "المرحلة الحالية", value: "الأولى" },
+          { label: "التالية", value: "تصميم الواجهة النهائية" },
+          { label: "إجمالي الاتفاق", value: "$450" },
+        ],
+        progressLabel: "مرحلة 1 من 3",
+      },
+      rules: {
+        title: "قواعد الصرف",
+        items: [
+          "الصرف بعد قبول التسليم",
+          "الاعتراض يجب أن يحدث قبل الصرف",
+          "طلب التعديل يوقف الصرف مؤقتًا",
+          "الخلاف ينتقل إلى AI Review",
+        ],
+      },
+      demo: {
+        title: "ملاحظة الديمو",
+        description:
+          "هذه شاشة محاكاة لصرف دفعة داخل MVP. في النسخة الفعلية سيتم ربطها بمزود دفع معتمد وسجل تنفيذي واضح.",
+        badge: "Demo Release",
+      },
+    },
+  },
+  changeRequestPayment: {
+    title: "دفع طلب تغيير إضافي",
+    description:
+      "راجع الطلب الإضافي، التكلفة الجديدة، والمدة قبل تأكيد حجز الدفعة الإضافية.",
+    hero: {
+      eyebrow: "طلب تغيير إضافي · خارج النطاق",
+      title: "تصميم صفحات إضافية",
+      meta: "حمزة → شركة المدار · المرحلة الأولى: الهيكل والتصميم الأولي",
+      project: "مشروع: تصميم صفحة هبوط لشركة ناشئة",
+      badges: [
+        {
+          label: "طلب خارج النطاق",
+          className: "border-red-400/25 bg-red-400/[0.12] text-[#f87171]",
+        },
+        {
+          label: "Change Request",
+          className: "border-[#8d63ff]/25 bg-[#8d63ff]/12 text-[#b58cff]",
+        },
+        {
+          label: "تكلفة إضافية",
+          className: "border-amber-400/25 bg-amber-400/[0.12] text-[#f6c453]",
+        },
+        {
+          label: "محاكاة دفع آمن",
+          className: "border-white/[0.08] bg-white/[0.05] text-[#7f86a8]",
+        },
+        {
+          label: "دفعة إضافية محمية",
+          className: "border-[#3b82f6]/25 bg-[#3b82f6]/12 text-[#67a8ff]",
+        },
+      ],
+      note:
+        "هذا الطلب منفصل عن دفعة المرحلة الأولى، وسيتم ربطه بتسليم إضافي مستقل وواضح للطرفين.",
+      amount: "$180",
+      amountLabel: "تكلفة طلب التغيير",
+      status: "بانتظار الحجز",
+      duration: "3 أيام إضافية",
+      originalPayment: "$150 Ready to Release",
+      actions: [
+        {
+          label: "تأكيد ودفع الطلب الإضافي",
+          icon: "check",
+          variant: "primary",
+        },
+        {
+          label: "رفض الطلب",
+          icon: "reject",
+          variant: "secondary",
+        },
+        {
+          label: "العودة لنتيجة AI",
+          icon: "arrow",
+          variant: "ghost",
+        },
+      ],
+    },
+    whyChangeRequest: {
+      title: "لماذا هذا طلب تغيير؟",
+      aiLabel: "تم تحديده كخارج النطاق بواسطة AI",
+      description:
+        "طلب تصميم صفحات إضافية مثل صفحة الأسعار، من نحن، والتواصل لا يندرج ضمن نطاق المرحلة الأولى الأصلية، لذلك تم فصله كطلب تغيير مستقل وواضح.",
+      items: [
+        "المرحلة الأصلية تركز على Wireframe الصفحة الرئيسية",
+        "الطلب الجديد يضيف صفحات داخلية غير مذكورة في الاتفاق",
+        "الأفضل تحويله إلى طلب منفصل واضح للطرفين.",
+      ],
+    },
+    scopeComparison: {
+      title: "النطاق الأصلي مقابل الطلب الجديد",
+      original: {
+        title: "النطاق الأصلي",
+        subtitle: "المرحلة الأولى: الهيكل والتصميم الأولي",
+        items: [
+          "Wireframe واضح للصفحة الرئيسية",
+          "تحديد أقسام الصفحة الرئيسية",
+          "اعتماد الاتجاه البصري الأولي",
+        ],
+        status: "Ready to Release",
+        amount: "$150",
+      },
+      requested: {
+        title: "الطلب الجديد",
+        subtitle: "تصميم صفحات إضافية · Change Request",
+        items: [
+          "صفحة الأسعار",
+          "صفحة من نحن",
+          "صفحة التواصل",
+          "ربط التصميم بالهوية البصرية الحالية",
+        ],
+        status: "بانتظار الحجز",
+        amount: "$180",
+        duration: "3 أيام إضافية",
+      },
+    },
+    requestDetails: {
+      title: "تفاصيل طلب التغيير",
+      rows: [
+        { label: "عنوان الطلب", value: "تصميم صفحات إضافية" },
+        { label: "طلب من", value: "شركة المدار" },
+        { label: "سيُنفّذه", value: "حمزة" },
+        { label: "مدة إضافية", value: "3 أيام إضافية" },
+        { label: "حد التعديل", value: "تعديل واحد" },
+      ],
+      reason: "إضافة صفحات داخلية غير موجودة ضمن نطاق المرحلة الأصلية للمشروع.",
+      deliveries: [
+        "تصميم صفحة الأسعار",
+        "تصميم صفحة من نحن",
+        "تصميم صفحة التواصل",
+        "تجهيز الروابط داخل ملف Figma",
+        "تسليم نسخة Desktop واضحة",
+      ],
+      acceptanceCriteria: [
+        "كل صفحة تحتوي على هيكل واضح ومحتوى قابل للمراجعة",
+        "التصميم متسق مع اتجاه الصفحة الرئيسية",
+        "تسليم رابط Figma محدّث",
+        "تعديل واحد متاح على الطلب الإضافي",
+      ],
+    },
+    paymentSummary: {
+      title: "ملخص الدفع الإضافي",
+      rows: [
+        { label: "مبلغ طلب التغيير", value: "$180" },
+        { label: "رسوم الخدمة", value: "$0" },
+        { label: "الضرائب", value: "$0" },
+      ],
+      totalLabel: "المبلغ المطلوب الآن",
+      total: "$180 USD",
+      note:
+        "هذه الدفعة منفصلة عن دفعة المرحلة الأولى، وترتبط فقط بتسليم طلب التغيير الإضافي.",
+    },
+    paymentMethod: {
+      title: "طريقة الدفع",
+      description: "اختر طريقة الدفع لحجز دفعة الطلب الإضافي.",
+      method: "بطاقة بنكية · Visa",
+      cardNumber: "Visa •••• 4242",
+      cardHolder: "شركة المدار",
+      status: "جاهزة للتأكيد",
+      action: "تغيير طريقة الدفع",
+      cardPreview: {
+        brand: "VISA",
+        maskedNumber: "•••• •••• •••• 4242",
+        holder: "شركة المدار",
+      },
+      note: "هذه بيانات تجريبية لمحاكاة الدفع داخل نسخة MVP.",
+    },
+    flow: {
+      title: "كيف تعمل دفعة طلب التغيير؟",
+      description:
+        "عند تأكيد الدفع، تصبح دفعة الطلب الإضافي محجوزة بشكل مستقل عن دفعة المرحلة الأصلية.",
+      steps: [
+        "تؤكد الطلب وتدفع",
+        "تصبح الدفعة Reserved",
+        "ينفذ الفريلانسر الطلب",
+        "تراجع التسليم وتقرر",
+      ],
+    },
+    statusUpdate: {
+      title: "تحديث حالة الدفعة الإضافية",
+      amount: "$180",
+      beforeLabel: "قبل التأكيد",
+      beforeStatus: "بانتظار الحجز",
+      afterLabel: "بعد التأكيد",
+      afterStatus: "Reserved",
+      note:
+        "بعد التأكيد، تظهر دفعة الطلب الإضافي كدفعة محمية مستقلة عن الدفعة الأصلية.",
+    },
+    checklist: {
+      title: "تأكيد قبل الدفع",
+      items: [
+        "راجعت الفرق بين النطاق الأصلي والطلب الجديد",
+        "أفهم أن هذا الطلب خارج نطاق المرحلة الأولى",
+        "أفهم أن هذه دفعة إضافية منفصلة",
+        "راجعت التكلفة والمدة الجديدة",
+        "أوافق على شروط قبول طلب التغيير",
+        "أدرك أن هذه واجهة محاكاة دفع للـ MVP",
+      ],
+      confirmation: "أؤكد رغبتي في حجز دفعة طلب التغيير بقيمة $180.",
+    },
+    confirmPayment: {
+      title: "تأكيد طلب التغيير",
+      rows: [
+        { label: "طلب التغيير", value: "تصميم صفحات إضافية" },
+        { label: "المبلغ", value: "$180" },
+        { label: "طريقة الدفع", value: "Visa •••• 4242" },
+        { label: "الحالة بعد التأكيد", value: "Reserved" },
+      ],
+      primaryAction: "تأكيد ودفع الطلب الإضافي",
+      secondaryActions: ["العودة للبوابة", "رفض الطلب"],
+    },
+    afterPayment: {
+      title: "ماذا يحدث بعد الدفع؟",
+      steps: [
+        "يتم اعتماد طلب التغيير",
+        "تحجز الدفعة الإضافية",
+        "يبدأ الفريلانسر العمل",
+        "يرفع تسليم الطلب الإضافي",
+        "تراجعه وتقرر الصرف",
+      ],
+    },
+    footerNotice: {
+      title: "طلب إضافي واضح ومنفصل",
+      description:
+        "يساعد ضمان على فصل الطلبات الإضافية عن نطاق الاتفاق الأصلي، ليبقى كل تسليم ودفعة موثقين بشكل واضح للطرفين.",
+      disclaimer:
+        "هذه واجهة محاكاة ولا تمثل Escrow قانوني أو عملية دفع حقيقية في هذه المرحلة.",
+      links: ["سياسة الخصوصية", "الشروط والأحكام"],
+      copyright: "© 2026 Dhaman",
+    },
+    recap: {
+      requestSummary: {
+        title: "ملخص طلب التغيير",
+        rows: [
+          { label: "الطلب", value: "تصميم صفحات إضافية" },
+          { label: "المبلغ", value: "$180" },
+          { label: "المدة", value: "3 أيام إضافية" },
+          { label: "الحالة بعد الدفع", value: "Reserved" },
+          { label: "مرتبط", value: "بالمرحلة الأولى" },
+        ],
+      },
+      originalPayment: {
+        title: "دفعة المرحلة الأصلية",
+        rows: [
+          { label: "المرحلة الأولى", value: "$150" },
+          { label: "الحالة", value: "Ready to Release" },
+          { label: "السبب", value: "الطلب الجديد خارج النطاق" },
+          { label: "الأثر", value: "لا تتأثر بهذا الطلب" },
+        ],
+        badge: "Original payment separate",
+      },
+      afterPayment: {
+        title: "ماذا يحدث بعد الدفع؟",
+        items: [
+          "يتم اعتماد طلب التغيير",
+          "تحجز الدفعة الإضافية",
+          "يبدأ الفريلانسر العمل",
+          "يرفع تسليم الطلب الإضافي",
+          "تراجعه وتقرر الصرف",
+        ],
+      },
+      policy: {
+        title: "السياسة المرتبطة",
+        description:
+          "سياسة الطلبات الإضافية: أي طلب خارج شروط قبول المرحلة يعتبر طلبًا إضافيًا مستقلًا ويحتاج موافقة ودفعة منفصلة.",
+      },
+      demo: {
+        title: "ملاحظة الديمو",
+        description:
+          "هذه شاشة محاكاة لدفع طلب تغيير داخل MVP. في النسخة الفعلية سيتم ربطها بمزود دفع معتمد وتوثيق تنفيذي أوضح.",
+        badge: "Demo Change Request Payment",
+      },
+    },
+  },
   fundMilestone: {
     title: "حجز دفعة المرحلة",
     description: "راجع تفاصيل الدفعة والمرحلة قبل تأكيد الحجز.",
