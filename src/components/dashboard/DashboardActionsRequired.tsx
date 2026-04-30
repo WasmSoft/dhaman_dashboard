@@ -35,7 +35,7 @@ export function DashboardActionsRequired() {
     return <CardError code={errorCode} onRetry={() => { refetch(); }} />;
   }
 
-  if (!data || data.items.length === 0) {
+  if (!data || !data.items || data.items.length === 0) {
     return <CardEmpty messageKey="dashboard.actions.empty" />;
   }
 
@@ -87,9 +87,9 @@ export function DashboardActionsRequired() {
                   {t[categoryKey]}
                 </p>
               </div>
-              {data.totalAvailable > data.items.length && (
+              {data.totalAvailable > (data.items?.length ?? 0) && (
                 <span className="text-[11px] text-[#737b99]">
-                  +{data.totalAvailable - data.items.length}
+                  +{data.totalAvailable - (data.items?.length ?? 0)}
                 </span>
               )}
             </a>

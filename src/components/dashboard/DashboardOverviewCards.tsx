@@ -39,7 +39,7 @@ export function DashboardOverviewCards() {
     );
   }
 
-  if (!data || data.metrics.length === 0) {
+  if (!data || !data.metrics || data.metrics.length === 0) {
     return (
       <div className="space-y-4">
         <DashboardDateRangeSelector value={range} onChange={setRange} />

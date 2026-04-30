@@ -27,7 +27,7 @@ export function DashboardRecentActivity() {
     return <CardError code={errorCode} onRetry={() => { refetch(); }} />;
   }
 
-  if (!data || data.events.length === 0) {
+  if (!data || !data.events || data.events.length === 0) {
     return <CardEmpty messageKey="dashboard.recentActivity.empty" />;
   }
 

@@ -202,8 +202,17 @@ function applyRequestDefaults(config: InternalAxiosRequestConfig) {
   return config;
 }
 
+const resolvedBaseUrl = resolveApiBaseUrl();
+
+if (!resolvedBaseUrl && isBrowser()) {
+  // eslint-disable-next-line no-console
+  console.warn(
+    "[Dhaman API] NEXT_PUBLIC_API_BASE_URL is empty. API requests will be sent to the current origin. Restart the Next.js dev server after changing .env.",
+  );
+}
+
 export const axiosInstance: AxiosInstance = axios.create({
-  baseURL: resolveApiBaseUrl(),
+  baseURL: resolvedBaseUrl,
   timeout: resolveTimeout(),
   withCredentials: resolveWithCredentials(),
   headers: {
