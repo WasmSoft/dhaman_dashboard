@@ -1,11 +1,27 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight, CalendarClock, CheckCircle2, CircleDollarSign, ClipboardList, Copy, ExternalLink, FileText, History, LockKeyhole, Send, ShieldCheck, Sparkles, UserRound } from "lucide-react";
 
 import { Button } from "@/components/shared";
 import { agreementsContent } from "@/constants";
+import { useAgreementMilestonesQuery } from "@/hooks/milestones";
+import {
+  buildAgreementWorkspacePaymentRows,
+  buildAgreementWorkspacePaymentSummary,
+  formatMilestoneAmount,
+  mapMilestoneToWorkspaceMilestone,
+} from "@/lib/milestones";
 import { cn } from "@/lib/utils";
 import { AgreementTimelineSection } from "@/components/agreements/AgreementTimelineSection";
-import type { AgreementWorkspaceActivityItem, AgreementWorkspaceMetricTone, AgreementWorkspaceMilestone, AgreementWorkspacePaymentTone } from "@/types";
+import type {
+  AgreementWorkspaceActivityItem,
+  AgreementWorkspaceMetricTone,
+  AgreementWorkspaceMilestone,
+  AgreementWorkspacePaymentRow,
+  AgreementWorkspacePaymentSummary,
+  AgreementWorkspacePaymentTone,
+} from "@/types";
 
 const metricToneClasses: Record<AgreementWorkspaceMetricTone, { icon: string; text: string; ring: string }> = {
   violet: { icon: "bg-[#6f52ff]/20 text-[#a898ff]", text: "text-[#a898ff]", ring: "border-[#6f52ff]/25" },
@@ -104,7 +120,18 @@ function AgreementOverviewCard() {
   );
 }
 
-function MilestoneCard({ milestone }: { milestone: AgreementWorkspaceMilestone }) {
+function MilestoneCard({
+  milestone,
+  agreementId,
+}: {
+  milestone: AgreementWorkspaceMilestone;
+  agreementId?: string;
+}) {
+  const detailsHref =
+    agreementId && milestone.id
+      ? `/agreements/${agreementId}/milestones/${milestone.id}`
+      : null;
+
   return (
     <article className={cn("relative rounded-[12px] border border-[#252a42] bg-[#1d2135] p-4 text-start", milestone.active && "border-[#6f52ff]/35 bg-[#201d42]")}> 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -120,9 +147,22 @@ function MilestoneCard({ milestone }: { milestone: AgreementWorkspaceMilestone }
             </div>
           </div>
         </div>
-        <button className="grid size-7 shrink-0 place-items-center rounded-lg bg-[#101323] text-[#8a91ac] hover:text-white" type="button" aria-label={contentlessAriaLabel(milestone.title)}>
-          <ClipboardList className="size-3.5" />
-        </button>
+        {detailsHref ? (
+          <Button
+            asChild
+            size="icon-sm"
+            variant="ghost"
+            className="shrink-0 rounded-lg bg-[#101323] text-[#8a91ac] hover:bg-[#1d2135] hover:text-white"
+          >
+            <Link href={detailsHref} aria-label={contentlessAriaLabel(milestone.title)}>
+              <ClipboardList className="size-3.5" />
+            </Link>
+          </Button>
+        ) : (
+          <button className="grid size-7 shrink-0 place-items-center rounded-lg bg-[#101323] text-[#8a91ac] hover:text-white" type="button" aria-label={contentlessAriaLabel(milestone.title)}>
+            <ClipboardList className="size-3.5" />
+          </button>
+        )}
       </div>
 
       {milestone.active ? (
@@ -141,10 +181,19 @@ function MilestoneCard({ milestone }: { milestone: AgreementWorkspaceMilestone }
             {milestone.revisionLimit}
           </p>
           <div className="mt-4 flex flex-wrap justify-end gap-2">
-            <Button variant="secondary" className="h-8 rounded-[8px] border border-[#252a42] bg-[#101323] px-3 text-[12px] font-bold text-[#c7cce0] hover:bg-[#262b49] hover:text-white">
-              <FileText className="size-3.5" />
-              {agreementsContent.agreementWorkspacePage.detailsLabel}
-            </Button>
+            {detailsHref ? (
+              <Button asChild variant="secondary" className="h-8 rounded-[8px] border border-[#252a42] bg-[#101323] px-3 text-[12px] font-bold text-[#c7cce0] hover:bg-[#262b49] hover:text-white">
+                <Link href={detailsHref}>
+                  <FileText className="size-3.5" />
+                  {agreementsContent.agreementWorkspacePage.detailsLabel}
+                </Link>
+              </Button>
+            ) : (
+              <Button variant="secondary" className="h-8 rounded-[8px] border border-[#252a42] bg-[#101323] px-3 text-[12px] font-bold text-[#c7cce0] hover:bg-[#262b49] hover:text-white">
+                <FileText className="size-3.5" />
+                {agreementsContent.agreementWorkspacePage.detailsLabel}
+              </Button>
+            )}
             <Button asChild className="h-8 rounded-[8px] bg-[#6f52ff] px-3 text-[12px] font-bold text-white hover:bg-[#7b63ff]">
               <Link href="/agreements/delivery">
                 <Send className="size-3.5" />
@@ -162,8 +211,22 @@ function contentlessAriaLabel(title: string) {
   return `عرض تفاصيل ${title}`;
 }
 
-function MilestonesSection() {
+function MilestonesSection({
+  agreementId,
+  milestones,
+  isLoading,
+  isError,
+  onRetry,
+}: {
+  agreementId?: string;
+  milestones?: readonly AgreementWorkspaceMilestone[];
+  isLoading?: boolean;
+  isError?: boolean;
+  onRetry?: () => void;
+}) {
   const content = agreementsContent.agreementWorkspacePage;
+  const milestoneItems: readonly AgreementWorkspaceMilestone[] =
+    milestones ?? content.milestones;
 
   return (
     <section className="rounded-[14px] border border-[#252a42] bg-[#15192b] p-4 md:p-6">
@@ -177,16 +240,53 @@ function MilestonesSection() {
         </span>
       </div>
       <div className="space-y-3">
-        {content.milestones.map((milestone) => (
-          <MilestoneCard key={milestone.number} milestone={milestone} />
-        ))}
+        {isLoading ? (
+          <div className="rounded-[10px] border border-dashed border-[#252a42] bg-[#12162a] px-4 py-5 text-center text-[12px] text-[#8a91ac]">
+            جاري تحميل المراحل...
+          </div>
+        ) : null}
+
+        {isError ? (
+          <div className="rounded-[10px] border border-red-500/20 bg-red-500/10 px-4 py-5 text-center text-[12px] text-red-100/85">
+            <p>تعذر تحميل المراحل الحالية.</p>
+            {onRetry ? (
+              <Button onClick={onRetry} variant="secondary" className="mt-3 h-8 rounded-[8px] border border-red-500/20 bg-red-500/10 px-3 text-[12px] font-bold text-red-100 hover:bg-red-500/20">
+                إعادة المحاولة
+              </Button>
+            ) : null}
+          </div>
+        ) : null}
+
+        {!isLoading && !isError && milestoneItems.length === 0 ? (
+          <div className="rounded-[10px] border border-dashed border-[#252a42] bg-[#12162a] px-4 py-5 text-center text-[12px] text-[#8a91ac]">
+            لا توجد مراحل مضافة لهذه الاتفاقية بعد.
+          </div>
+        ) : null}
+
+        {!isLoading && !isError
+          ? milestoneItems.map((milestone) => (
+              <MilestoneCard
+                key={milestone.id ?? milestone.number}
+                milestone={milestone}
+                agreementId={agreementId}
+              />
+            ))
+          : null}
       </div>
     </section>
   );
 }
 
-function PaymentsSection() {
+function PaymentsSection({
+  paymentSummary,
+  paymentRows,
+}: {
+  paymentSummary?: readonly AgreementWorkspacePaymentSummary[];
+  paymentRows?: readonly AgreementWorkspacePaymentRow[];
+}) {
   const content = agreementsContent.agreementWorkspacePage;
+  const summaryItems = paymentSummary ?? content.paymentSummary;
+  const rows = paymentRows ?? content.paymentRows;
 
   return (
     <section className="rounded-[14px] border border-[#252a42] bg-[#15192b] p-4 md:p-6">
@@ -201,7 +301,7 @@ function PaymentsSection() {
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {content.paymentSummary.map((item) => (
+        {summaryItems.map((item) => (
           <article key={item.label} className={cn("rounded-[10px] p-4 text-start", paymentToneClasses[item.tone].card)}>
             <strong className={cn("block text-[18px] font-extrabold", paymentToneClasses[item.tone].value)} dir="ltr">{item.value}</strong>
             <span className="mt-2 block text-[11px] text-[#a7aecb]">{item.label}</span>
@@ -220,7 +320,7 @@ function PaymentsSection() {
             </tr>
           </thead>
           <tbody>
-            {content.paymentRows.map((row) => (
+            {rows.map((row) => (
               <tr key={row.milestone} className="h-12 border-t border-[#252a42] text-[#c7cce0]">
                 <td className="px-4 font-bold text-white">{row.milestone}</td>
                 <td className="px-4 font-bold text-emerald-300" dir="ltr">{row.amount}</td>
@@ -356,6 +456,25 @@ export function AgreementWorkspaceSection({
 }: {
   agreementId?: string;
 }) {
+  const content = agreementsContent.agreementWorkspacePage;
+  const {
+    data: milestoneResponse,
+    isLoading: isMilestonesLoading,
+    isError: isMilestonesError,
+    refetch: refetchMilestones,
+  } = useAgreementMilestonesQuery(agreementId);
+
+  const liveMilestoneSummary = milestoneResponse?.data;
+  const workspaceMilestones = liveMilestoneSummary
+    ? liveMilestoneSummary.milestones.map(mapMilestoneToWorkspaceMilestone)
+    : content.milestones;
+  const workspacePaymentSummary = liveMilestoneSummary
+    ? buildAgreementWorkspacePaymentSummary(liveMilestoneSummary.milestones)
+    : content.paymentSummary;
+  const workspacePaymentRows = liveMilestoneSummary
+    ? buildAgreementWorkspacePaymentRows(liveMilestoneSummary.milestones)
+    : content.paymentRows;
+
   return (
     <>
       <WorkspaceHeader />
@@ -364,8 +483,39 @@ export function AgreementWorkspaceSection({
         <WorkspaceSidebar />
         <div dir="rtl" className="min-w-0 flex-1 space-y-4 pb-10">
           <AgreementOverviewCard />
-          <MilestonesSection />
-          <PaymentsSection />
+          {liveMilestoneSummary && !liveMilestoneSummary.amountMatch ? (
+            <section className="rounded-[14px] border border-amber-500/25 bg-amber-500/10 px-4 py-4 text-start text-[12px] leading-6 text-amber-100/85 md:px-5">
+              <strong className="block text-amber-300">تنبيه توافق المبالغ</strong>
+              <p className="mt-1">
+                مجموع المراحل الحالي هو{" "}
+                <span className="font-bold" dir="ltr">
+                  {formatMilestoneAmount(
+                    liveMilestoneSummary.totalAmount,
+                    liveMilestoneSummary.currency,
+                  )}
+                </span>
+                {" "}بينما قيمة الاتفاق هي{" "}
+                <span className="font-bold" dir="ltr">
+                  {formatMilestoneAmount(
+                    liveMilestoneSummary.agreementTotalAmount,
+                    liveMilestoneSummary.currency,
+                  )}
+                </span>
+                .
+              </p>
+            </section>
+          ) : null}
+          <MilestonesSection
+            agreementId={agreementId}
+            milestones={workspaceMilestones}
+            isLoading={Boolean(agreementId) && isMilestonesLoading && !liveMilestoneSummary}
+            isError={Boolean(agreementId) && isMilestonesError}
+            onRetry={() => refetchMilestones()}
+          />
+          <PaymentsSection
+            paymentSummary={workspacePaymentSummary}
+            paymentRows={workspacePaymentRows}
+          />
           <ActivitySection />
           {/* AR: السجل الزمني الحي للاتفاقية — يعرض أحداث الأدلة الفعلية من الخادم.
               EN: Live agreement timeline — displays actual evidence events from the backend. */}
