@@ -25,6 +25,23 @@
 
 ---
 
+---
+
+## 🔑 Demo Login
+
+For demo and testing purposes, you can access the freelancer dashboard using the following credentials:
+
+```json
+{
+  "email": "demo@demo.com",
+  "password": "temporary123"
+}
+```
+
+---
+
+Use this account to test the main dashboard flows, including agreement creation, milestone creation, and client invitation workflows.
+
 ## 📚 Table of Contents
 
 - [🚧 Current Project Status](#-current-project-status)
@@ -537,21 +554,6 @@ http://localhost:3032
 ```
 
 ---
-
-## 🔑 Demo Login
-
-For demo and testing purposes, you can access the freelancer dashboard using the following credentials:
-
-```json
-{
-  "email": "demo@demo.com",
-  "password": "temporary123"
-}
-```
-
----
-
-Use this account to test the main dashboard flows, including agreement creation, milestone creation, and client invitation workflows.
 
 ## 🧭 Usage Flow
 
