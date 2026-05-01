@@ -1,13 +1,6 @@
 export { PortalTimelineEvidence } from "./PortalTimelineEvidence";
 export { PortalTimelineSection } from "./PortalTimelineSection";
 export { PortalSection } from "./PortalSection";
-export { PaymentSetupDetailsSection } from "./PaymentSetupDetailsSection";
-export { PaymentConfirmationSection } from "./PaymentConfirmationSection";
-export { PaymentHistorySection } from "./PaymentHistorySection";
-export { ReleasePaymentSection } from "./ReleasePaymentSection";
-export { ChangeRequestPaymentSection } from "./ChangeRequestPaymentSection";
-export { PaymentSetupOutcomeSection } from "./PaymentSetupOutcomeSection";
-export { PaymentSetupSection } from "./PaymentSetupSection";
 export { TrackingDetailsSection } from "./TrackingDetailsSection";
 export { TrackingFinalSection } from "./TrackingFinalSection";
 export { TrackingProgressSection } from "./TrackingProgressSection";
@@ -17,10 +10,12 @@ export { AgreementSummarySection } from "./AgreementSummarySection";
 export { AiDisputeSection } from "./AiDisputeSection";
 export { DecisionSection } from "./DecisionSection";
 export { DeliveryPreviewSection } from "./DeliveryPreviewSection";
-export { FundMilestoneDetailsSection } from "./FundMilestoneDetailsSection";
-export { FundMilestoneSection } from "./FundMilestoneSection";
 export { MilestonesSection } from "./MilestonesSection";
 export { PaymentSummaryCard } from "./PaymentSummaryCard";
 export { PolicySection } from "./PolicySection";
 export { ProjectSummaryCard } from "./ProjectSummaryCard";
 export { ChangeRequestPortalSection } from "./ChangeRequestPortalSection";
+export { ChangeRequestPaymentSection } from "./ChangeRequestPaymentSection";
+
+// AR: تم نقل أقسام الدفع إلى `@/components/payments` كنطاق مستقل.
+// EN: Payment sections moved to `@/components/payments` as a standalone domain.

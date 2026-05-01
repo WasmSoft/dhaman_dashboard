@@ -280,9 +280,11 @@ function MilestonesSection({
 function PaymentsSection({
   paymentSummary,
   paymentRows,
+  agreementId,
 }: {
   paymentSummary?: readonly AgreementWorkspacePaymentSummary[];
   paymentRows?: readonly AgreementWorkspacePaymentRow[];
+  agreementId?: string;
 }) {
   const content = agreementsContent.agreementWorkspacePage;
   const summaryItems = paymentSummary ?? content.paymentSummary;
@@ -299,6 +301,23 @@ function PaymentsSection({
           <CircleDollarSign className="size-4" />
         </span>
       </div>
+
+      {agreementId ? (
+        <div className="mb-4 flex flex-wrap gap-2">
+          <Button asChild variant="secondary" className="h-8 gap-1.5 rounded-[8px] border border-[#252a42] bg-[#101323] px-3 text-[11px] font-bold text-[#a898ff] hover:bg-[#1d2135] hover:text-white">
+            <Link href={`/agreements/${agreementId}/payments`}>
+              <CircleDollarSign className="size-3" />
+              فتح الدفعات
+            </Link>
+          </Button>
+          <Button asChild variant="secondary" className="h-8 gap-1.5 rounded-[8px] border border-[#252a42] bg-[#101323] px-3 text-[11px] font-bold text-[#c7cce0] hover:bg-[#1d2135] hover:text-white">
+            <Link href={`/agreements/${agreementId}/payment-history`}>
+              <History className="size-3" />
+              سجل الدفعات
+            </Link>
+          </Button>
+        </div>
+      ) : null}
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {summaryItems.map((item) => (
@@ -515,6 +534,7 @@ export function AgreementWorkspaceSection({
           <PaymentsSection
             paymentSummary={workspacePaymentSummary}
             paymentRows={workspacePaymentRows}
+            agreementId={agreementId}
           />
           <ActivitySection />
           {/* AR: السجل الزمني الحي للاتفاقية — يعرض أحداث الأدلة الفعلية من الخادم.
