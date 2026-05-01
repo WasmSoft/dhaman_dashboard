@@ -27,6 +27,21 @@ export const API_PATHS = {
     AGREEMENTS: "/client-portal/agreements",
   },
   PORTAL: {
+    INVITE: (token: PathParam) =>
+      `/portal/${encodePathParam(token)}/invite`,
+    WORKSPACE: (token: PathParam) => `/portal/${encodePathParam(token)}`,
+    APPROVE: (token: PathParam) =>
+      `/portal/${encodePathParam(token)}/approve`,
+    REQUEST_CHANGES: (token: PathParam) =>
+      `/portal/${encodePathParam(token)}/request-changes`,
+    REJECT: (token: PathParam) =>
+      `/portal/${encodePathParam(token)}/reject`,
+    DELIVERY: (token: PathParam, deliveryId: PathParam) =>
+      `/portal/${encodePathParam(token)}/deliveries/${encodePathParam(deliveryId)}`,
+    DELIVERY_ACCEPT: (token: PathParam, deliveryId: PathParam) =>
+      `/portal/${encodePathParam(token)}/deliveries/${encodePathParam(deliveryId)}/accept`,
+    DELIVERY_REQUEST_CHANGES: (token: PathParam, deliveryId: PathParam) =>
+      `/portal/${encodePathParam(token)}/deliveries/${encodePathParam(deliveryId)}/request-changes`,
     TIMELINE: (token: PathParam) =>
       `/portal/${encodePathParam(token)}/timeline`,
   },
@@ -44,8 +59,16 @@ export const API_PATHS = {
       `/agreements/${encodePathParam(agreementId)}`,
     DELETE: (agreementId: PathParam) =>
       `/agreements/${encodePathParam(agreementId)}`,
-    RESEND_INVITE: (agreementId: PathParam) =>
-      `/agreements/${encodePathParam(agreementId)}/resend-invite`,
+    SEND_INVITE: (agreementId: PathParam) =>
+      `/agreements/${encodePathParam(agreementId)}/send-invite`,
+    ACTIVATE: (agreementId: PathParam) =>
+      `/agreements/${encodePathParam(agreementId)}/activate`,
+    ARCHIVE: (agreementId: PathParam) =>
+      `/agreements/${encodePathParam(agreementId)}/archive`,
+  },
+  AGREEMENT_POLICIES: {
+    BY_AGREEMENT: (agreementId: PathParam) =>
+      `/agreements/${encodePathParam(agreementId)}/policies`,
   },
   MILESTONES: {
     LIST: (agreementId: PathParam) =>
@@ -102,8 +125,19 @@ export const API_PATHS = {
       `/portal/${encodePathParam(token)}/payment-history`,
     FUND: (token: PathParam, paymentId: PathParam) =>
       `/portal/${encodePathParam(token)}/payments/${encodePathParam(paymentId)}/fund`,
-    RELEASE_CONFIRMATION: (token: PathParam, paymentId: PathParam) =>
-      `/portal/${encodePathParam(token)}/payments/${encodePathParam(paymentId)}/release-confirmation`,
+    RELEASE: (token: PathParam, paymentId: PathParam) =>
+      `/portal/${encodePathParam(token)}/payments/${encodePathParam(paymentId)}/release`,
+  },
+  DELIVERIES: {
+    LIST: "/deliveries",
+    DETAILS: (deliveryId: PathParam) =>
+      `/deliveries/${encodePathParam(deliveryId)}`,
+    UPDATE: (deliveryId: PathParam) =>
+      `/deliveries/${encodePathParam(deliveryId)}`,
+    SUBMIT: (deliveryId: PathParam) =>
+      `/deliveries/${encodePathParam(deliveryId)}/submit`,
+    CREATE_FOR_MILESTONE: (milestoneId: PathParam) =>
+      `/milestones/${encodePathParam(milestoneId)}/deliveries`,
   },
   CHANGE_REQUESTS: {
     LIST: (agreementId: PathParam) =>
@@ -127,5 +161,8 @@ export const API_PATHS = {
     PREVIEW: "/email-notifications/preview",
     LOGS: "/emails/logs",
     SEND_TEST: "/notifications/test",
+  },
+  SETTINGS: {
+    DEFAULT_POLICIES: "/settings/default-policies",
   },
 } as const;

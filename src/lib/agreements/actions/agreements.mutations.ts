@@ -3,11 +3,17 @@ import type {
   UseMutationOptions,
 } from "@tanstack/react-query";
 
-import type { AgreementMutationPayload } from "@/types";
+import type {
+  CreateAgreementPayload,
+  UpdateAgreementPayload,
+} from "@/types";
 
 import {
+  activateAgreement,
+  archiveAgreement,
   createAgreement,
   deleteAgreement,
+  sendInvite,
   updateAgreement,
 } from "./agreements.api";
 import { agreementsQueryKeys } from "./agreements.keys";
@@ -19,10 +25,10 @@ export function createAgreementMutationOptions(
 ): UseMutationOptions<
   Awaited<ReturnType<typeof createAgreement>>,
   Error,
-  AgreementMutationPayload
+  CreateAgreementPayload
 > {
   return {
-    mutationFn: (payload: AgreementMutationPayload) => createAgreement(payload),
+    mutationFn: (payload: CreateAgreementPayload) => createAgreement(payload),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: agreementsQueryKeys.lists(),
@@ -40,7 +46,7 @@ export function updateAgreementMutationOptions(
   Error,
   {
     agreementId: string;
-    payload: AgreementMutationPayload;
+    payload: UpdateAgreementPayload;
   }
 > {
   return {
@@ -49,7 +55,7 @@ export function updateAgreementMutationOptions(
       payload,
     }: {
       agreementId: string;
-      payload: AgreementMutationPayload;
+      payload: UpdateAgreementPayload;
     }) => updateAgreement(agreementId, payload),
     onSuccess: async (_, variables) => {
       await Promise.all([
@@ -77,6 +83,78 @@ export function deleteAgreementMutationOptions(
           queryKey: agreementsQueryKeys.lists(),
         }),
         queryClient.removeQueries({
+          queryKey: agreementsQueryKeys.detail(agreementId),
+        }),
+      ]);
+    },
+  };
+}
+
+// AR: تبني هذه الدالة mutation خاصة بإرسال الدعوة مع تحديث الكاش للقائمة والتفاصيل معًا.
+// EN: This function builds the send-invite mutation and refreshes both list and detail caches.
+export function sendInviteMutationOptions(
+  queryClient: QueryClient,
+): UseMutationOptions<
+  Awaited<ReturnType<typeof sendInvite>>,
+  Error,
+  string
+> {
+  return {
+    mutationFn: (agreementId: string) => sendInvite(agreementId),
+    onSuccess: async (_, agreementId) => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: agreementsQueryKeys.lists(),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: agreementsQueryKeys.detail(agreementId),
+        }),
+      ]);
+    },
+  };
+}
+
+// AR: تبني هذه الدالة mutation خاصة بتفعيل الاتفاقية مع تحديث كاش القوائم والتفاصيل بعد النجاح.
+// EN: This function builds the activate-agreement mutation and refreshes list/detail cache after success.
+export function activateAgreementMutationOptions(
+  queryClient: QueryClient,
+): UseMutationOptions<
+  Awaited<ReturnType<typeof activateAgreement>>,
+  Error,
+  string
+> {
+  return {
+    mutationFn: (agreementId: string) => activateAgreement(agreementId),
+    onSuccess: async (_, agreementId) => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: agreementsQueryKeys.lists(),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: agreementsQueryKeys.detail(agreementId),
+        }),
+      ]);
+    },
+  };
+}
+
+// AR: تبني هذه الدالة mutation خاصة بأرشفة الاتفاقية مع تحديث كاش القوائم والتفاصيل فورًا.
+// EN: This function builds the archive-agreement mutation and refreshes list/detail cache immediately.
+export function archiveAgreementMutationOptions(
+  queryClient: QueryClient,
+): UseMutationOptions<
+  Awaited<ReturnType<typeof archiveAgreement>>,
+  Error,
+  string
+> {
+  return {
+    mutationFn: (agreementId: string) => archiveAgreement(agreementId),
+    onSuccess: async (_, agreementId) => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: agreementsQueryKeys.lists(),
+        }),
+        queryClient.invalidateQueries({
           queryKey: agreementsQueryKeys.detail(agreementId),
         }),
       ]);

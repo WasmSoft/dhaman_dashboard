@@ -48,7 +48,7 @@ export function mapCreateFormToPayload(
     orderIndex: Number(values.orderIndex),
     acceptanceCriteria: (values.acceptanceCriteria as Array<Record<string, unknown>>).map((criterion) => ({
       description: String(criterion.description),
-      required: criterion.required === false ? false : undefined,
+      required: criterion.required === false ? false : true,
     })),
     revisionLimit: values.revisionLimit != null ? Number(values.revisionLimit) : undefined,
   };
@@ -76,7 +76,7 @@ export function mapUpdateFormToPayload(
   if (values.acceptanceCriteria != null) {
     payload.acceptanceCriteria = (values.acceptanceCriteria as Array<Record<string, unknown>>).map((criterion) => ({
       description: String(criterion.description),
-      required: criterion.required === false ? false : undefined,
+      required: criterion.required === false ? false : true,
     }));
   }
   if (values.revisionLimit != null) {

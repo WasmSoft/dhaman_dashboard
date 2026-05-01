@@ -99,7 +99,7 @@ export async function confirmReleaseFromPortal(
   input: PortalReleaseConfirmationInput,
 ) {
   const response = await axiosInstance.post<PaymentDetailsResponse>(
-    API_PATHS.PORTAL_PAYMENTS.RELEASE_CONFIRMATION(token, paymentId),
+    API_PATHS.PORTAL_PAYMENTS.RELEASE(token, paymentId),
     input,
   );
   return response.data;

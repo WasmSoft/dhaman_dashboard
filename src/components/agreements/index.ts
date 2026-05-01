@@ -5,6 +5,7 @@ export { MilestoneDraftForm } from "./MilestoneDraftForm";
 export { MilestoneDraftList } from "./MilestoneDraftList";
 export { AgreementTimelineSection } from "./AgreementTimelineSection";
 export { AgreementWorkspaceSection } from "./AgreementWorkspaceSection";
+export { AgreementPoliciesSection } from "./AgreementPoliciesSection";
 export { CreateAgreementSection } from "./CreateAgreementSection";
 export { AgreementsSection } from "./AgreementsSection";
 export { ReviewAgreementSection } from "./ReviewAgreementSection";

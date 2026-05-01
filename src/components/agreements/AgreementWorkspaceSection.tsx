@@ -1,11 +1,32 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, CalendarClock, CheckCircle2, CircleDollarSign, ClipboardList, Copy, ExternalLink, FileText, History, LockKeyhole, Send, ShieldCheck, Sparkles, UserRound } from "lucide-react";
 
-import { Button } from "@/components/shared";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+  Button,
+  NotFoundState,
+  Skeleton,
+} from "@/components/shared";
 import { agreementsContent } from "@/constants";
+import {
+  useActivateMutation,
+  useAgreementDetailsQuery,
+  useArchiveMutation,
+  useSendInviteMutation,
+} from "@/hooks/agreements";
 import { useAgreementMilestonesQuery } from "@/hooks/milestones";
+import { ApiError } from "@/lib/axios-instance";
 import {
   buildAgreementWorkspacePaymentRows,
   buildAgreementWorkspacePaymentSummary,
@@ -14,7 +35,10 @@ import {
 } from "@/lib/milestones";
 import { cn } from "@/lib/utils";
 import { AgreementTimelineSection } from "@/components/agreements/AgreementTimelineSection";
+import { AgreementPoliciesSection } from "@/components/agreements/AgreementPoliciesSection";
 import type {
+  Agreement,
+  AgreementStatus,
   AgreementWorkspaceActivityItem,
   AgreementWorkspaceMetricTone,
   AgreementWorkspaceMilestone,
@@ -37,6 +61,92 @@ const paymentToneClasses: Record<AgreementWorkspacePaymentTone, { card: string; 
   held: { card: "bg-red-500/15", badge: "bg-red-500/20 text-red-300", value: "text-red-300" },
 };
 
+const agreementStatusLabels: Record<AgreementStatus, string> = {
+  DRAFT: "مسودة",
+  SENT: "مرسلة",
+  APPROVED: "موافق عليها",
+  ACTIVE: "نشطة",
+  COMPLETED: "مكتملة",
+  CANCELLED: "ملغاة",
+  DISPUTED: "متنازع عليها",
+};
+
+const agreementStatusBadgeClasses: Record<AgreementStatus, string> = {
+  DRAFT: "bg-[#6f52ff]/15 text-[#a898ff]",
+  SENT: "bg-amber-500/15 text-amber-300",
+  APPROVED: "bg-blue-500/15 text-blue-300",
+  ACTIVE: "bg-emerald-500/15 text-emerald-300",
+  COMPLETED: "bg-slate-500/20 text-slate-300",
+  CANCELLED: "bg-red-500/15 text-red-300",
+  DISPUTED: "bg-violet-500/15 text-violet-300",
+};
+
+function formatAgreementAmount(amount: number, currency: string) {
+  return `${new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount)} ${currency}`;
+}
+
+function formatAgreementDate(dateValue: string | null | undefined) {
+  if (!dateValue) {
+    return "-";
+  }
+
+  const parsedDate = new Date(dateValue);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return dateValue;
+  }
+
+  return parsedDate.toLocaleDateString("ar-SA");
+}
+
+function getAgreementProgress(status: AgreementStatus) {
+  if (status === "DRAFT") return 15;
+  if (status === "SENT") return 30;
+  if (status === "APPROVED") return 55;
+  if (status === "ACTIVE") return 75;
+  if (status === "COMPLETED") return 100;
+  if (status === "CANCELLED") return 100;
+  return 65;
+}
+
+function getAgreementErrorMessage(error: unknown) {
+  const apiError = error as ApiError;
+
+  return (
+    apiError.message ||
+    "تعذر تنفيذ الإجراء الآن / Could not complete the requested action right now"
+  );
+}
+
+function getSendInviteErrorMessage(error: unknown) {
+  const apiError = error as ApiError;
+
+  if (apiError.code === "AGREEMENT_CLIENT_REQUIRED") {
+    return "يجب ربط عميل أولاً / A client must be linked first";
+  }
+
+  if (apiError.code === "AGREEMENT_POLICY_REQUIRED") {
+    return "يجب تحديد السياسات أولاً / Policies must be set first";
+  }
+
+  if (apiError.code === "VALIDATION_ERROR") {
+    return "يجب إضافة مرحلة واحدة على الأقل / At least one milestone is required";
+  }
+
+  if (apiError.code === "PAYMENT_INVALID_AMOUNT") {
+    return "المبلغ الإجمالي لا يتطابق مع مجموع المراحل / Total amount does not match milestones sum";
+  }
+
+  if (apiError.code === "AGREEMENT_ALREADY_SENT") {
+    return "تم إرسال الاتفاقية بالفعل / Agreement already sent";
+  }
+
+  return getAgreementErrorMessage(error);
+}
+
 function metricIcon(tone: AgreementWorkspaceMetricTone) {
   if (tone === "blue") return <UserRound className="size-4" />;
   if (tone === "emerald") return <CircleDollarSign className="size-4" />;
@@ -45,8 +155,30 @@ function metricIcon(tone: AgreementWorkspaceMetricTone) {
   return <ShieldCheck className="size-4" />;
 }
 
-function WorkspaceHeader() {
+function WorkspaceHeader({
+  agreement,
+  isSendInvitePending,
+  isActivatePending,
+  isArchivePending,
+  onCopyInvite,
+  onSendInvite,
+  onActivate,
+  onArchive,
+}: {
+  agreement: Agreement;
+  isSendInvitePending: boolean;
+  isActivatePending: boolean;
+  isArchivePending: boolean;
+  onCopyInvite: () => void;
+  onSendInvite: () => void;
+  onActivate: () => void;
+  onArchive: () => void;
+}) {
   const content = agreementsContent.agreementWorkspacePage;
+  const canSendInvite = agreement.status === "DRAFT";
+  const canActivate = agreement.status === "APPROVED";
+  const canArchive = agreement.status !== "COMPLETED";
+  const canSubmitDelivery = agreement.status === "ACTIVE";
 
   return (
     <section className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
@@ -57,63 +189,183 @@ function WorkspaceHeader() {
             {content.backLabel}
           </Link>
         </Button>
-        <h1 className="text-2xl font-extrabold tracking-[-0.02em] text-white md:text-[28px]">{content.title}</h1>
-        <p className="mt-1 text-sm leading-6 text-[#737b99]">{content.subtitle}</p>
+        <h1 className="text-2xl font-extrabold tracking-[-0.02em] text-white md:text-[28px]">
+          {agreement.title}
+        </h1>
+        <p className="mt-1 text-sm leading-6 text-[#737b99]">
+          {agreement.description || content.subtitle}
+        </p>
       </div>
 
       <div className="order-1 flex flex-wrap gap-2 lg:order-2">
-        <Button asChild className="h-10 rounded-[10px] bg-[#6f52ff] px-4 text-sm font-bold text-white shadow-[0_12px_28px_rgba(111,82,255,0.26)] hover:bg-[#7b63ff]">
-          <Link href="/agreements/delivery">
+        {canSendInvite ? (
+          <Button
+            className="h-10 rounded-[10px] bg-[#6f52ff] px-4 text-sm font-bold text-white shadow-[0_12px_28px_rgba(111,82,255,0.26)] hover:bg-[#7b63ff]"
+            disabled={isSendInvitePending}
+            onClick={onSendInvite}
+          >
             <Send className="size-[15px]" />
-            {content.submitLabel}
-          </Link>
-        </Button>
-        <Button variant="secondary" className="h-10 rounded-[10px] border border-[#252a42] bg-[#15192b] px-4 text-sm font-bold text-[#c7cce0] hover:bg-[#1d2135] hover:text-white">
-          <ExternalLink className="size-[15px]" />
-          {content.portalLabel}
-        </Button>
-        <Button variant="secondary" className="h-10 rounded-[10px] border border-[#252a42] bg-[#15192b] px-4 text-sm font-bold text-[#c7cce0] hover:bg-[#1d2135] hover:text-white">
+            {isSendInvitePending ? "جارٍ الإرسال..." : "إرسال الدعوة"}
+          </Button>
+        ) : null}
+
+        {canActivate ? (
+          <Button
+            className="h-10 rounded-[10px] bg-emerald-600 px-4 text-sm font-bold text-white shadow-[0_12px_28px_rgba(5,150,105,0.24)] hover:bg-emerald-500"
+            disabled={isActivatePending}
+            onClick={onActivate}
+          >
+            <ShieldCheck className="size-[15px]" />
+            {isActivatePending ? "جارٍ التفعيل..." : "تفعيل الاتفاقية"}
+          </Button>
+        ) : null}
+
+        {canSubmitDelivery ? (
+          <Button asChild className="h-10 rounded-[10px] bg-[#6f52ff] px-4 text-sm font-bold text-white shadow-[0_12px_28px_rgba(111,82,255,0.26)] hover:bg-[#7b63ff]">
+            <Link href="/agreements/delivery">
+              <Send className="size-[15px]" />
+              {content.submitLabel}
+            </Link>
+          </Button>
+        ) : null}
+
+        {agreement.status === "DRAFT" ? (
+          <Button
+            asChild
+            variant="secondary"
+            className="h-10 rounded-[10px] border border-[#252a42] bg-[#15192b] px-4 text-sm font-bold text-[#c7cce0] hover:bg-[#1d2135] hover:text-white"
+          >
+            <Link href={`/agreements/${agreement.id}/edit`}>
+              <FileText className="size-[15px]" />
+              تعديل الاتفاقية
+            </Link>
+          </Button>
+        ) : null}
+
+        {agreement.portalToken ? (
+          <Button asChild variant="secondary" className="h-10 rounded-[10px] border border-[#252a42] bg-[#15192b] px-4 text-sm font-bold text-[#c7cce0] hover:bg-[#1d2135] hover:text-white">
+            <Link href={`/portal/${agreement.portalToken}/payments`}>
+              <ExternalLink className="size-[15px]" />
+              {content.portalLabel}
+            </Link>
+          </Button>
+        ) : (
+          <Button variant="secondary" className="h-10 rounded-[10px] border border-[#252a42] bg-[#15192b] px-4 text-sm font-bold text-[#c7cce0] hover:bg-[#1d2135] hover:text-white" disabled>
+            <ExternalLink className="size-[15px]" />
+            {content.portalLabel}
+          </Button>
+        )}
+        <Button variant="secondary" className="h-10 rounded-[10px] border border-[#252a42] bg-[#15192b] px-4 text-sm font-bold text-[#c7cce0] hover:bg-[#1d2135] hover:text-white" disabled={!agreement.inviteToken} onClick={onCopyInvite}>
           <Copy className="size-[15px]" />
           {content.copyInviteLabel}
         </Button>
+
+        {canArchive ? (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="destructive"
+                className="h-10 rounded-[10px] border border-red-500/20 px-4 text-sm font-bold"
+                type="button"
+              >
+                أرشفة الاتفاقية
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent dir="rtl">
+              <AlertDialogHeader>
+                <AlertDialogTitle>تأكيد أرشفة الاتفاقية</AlertDialogTitle>
+                <AlertDialogDescription>
+                  سيتم نقل هذه الاتفاقية إلى حالة ملغاة. هل تريد المتابعة؟
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel asChild>
+                  <Button variant="secondary" className="h-10 rounded-[10px] border border-[#252a42] bg-[#101323] px-4 text-sm font-bold text-[#c7cce0] hover:bg-[#1d2135] hover:text-white">
+                    إلغاء
+                  </Button>
+                </AlertDialogCancel>
+                <AlertDialogAction asChild>
+                  <Button
+                    variant="destructive"
+                    className="h-10 rounded-[10px] border border-red-500/20 px-4 text-sm font-bold"
+                    disabled={isArchivePending}
+                    onClick={onArchive}
+                  >
+                    {isArchivePending ? "جارٍ الأرشفة..." : "تأكيد الأرشفة"}
+                  </Button>
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        ) : null}
       </div>
     </section>
   );
 }
 
-function AgreementOverviewCard() {
+function AgreementOverviewCard({ agreement }: { agreement: Agreement }) {
   const content = agreementsContent.agreementWorkspacePage;
+  const progressValue = `${getAgreementProgress(agreement.status)}%`;
+  const summaryMetrics = [
+    {
+      label: "العميل",
+      value: agreement.client?.name ?? "عميل غير مرتبط",
+      tone: "blue",
+    },
+    {
+      label: "إجمالي الاتفاق",
+      value: formatAgreementAmount(agreement.totalAmount, agreement.currency),
+      tone: "emerald",
+    },
+    {
+      label: "عدد المراحل",
+      value: String(agreement.milestones.length),
+      tone: "violet",
+    },
+    {
+      label: agreement.sentAt ? "تاريخ الإرسال" : "تاريخ الإنشاء",
+      value: formatAgreementDate(agreement.sentAt ?? agreement.createdAt),
+      tone: "amber",
+    },
+  ] as const;
 
   return (
     <section className="rounded-[14px] border border-[#252a42] bg-[radial-gradient(circle_at_top_right,rgba(111,82,255,0.22),transparent_42%),#15192b] p-4 shadow-[0_18px_45px_rgba(4,7,20,0.18)] md:p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="text-start">
-          <h2 className="text-[18px] font-extrabold text-white md:text-[20px]">{content.projectTitle}</h2>
-          <p className="mt-2 text-[13px] leading-6 text-[#a7aecb]">{content.projectDescription}</p>
+          <h2 className="text-[18px] font-extrabold text-white md:text-[20px]">{agreement.title}</h2>
+          <p className="mt-2 text-[13px] leading-6 text-[#a7aecb]">
+            {agreement.description || content.projectDescription}
+          </p>
         </div>
-        <span className="inline-flex w-fit items-center gap-2 rounded-md bg-emerald-500/15 px-3 py-1.5 text-[12px] font-bold text-emerald-300">
-          <span className="size-1.5 rounded-full bg-emerald-300" />
-          {content.statusLabel}
+        <span
+          className={cn(
+            "inline-flex w-fit items-center gap-2 rounded-md px-3 py-1.5 text-[12px] font-bold",
+            agreementStatusBadgeClasses[agreement.status],
+          )}
+        >
+          <span className="size-1.5 rounded-full bg-current" />
+          {agreementStatusLabels[agreement.status]}
         </span>
       </div>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {content.summaryMetrics.slice(0, 4).map((metric) => (
+        {summaryMetrics.map((metric) => (
           <article key={metric.label} className={cn("rounded-[10px] border bg-[#1d2135] p-4 text-start", metricToneClasses[metric.tone].ring)}>
             <span className={cn("mb-3 grid size-8 place-items-center rounded-[9px]", metricToneClasses[metric.tone].icon)}>{metricIcon(metric.tone)}</span>
             <span className="text-[11px] text-[#737b99]">{metric.label}</span>
-            <strong className={cn("mt-2 block text-[14px] font-extrabold text-white", metricToneClasses[metric.tone].text)}>{metric.value}</strong>
+            <strong className={cn("mt-2 block text-[14px] font-extrabold text-white", metricToneClasses[metric.tone].text)} dir={metric.tone === "emerald" || metric.tone === "amber" ? "ltr" : undefined}>{metric.value}</strong>
           </article>
         ))}
       </div>
 
       <div className="mt-5 space-y-2">
         <div className="flex items-center justify-between text-[12px]">
-          <span className="font-bold text-white">{content.progressValue}</span>
+          <span className="font-bold text-white">{progressValue}</span>
           <span className="text-[#a7aecb]">{content.progressLabel}</span>
         </div>
         <div className="h-1.5 rounded-full bg-[#0d1020]">
-          <span className="block h-full w-1/3 rounded-full bg-gradient-to-l from-emerald-400 to-[#6f52ff]" />
+          <span className="block h-full rounded-full bg-gradient-to-l from-emerald-400 to-[#6f52ff]" style={{ width: progressValue }} />
         </div>
       </div>
     </section>
@@ -395,17 +647,45 @@ function ActivitySection() {
   );
 }
 
-function WorkspaceSidebar() {
+function WorkspaceSidebar({
+  agreement,
+  paymentSummary,
+}: {
+  agreement: Agreement;
+  paymentSummary: readonly AgreementWorkspacePaymentSummary[];
+}) {
   const content = agreementsContent.agreementWorkspacePage;
+  const quickSummaryItems = [
+    {
+      label: "قيمة الاتفاق",
+      value: formatAgreementAmount(agreement.totalAmount, agreement.currency),
+      tone: "emerald",
+    },
+    {
+      label: "عدد المراحل",
+      value: String(agreement.milestones.length),
+      tone: "violet",
+    },
+    {
+      label: "الحالة",
+      value: agreementStatusLabels[agreement.status],
+      tone: agreement.status === "ACTIVE" ? "emerald" : "amber",
+    },
+    {
+      label: agreement.sentAt ? "تاريخ الإرسال" : "تاريخ الإنشاء",
+      value: formatAgreementDate(agreement.sentAt ?? agreement.createdAt),
+      tone: "amber",
+    },
+  ] as const;
 
   return (
     <aside className="space-y-3 xl:w-[230px] xl:shrink-0">
       <article className="rounded-[14px] border border-[#252a42] bg-[#15192b] p-5">
         <h2 className="mb-4 text-[14px] font-extrabold text-white">{content.quickSummaryTitle}</h2>
         <div className="space-y-3">
-          {content.quickSummaryItems.map((item) => (
+          {quickSummaryItems.map((item) => (
             <div key={item.label} className="flex items-center justify-between gap-3 text-[12px]">
-              <strong className={cn("text-white", metricToneClasses[item.tone].text)}>{item.value}</strong>
+              <strong className={cn("text-white", metricToneClasses[item.tone].text)} dir={item.tone === "emerald" || item.tone === "amber" ? "ltr" : undefined}>{item.value}</strong>
               <span className="text-[#737b99]">{item.label}</span>
             </div>
           ))}
@@ -415,7 +695,7 @@ function WorkspaceSidebar() {
       <article className="rounded-[14px] border border-[#252a42] bg-[#15192b] p-5">
         <h2 className="mb-4 text-[14px] font-extrabold text-white">{content.financialSummaryTitle}</h2>
         <div className="space-y-3">
-          {content.financialSummaryItems.map((item) => (
+          {paymentSummary.map((item) => (
             <div key={item.label} className="flex items-center justify-between gap-3 text-[12px]">
               <strong className={paymentToneClasses[item.tone].value} dir="ltr">{item.value}</strong>
               <span className="text-[#737b99]">{item.label}</span>
@@ -446,25 +726,44 @@ function WorkspaceSidebar() {
       <article className="rounded-[14px] border border-[#6f52ff]/25 bg-[#6f52ff]/10 p-5">
         <div className="mb-3 flex items-center justify-between gap-3">
           <h2 className="text-[14px] font-extrabold text-white">{content.clientPortalTitle}</h2>
-          <span className="rounded-md bg-emerald-500/15 px-2 py-1 text-[11px] font-bold text-emerald-300">{content.clientPortalStatus}</span>
+          <span className="rounded-md bg-emerald-500/15 px-2 py-1 text-[11px] font-bold text-emerald-300">{agreement.portalToken ? content.clientPortalStatus : "غير متاح"}</span>
         </div>
         <p className="text-[12px] leading-6 text-[#a7aecb]">{content.clientPortalDescription}</p>
-        <span className="mt-3 block rounded-[8px] bg-[#101323] px-3 py-2 text-center text-[11px] text-[#a898ff]" dir="ltr">{content.clientPortalLink}</span>
-        <Button variant="secondary" className="mt-3 h-9 w-full rounded-[9px] border border-[#252a42] bg-[#101323] text-[12px] font-bold text-white hover:bg-[#1d2135]">
-          <ExternalLink className="size-3.5" />
-          {content.clientPortalAction}
-        </Button>
+        <span className="mt-3 block rounded-[8px] bg-[#101323] px-3 py-2 text-center text-[11px] text-[#a898ff]" dir="ltr">{agreement.portalToken ?? content.clientPortalLink}</span>
+        {agreement.portalToken ? (
+          <Button asChild variant="secondary" className="mt-3 h-9 w-full rounded-[9px] border border-[#252a42] bg-[#101323] text-[12px] font-bold text-white hover:bg-[#1d2135]">
+            <Link href={`/portal/${agreement.portalToken}/payments`}>
+              <ExternalLink className="size-3.5" />
+              {content.clientPortalAction}
+            </Link>
+          </Button>
+        ) : (
+          <Button variant="secondary" className="mt-3 h-9 w-full rounded-[9px] border border-[#252a42] bg-[#101323] text-[12px] font-bold text-white hover:bg-[#1d2135]" disabled>
+            <ExternalLink className="size-3.5" />
+            {content.clientPortalAction}
+          </Button>
+        )}
       </article>
 
       <article className="rounded-[14px] border border-[#6f52ff]/40 bg-gradient-to-l from-[#6f52ff] to-[#8b74ff] p-5 text-white shadow-[0_16px_34px_rgba(111,82,255,0.24)]">
         <h2 className="text-[14px] font-extrabold">{content.nextStepTitle}</h2>
         <p className="mt-3 text-[12px] leading-6 text-white/75">{content.nextStepDescription}</p>
-        <Button asChild className="mt-4 h-9 w-full rounded-[9px] bg-white text-[12px] font-extrabold text-[#4c35c7] hover:bg-white/90">
-          <Link href="/agreements/delivery">
+        {agreement.status === "ACTIVE" ? (
+          <Button asChild className="mt-4 h-9 w-full rounded-[9px] bg-white text-[12px] font-extrabold text-[#4c35c7] hover:bg-white/90">
+            <Link href="/agreements/delivery">
+              <Send className="size-3.5" />
+              {content.nextStepAction}
+            </Link>
+          </Button>
+        ) : (
+          <Button
+            className="mt-4 h-9 w-full rounded-[9px] bg-white/70 text-[12px] font-extrabold text-[#4c35c7]"
+            disabled
+          >
             <Send className="size-3.5" />
-            {content.nextStepAction}
-          </Link>
-        </Button>
+            {agreementStatusLabels[agreement.status]}
+          </Button>
+        )}
       </article>
     </aside>
   );
@@ -476,6 +775,17 @@ export function AgreementWorkspaceSection({
   agreementId?: string;
 }) {
   const content = agreementsContent.agreementWorkspacePage;
+  const [workspaceFeedback, setWorkspaceFeedback] = useState<string | null>(null);
+  const {
+    data: agreement,
+    isLoading: isAgreementLoading,
+    isError: isAgreementError,
+    error: agreementError,
+    refetch: refetchAgreement,
+  } = useAgreementDetailsQuery(agreementId ?? "");
+  const sendInviteMutation = useSendInviteMutation();
+  const activateMutation = useActivateMutation();
+  const archiveMutation = useArchiveMutation();
   const {
     data: milestoneResponse,
     isLoading: isMilestonesLoading,
@@ -494,14 +804,149 @@ export function AgreementWorkspaceSection({
     ? buildAgreementWorkspacePaymentRows(liveMilestoneSummary.milestones)
     : content.paymentRows;
 
+  async function handleCopyInvite() {
+    if (!agreement?.inviteToken || typeof navigator === "undefined") {
+      return;
+    }
+
+    await navigator.clipboard.writeText(agreement.inviteToken);
+    setWorkspaceFeedback("تم نسخ رابط الدعوة / Invite link copied");
+  }
+
+  async function handleSendInvite() {
+    if (!agreementId) {
+      return;
+    }
+
+    setWorkspaceFeedback(null);
+
+    try {
+      await sendInviteMutation.mutateAsync(agreementId);
+      setWorkspaceFeedback("تم إرسال الاتفاقية للعميل / Agreement invite sent");
+    } catch (error) {
+      setWorkspaceFeedback(getSendInviteErrorMessage(error));
+    }
+  }
+
+  async function handleActivateAgreement() {
+    if (!agreementId) {
+      return;
+    }
+
+    setWorkspaceFeedback(null);
+
+    try {
+      await activateMutation.mutateAsync(agreementId);
+      setWorkspaceFeedback("تم تفعيل الاتفاقية / Agreement activated");
+    } catch (error) {
+      setWorkspaceFeedback(getAgreementErrorMessage(error));
+    }
+  }
+
+  async function handleArchiveAgreement() {
+    if (!agreementId) {
+      return;
+    }
+
+    setWorkspaceFeedback(null);
+
+    try {
+      await archiveMutation.mutateAsync(agreementId);
+      setWorkspaceFeedback("تمت أرشفة الاتفاقية / Agreement archived");
+    } catch (error) {
+      setWorkspaceFeedback(getAgreementErrorMessage(error));
+    }
+  }
+
+  if (!agreementId) {
+    return (
+      <NotFoundState
+        eyebrow="الاتفاقات"
+        code="404"
+        title="تعذر العثور على الاتفاقية"
+        description="المعرّف المطلوب غير موجود أو لم يتم تمريره إلى مساحة العمل الحالية."
+        primaryActionLabel="العودة إلى الاتفاقات"
+        primaryActionHref="/agreements"
+        highlights={[]}
+      />
+    );
+  }
+
+  if (isAgreementLoading && !agreement) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-24 w-full rounded-[14px] bg-[#1d2135]" />
+        <Skeleton className="h-52 w-full rounded-[14px] bg-[#1d2135]" />
+        <Skeleton className="h-64 w-full rounded-[14px] bg-[#1d2135]" />
+      </div>
+    );
+  }
+
+  if (isAgreementError && !agreement) {
+    const apiError = agreementError as ApiError;
+
+    if (apiError.statusCode === 404) {
+      return (
+        <NotFoundState
+          eyebrow="الاتفاقات"
+          code="404"
+          title="هذه الاتفاقية غير متاحة"
+          description="إما أن الاتفاقية غير موجودة أو أنها لا تخص حسابك الحالي."
+          primaryActionLabel="العودة إلى الاتفاقات"
+          primaryActionHref="/agreements"
+          highlights={[]}
+        />
+      );
+    }
+
+    return (
+      <section className="rounded-[14px] border border-red-500/20 bg-red-500/10 px-5 py-6 text-start text-[13px] text-red-100/90">
+        <p>{getAgreementErrorMessage(agreementError)}</p>
+        <Button
+          variant="secondary"
+          className="mt-4 h-9 rounded-[10px] border border-red-500/20 bg-red-500/10 px-4 text-[12px] font-bold text-red-50 hover:bg-red-500/20"
+          onClick={() => refetchAgreement()}
+        >
+          إعادة المحاولة
+        </Button>
+      </section>
+    );
+  }
+
+  if (!agreement) {
+    return null;
+  }
+
   return (
     <>
-      <WorkspaceHeader />
+      <WorkspaceHeader
+        agreement={agreement}
+        isSendInvitePending={sendInviteMutation.isPending}
+        isActivatePending={activateMutation.isPending}
+        isArchivePending={archiveMutation.isPending}
+        onCopyInvite={handleCopyInvite}
+        onSendInvite={handleSendInvite}
+        onActivate={handleActivateAgreement}
+        onArchive={handleArchiveAgreement}
+      />
+      {workspaceFeedback ? (
+        <section className="mb-4 rounded-[14px] border border-[#252a42] bg-[#15192b] px-4 py-3 text-start text-[12px] leading-6 text-[#c7cce0]">
+          {workspaceFeedback}
+        </section>
+      ) : null}
       {/* AR: مساحة العمل تعرض تفاصيل الاتفاق النشط بعمود محتوى وملخص جانبي مطابق لاتجاه RTL. EN: The workspace shows active agreement details with a content column and RTL-aligned side summary. */}
       <section dir="ltr" className="mx-auto flex max-w-[980px] flex-col gap-4 xl:flex-row xl:items-start">
-        <WorkspaceSidebar />
+        <WorkspaceSidebar
+          agreement={agreement}
+          paymentSummary={workspacePaymentSummary}
+        />
         <div dir="rtl" className="min-w-0 flex-1 space-y-4 pb-10">
-          <AgreementOverviewCard />
+          <AgreementOverviewCard agreement={agreement} />
+          {agreement.status !== "DRAFT" ? (
+            <section className="rounded-[14px] border border-[#252a42] bg-[#15192b] px-4 py-4 text-start text-[12px] leading-6 text-[#a7aecb] md:px-5">
+              هذه الاتفاقية للقراءة فقط حالياً. التحرير متاح للمسودات فقط.
+            </section>
+          ) : null}
           {liveMilestoneSummary && !liveMilestoneSummary.amountMatch ? (
             <section className="rounded-[14px] border border-amber-500/25 bg-amber-500/10 px-4 py-4 text-start text-[12px] leading-6 text-amber-100/85 md:px-5">
               <strong className="block text-amber-300">تنبيه توافق المبالغ</strong>
@@ -524,6 +969,10 @@ export function AgreementWorkspaceSection({
               </p>
             </section>
           ) : null}
+          <AgreementPoliciesSection
+            agreementId={agreementId}
+            isDraft={agreement.status === "DRAFT"}
+          />
           <MilestonesSection
             agreementId={agreementId}
             milestones={workspaceMilestones}

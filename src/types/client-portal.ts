@@ -70,10 +70,17 @@ export interface PortalProjectSummary {
 }
 
 export interface PortalPayment {
+  id?: string;
+  milestoneId?: string;
+  milestoneName?: string;
   label: string;
-  amount: string;
-  percent: number;
-  description: string;
+  amount: string | number;
+  currency?: string | null;
+  status?: string | null;
+  fundedAt?: string | null;
+  releasedAt?: string | null;
+  percent?: number;
+  description?: string | null;
   colorClassName?: string;
   dotClassName?: string;
 }
@@ -81,10 +88,13 @@ export interface PortalPayment {
 export interface PortalMilestone {
   id: string;
   title: string;
-  amount: string;
-  summary: string;
-  description: string;
-  acceptanceCriteria: string[];
+  amount: string | number;
+  summary?: string;
+  description?: string | null;
+  acceptanceCriteria?: string[];
+  currency?: string | null;
+  status?: string | null;
+  progress?: number | null;
 }
 
 export interface PortalPolicy {
@@ -1215,4 +1225,140 @@ export type ClientPortalAgreementsParams = PaginatedQueryParams;
 
 export type ClientPortalAgreementsResponse =
   ApiListResponse<ClientPortalAgreement>;
+
+export interface PortalInviteMilestoneSummary {
+  id: string;
+  title: string;
+  description?: string | null;
+  amount?: number | null;
+  currency?: string | null;
+}
+
+export interface PortalPolicySummary {
+  title: string;
+  description: string;
+}
+
+export interface PortalInvitePaymentSummary {
+  id: string;
+  milestoneId?: string | null;
+  milestoneName: string;
+  amount: number;
+  currency: string;
+  status?: string | null;
+}
+
+export interface PortalInviteResponse {
+  agreement: {
+    id: string;
+    title: string;
+    description: string | null;
+    status: string;
+    sentAt: string | null;
+  };
+  freelancer: {
+    name: string;
+    email: string;
+  };
+  client: {
+    name: string;
+    email: string;
+  };
+  milestones: PortalInviteMilestoneSummary[];
+  policies: PortalPolicySummary[] | null;
+  paymentPlan: PortalInvitePaymentSummary[];
+}
+
+export interface PortalDeliverySummary {
+  id: string;
+  milestoneId?: string | null;
+  milestoneName: string;
+  status: string;
+  submittedAt: string;
+}
+
+export interface PortalChangeRequestSummary {
+  id: string;
+  title?: string | null;
+  status: string;
+  amount?: number | null;
+  currency?: string | null;
+}
+
+export interface PortalPaymentSummary {
+  id: string;
+  milestoneId?: string | null;
+  milestoneName: string;
+  amount: number;
+  currency: string;
+  status: string;
+}
+
+export interface PortalTimelineEvent {
+  id: string;
+  eventType: string;
+  actorRole: string;
+  occurredAt: string;
+  description: string | null;
+}
+
+export interface PortalWorkspaceResponse {
+  agreement: {
+    id: string;
+    title: string;
+    status: string;
+    approvedAt: string | null;
+  };
+  freelancer: {
+    name: string;
+  };
+  milestones: PortalMilestone[];
+  payments: PortalPaymentSummary[];
+  deliveries: PortalDeliverySummary[];
+  changeRequests: PortalChangeRequestSummary[];
+  timelineSummary: PortalTimelineEvent[];
+}
+
+export interface PortalDeliveryReview {
+  reason?: string | null;
+  requestedChanges?: string[] | null;
+  reviewedAt?: string | null;
+}
+
+export interface PortalDelivery {
+  id: string;
+  milestoneId: string;
+  milestoneName: string;
+  status: string;
+  submittedAt: string;
+  content: string;
+  attachments: string[];
+  review: PortalDeliveryReview | null;
+}
+
+export interface PortalPaymentHistoryItem {
+  id: string;
+  paymentId: string;
+  type: string;
+  amount: number;
+  currency: string;
+  occurredAt: string;
+  note: string | null;
+}
+
+export interface PortalActionResponse {
+  agreementId: string;
+  status: string;
+  message: string;
+  timelineEventId?: string | null;
+}
+
+export interface PortalRequestChangesPayload {
+  reason: string;
+  requestedChanges?: string[] | null;
+}
+
+export interface PortalRejectAgreementPayload {
+  reason: string;
+}
 

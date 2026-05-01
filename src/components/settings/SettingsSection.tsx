@@ -2,7 +2,9 @@
 // EN: The settings page combines account summaries, internal navigation, and agreement policies in a responsive RTL interface.
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, type FieldError, type FieldErrors, type UseFormRegister } from "react-hook-form";
 import {
   Bell,
   BriefcaseBusiness,
@@ -22,8 +24,12 @@ import {
 
 import { Button } from "@/components/shared";
 import { settingsContent } from "@/constants";
+import { useDefaultPoliciesQuery, useUpdateDefaultPoliciesMutation } from "@/hooks/settings";
+import { ApiError } from "@/lib/axios-instance";
+import { policyMutationSchema } from "@/lib/agreement-policies";
 import { cn } from "@/lib/utils";
 import type {
+  DefaultPoliciesMutationPayload,
   SettingsAction,
   SettingsIconName,
   SettingsOverviewCard,
@@ -33,6 +39,117 @@ import type {
 } from "@/types";
 
 const panelKeysWithPolicies = new Set<SettingsSectionKey>(["agreementPolicies", "aiPreferences"]);
+
+type DefaultPolicyFieldName = keyof DefaultPoliciesMutationPayload;
+
+function getDefaultPoliciesFormValues(
+  values?: DefaultPoliciesMutationPayload | null,
+): DefaultPoliciesMutationPayload {
+  return {
+    delayPolicy: values?.delayPolicy ?? "",
+    cancellationPolicy: values?.cancellationPolicy ?? "",
+    extraRequestPolicy: values?.extraRequestPolicy ?? "",
+    reviewPolicy: values?.reviewPolicy ?? "",
+    clientReviewPeriodDays: values?.clientReviewPeriodDays,
+    freelancerDelayGraceDays: values?.freelancerDelayGraceDays,
+  };
+}
+
+function getPolicyFieldError(
+  errors: FieldErrors<DefaultPoliciesMutationPayload>,
+  name?: string,
+) {
+  if (!name) {
+    return undefined;
+  }
+
+  return errors[name as DefaultPolicyFieldName] as FieldError | undefined;
+}
+
+function getSettingsErrorMessage(error: unknown) {
+  const apiError = error as ApiError;
+
+  return (
+    apiError.message ||
+    "تعذر تحميل سياسات الإعدادات الآن / Could not load settings policies right now"
+  );
+}
+
+function buildSettingsPolicyCards(
+  policies: readonly SettingsPolicyCard[],
+  values: DefaultPoliciesMutationPayload,
+): SettingsPolicyCard[] {
+  return [
+    {
+      ...policies[0],
+      showDefaultToggle: false,
+      fields: [
+        {
+          label: "مدة مراجعة العميل بالأيام",
+          name: "clientReviewPeriodDays",
+          value: values.clientReviewPeriodDays ?? "",
+          inputType: "number",
+        },
+        {
+          label: "مهلة التأخير المسموحة للفريلانسر بالأيام",
+          name: "freelancerDelayGraceDays",
+          value: values.freelancerDelayGraceDays ?? "",
+          inputType: "number",
+        },
+        {
+          label: "نص السياسة",
+          name: "delayPolicy",
+          value: values.delayPolicy ?? "",
+          inputType: "textarea",
+          placeholder: "اكتب سياسة التأخير الافتراضية",
+        },
+      ],
+      enabledByDefault: true,
+    },
+    {
+      ...policies[1],
+      showDefaultToggle: false,
+      fields: [
+        {
+          label: "نص السياسة",
+          name: "cancellationPolicy",
+          value: values.cancellationPolicy ?? "",
+          inputType: "textarea",
+          placeholder: "اكتب سياسة الإلغاء الافتراضية",
+        },
+      ],
+      enabledByDefault: true,
+    },
+    {
+      ...policies[2],
+      showDefaultToggle: false,
+      fields: [
+        {
+          label: "نص السياسة",
+          name: "extraRequestPolicy",
+          value: values.extraRequestPolicy ?? "",
+          inputType: "textarea",
+          placeholder: "اكتب سياسة الطلبات الإضافية الافتراضية",
+        },
+      ],
+      enabledByDefault: true,
+    },
+    {
+      ...policies[3],
+      showDefaultToggle: false,
+      fields: [
+        {
+          label: "نص السياسة",
+          name: "reviewPolicy",
+          value: values.reviewPolicy ?? "",
+          inputType: "textarea",
+          placeholder: "اكتب سياسة المراجعة والاعتراض الافتراضية",
+        },
+      ],
+      enabledByDefault: true,
+    },
+  ];
+}
 
 function SettingsIcon({ name, className }: { name: SettingsIconName; className?: string }) {
   const iconClassName = cn("size-4", className);
@@ -241,16 +358,60 @@ function PlaceholderPanel({ onFocusPolicies }: { onFocusPolicies: () => void }) 
   );
 }
 
-function PolicyField({ field }: { field: SettingsPolicyField }) {
+function PolicyField({
+  field,
+  register,
+  error,
+  disabled = false,
+}: {
+  field: SettingsPolicyField;
+  register?: UseFormRegister<DefaultPoliciesMutationPayload>;
+  error?: FieldError;
+  disabled?: boolean;
+}) {
+  const fieldRegistration =
+    register && field.name
+      ? register(field.name as DefaultPolicyFieldName, {
+          setValueAs:
+            field.inputType === "number"
+              ? (value) => (value === "" ? undefined : Number(value))
+              : (value) => (value === "" ? null : value),
+        })
+      : undefined;
+
   if (field.inputType === "textarea") {
     return (
       <div className="space-y-2">
         <label className="block text-[12px] font-medium text-[#cbd1e8]">{field.label}</label>
         <textarea
-          defaultValue={field.value}
+          {...fieldRegistration}
+          defaultValue={fieldRegistration ? undefined : (field.value ?? "")}
           rows={4}
-          className="min-h-[86px] w-full resize-none rounded-[10px] border border-[#252a42] bg-[#1d2135] px-3 py-2.5 text-[12px] leading-6 text-white outline-none placeholder:text-[#636b8a]"
+          disabled={disabled}
+          placeholder={field.placeholder}
+          className="min-h-[86px] w-full resize-none rounded-[10px] border border-[#252a42] bg-[#1d2135] px-3 py-2.5 text-[12px] leading-6 text-white outline-none placeholder:text-[#636b8a] disabled:cursor-not-allowed disabled:opacity-60"
         />
+        {error ? (
+          <p className="text-[11px] text-red-300">{error.message}</p>
+        ) : null}
+      </div>
+    );
+  }
+
+  if (field.inputType === "number") {
+    return (
+      <div className="space-y-2">
+        <label className="block text-[12px] font-medium text-[#cbd1e8]">{field.label}</label>
+        <input
+          {...fieldRegistration}
+          type="number"
+          defaultValue={fieldRegistration ? undefined : (field.value ?? "")}
+          disabled={disabled}
+          className="h-[38px] w-full rounded-[10px] border border-[#252a42] bg-[#1d2135] px-3 text-[12px] text-white outline-none placeholder:text-[#636b8a] disabled:cursor-not-allowed disabled:opacity-60"
+        />
+        {error ? (
+          <p className="text-[11px] text-red-300">{error.message}</p>
+        ) : null}
       </div>
     );
   }
@@ -260,7 +421,7 @@ function PolicyField({ field }: { field: SettingsPolicyField }) {
       <div className="space-y-2">
         <label className="block text-[12px] font-medium text-[#cbd1e8]">{field.label}</label>
         <select
-          defaultValue={field.value}
+          defaultValue={field.value ?? ""}
           className="h-[38px] w-full rounded-[10px] border border-[#252a42] bg-[#1d2135] px-3 text-[12px] text-white outline-none"
         >
           {field.options?.map((option) => (
@@ -301,14 +462,24 @@ function PolicyField({ field }: { field: SettingsPolicyField }) {
     <div className="space-y-2">
       <label className="block text-[12px] font-medium text-[#cbd1e8]">{field.label}</label>
       <input
-        defaultValue={field.value}
+        defaultValue={field.value ?? ""}
         className="h-[38px] w-full rounded-[10px] border border-[#252a42] bg-[#1d2135] px-3 text-[12px] text-white outline-none placeholder:text-[#636b8a]"
       />
     </div>
   );
 }
 
-function PolicyCard({ card }: { card: SettingsPolicyCard }) {
+function PolicyCard({
+  card,
+  register,
+  errors,
+  disabled = false,
+}: {
+  card: SettingsPolicyCard;
+  register?: UseFormRegister<DefaultPoliciesMutationPayload>;
+  errors?: FieldErrors<DefaultPoliciesMutationPayload>;
+  disabled?: boolean;
+}) {
   return (
     <article className="rounded-[16px] border border-[#252a42] bg-[#15192b] shadow-[0_18px_40px_rgba(3,5,18,0.2)]">
       <div className="flex items-start justify-between gap-4 border-b border-[#252a42] px-5 py-4">
@@ -323,15 +494,23 @@ function PolicyCard({ card }: { card: SettingsPolicyCard }) {
 
       <div className="space-y-4 px-5 py-4">
         {card.fields.map((field) => (
-          <PolicyField key={field.label} field={field} />
+          <PolicyField
+            key={field.label}
+            field={field}
+            register={register}
+            error={getPolicyFieldError(errors ?? {}, field.name)}
+            disabled={disabled}
+          />
         ))}
 
-        <div className="border-t border-[#252a42] pt-4">
-          <div className="flex items-center justify-between gap-4 rounded-[10px] border border-[#252a42] bg-[#171b2d] px-3 py-3.5">
-            <ToggleSwitch defaultEnabled={card.enabledByDefault} />
-            <span className="text-[12px] font-medium text-[#cbd1e8]">تفعيل هذه السياسة افتراضيًا</span>
+        {card.showDefaultToggle !== false ? (
+          <div className="border-t border-[#252a42] pt-4">
+            <div className="flex items-center justify-between gap-4 rounded-[10px] border border-[#252a42] bg-[#171b2d] px-3 py-3.5">
+              <ToggleSwitch defaultEnabled={card.enabledByDefault} />
+              <span className="text-[12px] font-medium text-[#cbd1e8]">تفعيل هذه السياسة افتراضيًا</span>
+            </div>
           </div>
-        </div>
+        ) : null}
       </div>
     </article>
   );
@@ -352,6 +531,82 @@ function PoliciesPanel() {
     policyIntroDescription,
     policyIntroTitle,
   } = settingsContent.settings;
+
+  const defaultPoliciesQuery = useDefaultPoliciesQuery();
+  const updateDefaultPoliciesMutation = useUpdateDefaultPoliciesMutation();
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setError,
+    formState: { errors },
+  } = useForm<DefaultPoliciesMutationPayload>({
+    resolver: zodResolver(policyMutationSchema),
+    defaultValues: getDefaultPoliciesFormValues(),
+  });
+
+  useEffect(() => {
+    if (!defaultPoliciesQuery.data) {
+      return;
+    }
+
+    reset(getDefaultPoliciesFormValues(defaultPoliciesQuery.data));
+  }, [defaultPoliciesQuery.data, reset]);
+
+  async function onSave(values: DefaultPoliciesMutationPayload) {
+    setSaveMessage(null);
+    setSubmitError(null);
+
+    try {
+      await updateDefaultPoliciesMutation.mutateAsync(values);
+      setSaveMessage("تم حفظ السياسات الافتراضية / Default policies saved");
+    } catch (error) {
+      const apiError = error as ApiError;
+
+      if (apiError.code === "POLICY_INVALID_CONTENT") {
+        const textFields: DefaultPolicyFieldName[] = [
+          "delayPolicy",
+          "cancellationPolicy",
+          "extraRequestPolicy",
+          "reviewPolicy",
+        ];
+
+        for (const fieldName of textFields) {
+          setError(fieldName, {
+            type: "server",
+            message: "لا يمكن أن يكون النص فارغًا / Policy text cannot be empty",
+          });
+        }
+      }
+
+      if (apiError.code === "POLICY_INVALID_REVIEW_PERIOD") {
+        const numericFields: DefaultPolicyFieldName[] = [
+          "clientReviewPeriodDays",
+          "freelancerDelayGraceDays",
+        ];
+
+        for (const fieldName of numericFields) {
+          setError(fieldName, {
+            type: "server",
+            message:
+              "القيمة يجب أن تكون ضمن الحدود المسموحة / Value must stay within the allowed range",
+          });
+        }
+      }
+
+      setSubmitError(
+        apiError.message ||
+          "تعذر حفظ السياسات الافتراضية الآن / Could not save the default policies right now",
+      );
+    }
+  }
+
+  const livePolicyCards = buildSettingsPolicyCards(
+    policies,
+    defaultPoliciesQuery.data ?? getDefaultPoliciesFormValues(),
+  );
 
   return (
     <section className="space-y-4">
@@ -380,9 +635,93 @@ function PoliciesPanel() {
         </div>
       </article>
 
-      {policies.map((policy) => (
-        <PolicyCard key={policy.key} card={policy} />
-      ))}
+      {defaultPoliciesQuery.isError ? (
+        <article className="rounded-[16px] border border-red-500/20 bg-red-500/10 px-5 py-5 text-start text-[12px] leading-6 text-red-100/90">
+          <p>{getSettingsErrorMessage(defaultPoliciesQuery.error)}</p>
+          <Button
+            type="button"
+            variant="secondary"
+            className="mt-4 h-[35.6px] rounded-[10px] border border-red-500/20 bg-red-500/10 px-4 text-[12px] font-bold text-red-50 hover:bg-red-500/20"
+            onClick={() => defaultPoliciesQuery.refetch()}
+          >
+            <RefreshCcw className="size-3.5" />
+            إعادة المحاولة
+          </Button>
+        </article>
+      ) : (
+        <form onSubmit={handleSubmit(onSave)} className="space-y-4">
+          {defaultPoliciesQuery.isLoading
+            ? Array.from({ length: 4 }).map((_, index) => (
+                <article
+                  key={index}
+                  className="rounded-[16px] border border-[#252a42] bg-[#15192b] p-5 shadow-[0_18px_40px_rgba(3,5,18,0.2)]"
+                >
+                  <div className="h-5 w-40 animate-pulse rounded bg-[#252a42]" />
+                  <div className="mt-3 h-4 w-3/4 animate-pulse rounded bg-[#252a42]" />
+                  <div className="mt-5 h-28 w-full animate-pulse rounded bg-[#252a42]" />
+                </article>
+              ))
+            : livePolicyCards.map((policy) => (
+                <PolicyCard
+                  key={policy.key}
+                  card={policy}
+                  register={register}
+                  errors={errors}
+                  disabled={updateDefaultPoliciesMutation.isPending}
+                />
+              ))}
+
+          <article className="rounded-[16px] border border-[#252a42] bg-[#15192b] p-5 shadow-[0_18px_40px_rgba(3,5,18,0.2)]">
+            <div className="flex items-start gap-2 rounded-[12px] border border-[#2d3252] bg-[#171b2d] px-3 py-3 text-[12px] font-medium text-[#cbd1e8]">
+              <CircleAlert className="mt-1 size-3.5 shrink-0 text-amber-400" />
+              <p>{footerBanner}</p>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Button
+                type="submit"
+                className="h-[35.6px] rounded-[10px] border border-transparent bg-[#6f52ff] px-3.5 text-[13px] font-bold text-white shadow-[0_14px_30px_rgba(111,82,255,0.26)] hover:bg-[#7b63ff]"
+                disabled={updateDefaultPoliciesMutation.isPending || defaultPoliciesQuery.isLoading}
+              >
+                <Save className="size-3.5" />
+                {updateDefaultPoliciesMutation.isPending ? "جارٍ الحفظ..." : "حفظ التغييرات"}
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                className="h-[35.6px] rounded-[10px] border border-[#252a42] bg-[#1d2135] px-3.5 text-[13px] font-bold text-white hover:bg-[#262b49]"
+                onClick={() => reset(getDefaultPoliciesFormValues(defaultPoliciesQuery.data))}
+              >
+                <X className="size-3.5" />
+                إلغاء
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                className="h-[35.6px] rounded-[10px] border border-[#252a42] bg-[#1d2135] px-3.5 text-[13px] font-bold text-white hover:bg-[#262b49]"
+                onClick={() => {
+                  reset(getDefaultPoliciesFormValues(defaultPoliciesQuery.data));
+                  setSaveMessage(null);
+                  setSubmitError(null);
+                }}
+              >
+                <RefreshCcw className="size-3.5" />
+                استعادة آخر قيمة
+              </Button>
+            </div>
+            {saveMessage ? (
+              <p className="mt-4 rounded-[10px] border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-[12px] leading-6 text-emerald-100/90">
+                {saveMessage}
+              </p>
+            ) : null}
+            {submitError ? (
+              <p className="mt-4 rounded-[10px] border border-red-500/20 bg-red-500/10 px-4 py-3 text-[12px] leading-6 text-red-100/90">
+                {submitError}
+              </p>
+            ) : null}
+            <p className="mt-4 text-[11px] leading-6 text-[#737b99]">{footerNote}</p>
+          </article>
+        </form>
+      )}
 
       <article className="rounded-[16px] border border-[#252a42] bg-[#15192b] p-5 shadow-[0_18px_40px_rgba(3,5,18,0.2)]">
         <div className="flex items-start justify-between gap-4">
@@ -425,19 +764,6 @@ function PoliciesPanel() {
           <Info className="mt-1 size-3.5 shrink-0 text-[#8b74ff]" />
           <p>{aiPreferenceHint}</p>
         </div>
-      </article>
-
-      <article className="rounded-[16px] border border-[#252a42] bg-[#15192b] p-5 shadow-[0_18px_40px_rgba(3,5,18,0.2)]">
-        <div className="flex items-start gap-2 rounded-[12px] border border-[#2d3252] bg-[#171b2d] px-3 py-3 text-[12px] font-medium text-[#cbd1e8]">
-          <CircleAlert className="mt-1 size-3.5 shrink-0 text-amber-400" />
-          <p>{footerBanner}</p>
-        </div>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {settingsContent.settings.actions.map((action, index) => (
-            <TopActionButton key={action.label} action={action} emphasized={index === 0} />
-          ))}
-        </div>
-        <p className="mt-4 text-[11px] leading-6 text-[#737b99]">{footerNote}</p>
       </article>
     </section>
   );

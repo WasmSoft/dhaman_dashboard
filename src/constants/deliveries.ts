@@ -1,4 +1,52 @@
-import type { DeliveriesContent } from "@/types";
+import type { DeliveryStatus, DeliveriesContent } from "@/types";
+
+// AR: ملصقات الفلاتر العربية لحالات التسليم المستخدمة في الشريط العلوي.
+// EN: Arabic filter labels for delivery statuses used in the filter bar.
+export const deliveryStatusLabelMap: Record<DeliveryStatus, string> = {
+  DRAFT: "مسودة",
+  SUBMITTED: "تم الإرسال",
+  CLIENT_REVIEW: "تحت مراجعة العميل",
+  CHANGES_REQUESTED: "طلب تعديل",
+  ACCEPTED: "مقبولة",
+  DISPUTED: "نزاع",
+};
+
+// AR: الحالة الافتراضية لعرض حالة غير معروفة.
+// EN: Default label for unknown statuses.
+export const deliveryStatusFallbackLabel = "غير معروف";
+
+// AR: فلاتر الحالات كقائمة ثابتة بالقيم والأسماء العربية.
+// EN: Status filter options as a static array of values and Arabic labels.
+export const deliveryStatusFilterOptions: { value: DeliveryStatus; label: string }[] = [
+  { value: "DRAFT", label: "مسودة" },
+  { value: "SUBMITTED", label: "تم الإرسال" },
+  { value: "CLIENT_REVIEW", label: "تحت مراجعة العميل" },
+  { value: "CHANGES_REQUESTED", label: "طلب تعديل" },
+  { value: "ACCEPTED", label: "مقبولة" },
+  { value: "DISPUTED", label: "نزاع" },
+];
+
+// AR: نصوص واجهة التسليمات — عناوين، تلميحات، رسائل فارغة، أخطاء.
+// EN: Deliveries UI strings — titles, placeholders, empty states, errors.
+export const deliveriesUiStrings = {
+  pageTitle: "التسليمات",
+  pageSubtitle: "تابع كل تسليمات المراحل، مراجعات العملاء، وحالة الدفعات المرتبطة بها.",
+  searchPlaceholder: "ابحث باسم المشروع أو العميل...",
+  exportLabel: "تصدير التقرير",
+  createLabel: "تقديم تسليم جديد",
+  emptyTitle: "لا توجد تسليمات",
+  emptyMessage: "لم يتم العثور على تسليمات تطابق الفلاتر الحالية.",
+  errorTitle: "خطأ في تحميل التسليمات",
+  errorRetry: "حاول مرة أخرى",
+  loadingText: "جارٍ التحميل...",
+  viewLabel: "عرض التفاصيل",
+  editLabel: "تعديل",
+  submitLabel: "إرسال للمراجعة",
+  paginationPrevious: "السابق",
+  paginationNext: "التالي",
+  paginationPage: "صفحة",
+  paginationOf: "من",
+} as const;
 
 export const deliveriesContent = {
   title: "التسليمات",
@@ -7,10 +55,10 @@ export const deliveriesContent = {
   exportLabel: "تصدير التقرير",
   createLabel: "تقديم تسليم جديد",
   metrics: [
-    { label: "بانتظار التسليم", value: "3", helper: "مراحل جاهزة للتسليم", badge: "انتباه", tone: "amber" },
-    { label: "تحت مراجعة العميل", value: "2", helper: "تسليمات تم إرسالها", badge: "نشط", tone: "violet" },
-    { label: "مقبولة", value: "5", helper: "دفعات جاهزة أو مصروفة", badge: "مكتمل", tone: "emerald" },
-    { label: "تحتاج إجراء", value: "1", helper: "طلب تعديل أو اعتراض", badge: "عاجل", tone: "red" },
+    { label: "بانتظار التسليم", value: "3", helper: "مراحل جاهزة للتسليم", badge: "انتباه", tone: "amber" as const },
+    { label: "تحت مراجعة العميل", value: "2", helper: "تسليمات تم إرسالها", badge: "نشط", tone: "violet" as const },
+    { label: "مقبولة", value: "5", helper: "دفعات جاهزة أو مصروفة", badge: "مكتمل", tone: "emerald" as const },
+    { label: "تحتاج إجراء", value: "1", helper: "طلب تعديل أو اعتراض", badge: "عاجل", tone: "red" as const },
   ],
   filters: [
     { label: "الكل", count: "5", active: true },
@@ -30,9 +78,9 @@ export const deliveriesContent = {
       milestone: "المرحلة الأولى: الهيكل والتصميم الأولي",
       delivery: "رابط Figma",
       deliveryStatus: "تحت مراجعة العميل",
-      deliveryTone: "review",
+      deliveryTone: "review" as const,
       paymentStatus: "Client Review",
-      paymentTone: "client",
+      paymentTone: "client" as const,
       amount: "$150",
       lastUpdate: "منذ ساعتين",
       actionLabel: "عرض التسليم",
@@ -45,9 +93,9 @@ export const deliveriesContent = {
       milestone: "المرحلة الثانية: النماذج النهائية",
       delivery: "ZIP + Drive",
       deliveryStatus: "طلب تعديل",
-      deliveryTone: "change",
+      deliveryTone: "change" as const,
       paymentStatus: "On Hold",
-      paymentTone: "hold",
+      paymentTone: "hold" as const,
       amount: "$300",
       lastUpdate: "منذ 5 ساعات",
       actionLabel: "مراجعة طلب التعديل",
@@ -59,9 +107,9 @@ export const deliveriesContent = {
       milestone: "المرحلة الأولى: الصفحة الرئيسية",
       delivery: "Live Demo",
       deliveryStatus: "مقبولة",
-      deliveryTone: "accepted",
+      deliveryTone: "accepted" as const,
       paymentStatus: "Ready to Release",
-      paymentTone: "ready",
+      paymentTone: "ready" as const,
       amount: "$250",
       lastUpdate: "أمس",
       actionLabel: "عرض التفاصيل",
@@ -73,9 +121,9 @@ export const deliveriesContent = {
       milestone: "المرحلة الثالثة: التصميم النهائي",
       delivery: "بانتظار الإرسال",
       deliveryStatus: "بانتظار التسليم",
-      deliveryTone: "pending",
+      deliveryTone: "pending" as const,
       paymentStatus: "Reserved",
-      paymentTone: "reserved",
+      paymentTone: "reserved" as const,
       amount: "$400",
       lastUpdate: "اليوم",
       actionLabel: "تقديم تسليم",
@@ -87,9 +135,9 @@ export const deliveriesContent = {
       milestone: "المرحلة الأولى: نسخة أولية",
       delivery: "Google Doc",
       deliveryStatus: "AI Review",
-      deliveryTone: "ai",
+      deliveryTone: "ai" as const,
       paymentStatus: "AI Review",
-      paymentTone: "ai",
+      paymentTone: "ai" as const,
       amount: "$120",
       lastUpdate: "منذ يومين",
       actionLabel: "عرض مراجعة AI",

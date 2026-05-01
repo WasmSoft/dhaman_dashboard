@@ -7,7 +7,7 @@ The purpose of this file is to keep the project architecture clean, consistent, 
 Do not ignore these rules when building UI, adding logic, using MCP servers, generating code, integrating APIs, writing tests, or refactoring existing files.
 
 <!-- SPECKIT START -->
-Current SpecKit plan: `specs/001-payments-frontend-integration/plan.md`
+Current SpecKit plan: `specs/004-deliveries-frontend/plan.md`
 <!-- SPECKIT END -->
 
 ---

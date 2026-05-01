@@ -1,25 +1,23 @@
+"use client";
+
 import Link from "next/link";
-import { AlertTriangle, ArrowUpDown, CheckCircle2, Circle, Clock3, Copy, Download, ExternalLink, Eye, FileText, Filter, MoreVertical, Search, Send, Sparkles } from "lucide-react";
+import { useState, useMemo, useCallback } from "react";
+import { AlertTriangle, ArrowUpDown, CheckCircle2, Circle, Clock3, Copy, Download, ExternalLink, FileText, Filter, MoreVertical, Search, Send, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/shared";
 import { Input } from "@/components/shared/input";
-import { deliveriesContent } from "@/constants";
+import { useDeliveriesQuery, useDeliveryFilters } from "@/hooks/deliveries";
+import { DeliveryStatusBadge } from "@/components/deliveries/DeliveryStatusBadge";
+import { deliveriesContent, deliveryStatusFilterOptions, deliveriesUiStrings } from "@/constants";
+import { getDeliveryStatusLabel, getDeliveryErrorMessage, isEvidenceRequired } from "@/lib/deliveries/helpers";
 import { cn } from "@/lib/utils";
-import type { DeliveryMetricTone, DeliveryPaymentTone, DeliveryStatusTone, DeliveryTableItem } from "@/types";
+import type { Delivery, DeliveryStatus, DeliveryMetricTone, DeliveryPaymentTone, DeliveryStatusTone, DeliveryTableItem } from "@/types";
 
 const metricToneClasses: Record<DeliveryMetricTone, { card: string; icon: string; badge: string; value: string }> = {
   amber: { card: "border-amber-500/25 bg-amber-500/10", icon: "bg-amber-500/15 text-amber-300", badge: "bg-amber-500/20 text-amber-300", value: "text-white" },
   violet: { card: "border-[#6f52ff]/25 bg-[#6f52ff]/10", icon: "bg-[#6f52ff]/20 text-[#a898ff]", badge: "bg-[#6f52ff]/20 text-[#a898ff]", value: "text-white" },
   emerald: { card: "border-emerald-500/25 bg-emerald-500/10", icon: "bg-emerald-500/15 text-emerald-300", badge: "bg-emerald-500/20 text-emerald-300", value: "text-white" },
   red: { card: "border-red-500/25 bg-red-500/10", icon: "bg-red-500/15 text-red-300", badge: "bg-red-500/20 text-red-300", value: "text-white" },
-};
-
-const deliveryToneClasses: Record<DeliveryStatusTone, string> = {
-  review: "bg-[#6f52ff]/20 text-[#cfc6ff]",
-  change: "bg-amber-500/20 text-amber-300",
-  accepted: "bg-emerald-500/15 text-emerald-300",
-  pending: "bg-amber-500/20 text-amber-300",
-  ai: "bg-[#6f52ff]/20 text-[#a898ff]",
 };
 
 const paymentToneClasses: Record<DeliveryPaymentTone, string> = {
@@ -33,8 +31,7 @@ const paymentToneClasses: Record<DeliveryPaymentTone, string> = {
 function metricIcon(tone: DeliveryMetricTone) {
   if (tone === "red") return <AlertTriangle className="size-4" />;
   if (tone === "emerald") return <CheckCircle2 className="size-4" />;
-  if (tone === "violet") return <Eye className="size-4" />;
-
+  if (tone === "violet") return <ExternalLink className="size-4" />;
   return <Clock3 className="size-4" />;
 }
 
@@ -48,9 +45,9 @@ function DeliveriesHeader() {
         <p className="mt-1 text-[13px] leading-6 text-[#737b99]">{content.subtitle}</p>
       </div>
 
-      <div className="order-1 flex  gap-2 lg:order-2">
+      <div className="order-1 flex gap-2 lg:order-2">
         <Button asChild className="h-[41px] rounded-[10px] bg-[#6f52ff] px-4 text-[13px] font-bold text-white shadow-[0_12px_28px_rgba(111,82,255,0.26)] hover:bg-[#7b63ff]">
-          <Link href="/agreements/delivery">
+          <Link href="/agreements">
             <Send className="size-[15px]" />
             {content.createLabel}
           </Link>
@@ -70,8 +67,6 @@ function DeliveriesHeader() {
 
 function DeliveriesMetrics() {
   return (
-    // AR: نترك مساحة الشريط الجانبي في جهة النهاية حتى تبدأ البطاقات من اليمين داخل تخطيط RTL.
-    // EN: Reserve sidebar space on the inline end side so the cards start from the right in the RTL layout.
     <section className="mb-6 grid max-w-[966px] justify-start gap-4 sm:grid-cols-2 xl:me-[284px] xl:grid-cols-4">
       {deliveriesContent.metrics.map((metric) => (
         <article key={metric.label} className={cn("relative min-h-[109px] rounded-[12px] border p-[18px] text-start", metricToneClasses[metric.tone].card)}>
@@ -87,16 +82,21 @@ function DeliveriesMetrics() {
 }
 
 function FilterBar() {
+  const { status, setStatus, resetFilters } = useDeliveryFilters();
+
   return (
     <section className="rounded-[14px] border border-[#252a42] bg-[#15192b] p-4">
       <div className="flex flex-wrap justify-start gap-2 lg:justify-end">
-        {deliveriesContent.filters.map((filter) => {
-          const isActive = "active" in filter && filter.active;
+        {deliveryStatusFilterOptions.map((opt) => {
+          const isActive = status === opt.value;
 
           return (
-            <button key={filter.label} className={cn("inline-flex h-8 items-center gap-2 rounded-[9px] border px-3 text-[12px] font-bold transition", isActive ? "border-[#6f52ff]/50 bg-[#6f52ff]/25 text-[#cfc6ff]" : "border-[#252a42] bg-[#101323] text-[#8a91ac] hover:text-white")} type="button">
-              <span>{filter.label}</span>
-              <span className="rounded-full bg-[#262b49] px-1.5 text-[10px] text-[#a898ff]">{filter.count}</span>
+            <button key={opt.value}
+              className={cn("inline-flex h-8 items-center gap-2 rounded-[9px] border px-3 text-[12px] font-bold transition", isActive ? "border-[#6f52ff]/50 bg-[#6f52ff]/25 text-[#cfc6ff]" : "border-[#252a42] bg-[#101323] text-[#8a91ac] hover:text-white")}
+              type="button"
+              onClick={() => setStatus(isActive ? "" : opt.value)}
+            >
+              {opt.label}
             </button>
           );
         })}
@@ -125,7 +125,7 @@ function DeliveryLinkLabel({ delivery }: { delivery: string }) {
 
 function DeliveryRow({ item }: { item: DeliveryTableItem }) {
   return (
-    <tr className={cn("h-[69px] border-t border-[#252a42] text-[12px] text-[#c7cce0]", item.active && "bg-[#6f52ff]/10 shadow-[inset_0_0_0_1px_rgba(111,82,255,0.55)]")}> 
+    <tr className={cn("h-[69px] border-t border-[#252a42] text-[12px] text-[#c7cce0]", item.active && "bg-[#6f52ff]/10 shadow-[inset_0_0_0_1px_rgba(111,82,255,0.55)]")}>
       <td className="px-4">
         <div className="flex items-center gap-3">
           <span className={cn("size-2 shrink-0 rounded-full", item.active ? "bg-[#6f52ff]" : "bg-[#323858]")} />
@@ -137,14 +137,16 @@ function DeliveryRow({ item }: { item: DeliveryTableItem }) {
       </td>
       <td className="px-4 text-start leading-5 text-[#c7cce0]">{item.milestone}</td>
       <td className="px-4"><DeliveryLinkLabel delivery={item.delivery} /></td>
-      <td className="px-4"><span className={cn("rounded-md px-2.5 py-1 text-[11px] font-bold", deliveryToneClasses[item.deliveryTone])}>{item.deliveryStatus}</span></td>
+      <td className="px-4"><DeliveryStatusBadge status={item.deliveryStatus} /></td>
       <td className="px-4"><span className={cn("rounded-md px-2.5 py-1 text-[11px] font-bold", paymentToneClasses[item.paymentTone])}>{item.paymentStatus}</span></td>
       <td className="px-4 font-extrabold text-emerald-300" dir="ltr">{item.amount}</td>
       <td className="px-4 text-[#8a91ac]">{item.lastUpdate}</td>
       <td className="px-4">
         <div className="flex items-center gap-2">
-          <Button variant="secondary" className="h-7 rounded-[8px] border border-[#6f52ff]/25 bg-[#6f52ff]/20 px-3 text-[11px] font-bold text-[#cfc6ff] hover:bg-[#6f52ff]/30 hover:text-white">
-            {item.actionLabel}
+          <Button asChild variant="secondary" className="h-7 rounded-[8px] border border-[#6f52ff]/25 bg-[#6f52ff]/20 px-3 text-[11px] font-bold text-[#cfc6ff] hover:bg-[#6f52ff]/30 hover:text-white">
+            <Link href={`/deliveries/${item.id}`}>
+              {item.actionLabel}
+            </Link>
           </Button>
           <Button size="icon-xs" variant="secondary" className="rounded-[7px] border border-[#252a42] bg-[#101323] text-[#8a91ac] hover:text-white">
             <MoreVertical className="size-3.5" />
@@ -155,7 +157,7 @@ function DeliveryRow({ item }: { item: DeliveryTableItem }) {
   );
 }
 
-function DeliveriesTable() {
+function DeliveriesTable({ deliveries }: { deliveries: DeliveryTableItem[] }) {
   return (
     <section className="rounded-[14px] border border-[#252a42] bg-[#15192b]">
       <div className="overflow-x-auto">
@@ -168,7 +170,7 @@ function DeliveriesTable() {
             </tr>
           </thead>
           <tbody>
-            {deliveriesContent.deliveries.map((item) => (
+            {deliveries.map((item) => (
               <DeliveryRow key={item.id} item={item} />
             ))}
           </tbody>
@@ -192,7 +194,7 @@ function SelectedSummaryCard() {
       <div className="my-4 h-px bg-[#252a42]" />
       <div className="space-y-3 text-[12px]">
         <div className="flex items-center justify-between gap-3">
-          <span className={cn("rounded-md px-2.5 py-1 text-[11px] font-bold", deliveryToneClasses.review)}>{summary.status}</span>
+          <span className="rounded-md px-2.5 py-1 text-[11px] font-bold bg-[#6f52ff]/20 text-[#cfc6ff]">{summary.status}</span>
           <span className="text-[#737b99]">{summary.statusLabel}</span>
         </div>
         <div className="flex items-center justify-between gap-3">
@@ -273,17 +275,94 @@ function DeliveriesSidebar() {
   );
 }
 
+function LoadingState() {
+  return (
+    <div data-testid="deliveries-loading" className="flex items-center justify-center py-20">
+      <div className="size-8 animate-spin rounded-full border-2 border-[#6f52ff] border-t-transparent" />
+    </div>
+  );
+}
+
+function EmptyState() {
+  return (
+    <div data-testid="deliveries-empty" className="flex flex-col items-center justify-center gap-3 py-20 text-center">
+      <FileText className="size-12 text-[#636b8a]" />
+      <p className="text-[14px] font-bold text-white">{deliveriesUiStrings.emptyTitle}</p>
+      <p className="text-[13px] text-[#737b99]">{deliveriesUiStrings.emptyMessage}</p>
+    </div>
+  );
+}
+
+function ErrorState({ message }: { message: string }) {
+  return (
+    <div data-testid="deliveries-error" className="flex flex-col items-center justify-center gap-3 py-20 text-center">
+      <AlertTriangle className="size-12 text-red-400" />
+      <p className="text-[14px] font-bold text-red-400">{deliveriesUiStrings.errorTitle}</p>
+      <p className="text-[13px] text-[#737b99]">{message}</p>
+    </div>
+  );
+}
+
 export function DeliveriesSection() {
+  const { filters, status, setStatus, resetFilters } = useDeliveryFilters();
+  const { data, isLoading, error } = useDeliveriesQuery(filters);
+
+  const deliveryRows: DeliveryTableItem[] = useMemo(() => {
+    if (!data?.items) return [];
+    return data.items.map((d) => ({
+      id: d.id,
+      project: d.agreementTitle,
+      client: "",
+      milestone: d.milestoneName,
+      delivery: d.deliveryUrl ? "رابط" : d.fileUrl ? d.fileName ?? "ملف" : "—",
+      deliveryStatus: getDeliveryStatusLabel(d.status),
+      deliveryTone: "review" as DeliveryStatusTone,
+      paymentStatus: d.payment?.status ?? "—",
+      paymentTone: "client" as DeliveryPaymentTone,
+      amount: d.payment?.amount ?? "—",
+      lastUpdate: d.updatedAt ? new Date(d.updatedAt).toLocaleDateString("ar-SA") : "—",
+      actionLabel: "عرض التفاصيل",
+    }));
+  }, [data]);
+
+  if (isLoading) {
+    return (
+      <>
+        <DeliveriesHeader />
+        <LoadingState />
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <DeliveriesHeader />
+        <ErrorState message={error.message} />
+      </>
+    );
+  }
+
   return (
     <>
       <DeliveriesHeader />
       <DeliveriesMetrics />
-      {/* AR: صفحة التسليمات تطابق Figma بملخص يسار وجدول رئيسي يمين مع محاذاة RTL للنص. EN: The deliveries page matches Figma with a left summary and right table while preserving RTL text alignment. */}
       <section dir="ltr" className="flex max-w-[1230px] flex-col gap-4 xl:flex-row xl:items-start">
         <DeliveriesSidebar />
         <div dir="rtl" className="min-w-0 flex-1 space-y-3">
           <FilterBar />
-          <DeliveriesTable />
+          {data?.items && data.items.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <DeliveriesTable deliveries={deliveryRows} />
+          )}
+          {data && data.totalPages > 1 && (
+            <div className="flex items-center justify-center gap-3 pt-4">
+              <span className="text-[12px] text-[#737b99]">
+                {deliveriesUiStrings.paginationPage} {data.page} {deliveriesUiStrings.paginationOf} {data.totalPages}
+              </span>
+            </div>
+          )}
         </div>
       </section>
     </>

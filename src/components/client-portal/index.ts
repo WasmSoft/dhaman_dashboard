@@ -1,5 +1,11 @@
 export { PortalTimelineEvidence } from "./PortalTimelineEvidence";
 export { PortalTimelineSection } from "./PortalTimelineSection";
+export { PortalErrorSection } from "./PortalErrorSection";
+export { PortalInviteSection } from "./PortalInviteSection";
+export { PortalWorkspaceSection } from "./PortalWorkspaceSection";
+export { PortalDeliverySection } from "./PortalDeliverySection";
+export { PortalPaymentsSection } from "./PortalPaymentsSection";
+export { PortalPaymentHistorySection } from "./PortalPaymentHistorySection";
 export { PortalSection } from "./PortalSection";
 export { TrackingDetailsSection } from "./TrackingDetailsSection";
 export { TrackingFinalSection } from "./TrackingFinalSection";

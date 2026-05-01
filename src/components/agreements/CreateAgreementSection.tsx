@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import { ArrowRight, Bot, CalendarDays, CheckCircle2, Circle, ClipboardList, CreditCard, FileText, LockKeyhole, Save, Sparkles, UsersRound } from "lucide-react";
 
 import { Button } from "@/components/shared";
 import { Input } from "@/components/shared/input";
 import { agreementsContent } from "@/constants";
+import { useCreateAgreementMutation } from "@/hooks/agreements";
+import { ApiError } from "@/lib/axios-instance";
 import { cn } from "@/lib/utils";
 import type { CreateAgreementStep, GeneratedPlan } from "@/types";
 import { AiPlanSection } from "./AiPlanSection";
@@ -56,7 +59,29 @@ function CreateAgreementHeader() {
   );
 }
 
-function ProjectDetailsCard() {
+function ProjectDetailsCard({
+  title,
+  description,
+  durationText,
+  serviceType,
+  expectedDeliveryDate,
+  onTitleChange,
+  onDescriptionChange,
+  onDurationTextChange,
+  onServiceTypeChange,
+  onExpectedDeliveryDateChange,
+}: {
+  title: string;
+  description: string;
+  durationText: string;
+  serviceType: string;
+  expectedDeliveryDate: string;
+  onTitleChange: (value: string) => void;
+  onDescriptionChange: (value: string) => void;
+  onDurationTextChange: (value: string) => void;
+  onServiceTypeChange: (value: string) => void;
+  onExpectedDeliveryDateChange: (value: string) => void;
+}) {
   const section = agreementsContent.createAgreementPage.sections.project;
 
   return (
@@ -65,26 +90,26 @@ function ProjectDetailsCard() {
       <div className="space-y-4">
         <div>
           <FieldLabel>{section.nameLabel}</FieldLabel>
-          <Input className="h-11 rounded-[10px] border-[#252a42] bg-[#1d2135] text-right text-[13px] text-white placeholder:text-[#58607c] focus-visible:ring-[#6f52ff]/20" placeholder={section.namePlaceholder} />
+          <Input className="h-11 rounded-[10px] border-[#252a42] bg-[#1d2135] text-right text-[13px] text-white placeholder:text-[#58607c] focus-visible:ring-[#6f52ff]/20" placeholder={section.namePlaceholder} value={title} onChange={(event) => onTitleChange(event.target.value)} />
         </div>
         <div>
           <FieldLabel>{section.descriptionLabel}</FieldLabel>
-          <textarea className="min-h-[118px] w-full resize-none rounded-[10px] border border-[#252a42] bg-[#1d2135] px-3 py-3 text-right text-[13px] leading-6 text-white outline-none placeholder:text-[#58607c] focus:border-[#6f52ff]/60 focus:ring-2 focus:ring-[#6f52ff]/20" placeholder={section.descriptionPlaceholder} />
+          <textarea className="min-h-[118px] w-full resize-none rounded-[10px] border border-[#252a42] bg-[#1d2135] px-3 py-3 text-right text-[13px] leading-6 text-white outline-none placeholder:text-[#58607c] focus:border-[#6f52ff]/60 focus:ring-2 focus:ring-[#6f52ff]/20" placeholder={section.descriptionPlaceholder} value={description} onChange={(event) => onDescriptionChange(event.target.value)} />
         </div>
         <div className="grid gap-4 md:grid-cols-2">
           <div>
             <FieldLabel>{section.durationLabel}</FieldLabel>
-            <Input className="h-11 rounded-[10px] border-[#252a42] bg-[#1d2135] text-right text-[13px] text-white placeholder:text-[#58607c] focus-visible:ring-[#6f52ff]/20" placeholder={section.durationPlaceholder} />
+            <Input className="h-11 rounded-[10px] border-[#252a42] bg-[#1d2135] text-right text-[13px] text-white placeholder:text-[#58607c] focus-visible:ring-[#6f52ff]/20" placeholder={section.durationPlaceholder} value={durationText} onChange={(event) => onDurationTextChange(event.target.value)} />
           </div>
           <div>
             <FieldLabel>{section.serviceLabel}</FieldLabel>
-            <Input className="h-11 rounded-[10px] border-[#252a42] bg-[#1d2135] text-right text-[13px] text-white placeholder:text-[#58607c] focus-visible:ring-[#6f52ff]/20" placeholder={section.servicePlaceholder} />
+            <Input className="h-11 rounded-[10px] border-[#252a42] bg-[#1d2135] text-right text-[13px] text-white placeholder:text-[#58607c] focus-visible:ring-[#6f52ff]/20" placeholder={section.servicePlaceholder} value={serviceType} onChange={(event) => onServiceTypeChange(event.target.value)} />
           </div>
         </div>
         <div>
           <FieldLabel>{section.deliveryLabel}</FieldLabel>
           <div className="relative">
-            <Input className="h-11 rounded-[10px] border-[#252a42] bg-[#1d2135] pe-10 text-right text-[13px] text-white placeholder:text-[#58607c] focus-visible:ring-[#6f52ff]/20" />
+            <Input className="h-11 rounded-[10px] border-[#252a42] bg-[#1d2135] pe-10 text-right text-[13px] text-white placeholder:text-[#58607c] focus-visible:ring-[#6f52ff]/20" type="date" value={expectedDeliveryDate} onChange={(event) => onExpectedDeliveryDateChange(event.target.value)} />
             <CalendarDays className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-[#58607c]" />
           </div>
         </div>
@@ -118,7 +143,15 @@ function ClientDetailsCard() {
   );
 }
 
-function PaymentDetailsCard({ incorporatedMilestones }: { incorporatedMilestones?: import('@/types').GeneratedMilestone[] }) {
+function PaymentDetailsCard({
+  currency,
+  onCurrencyChange,
+  incorporatedMilestones,
+}: {
+  currency: string;
+  onCurrencyChange: (value: string) => void;
+  incorporatedMilestones?: import('@/types').GeneratedMilestone[];
+}) {
   const section = agreementsContent.createAgreementPage.sections.payment;
 
   return (
@@ -131,7 +164,7 @@ function PaymentDetailsCard({ incorporatedMilestones }: { incorporatedMilestones
           </div>
           <div>
             <FieldLabel>{section.currencyLabel}</FieldLabel>
-            <Input className="h-11 rounded-[10px] border-[#252a42] bg-[#1d2135] text-right text-[13px] text-white focus-visible:ring-[#6f52ff]/20" />
+            <Input className="h-11 rounded-[10px] border-[#252a42] bg-[#1d2135] text-right text-[13px] text-white focus-visible:ring-[#6f52ff]/20" value={currency} onChange={(event) => onCurrencyChange(event.target.value)} />
           </div>
         </div>
         <div>
@@ -256,10 +289,19 @@ function CreateAgreementSidebar() {
 
 export function CreateAgreementSection() {
   const content = agreementsContent.createAgreementPage;
+  const router = useRouter();
+  const createAgreementMutation = useCreateAgreementMutation();
 
   // AR: حالة الخطة المدمجة في نموذج الاتفاقية.
   // EN: State for the plan incorporated into the agreement form.
   const [incorporatedPlan, setIncorporatedPlan] = useState<GeneratedPlan | null>(null);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [durationText, setDurationText] = useState("");
+  const [serviceType, setServiceType] = useState("");
+  const [expectedDeliveryDate, setExpectedDeliveryDate] = useState("");
+  const [currency, setCurrency] = useState("SAR");
+  const [formError, setFormError] = useState<string | null>(null);
 
   // AR: تملأ هذه الدالة حقول نموذج الاتفاقية من الخطة المولَّدة.
   // EN: Populates the agreement form fields from the generated plan.
@@ -268,23 +310,71 @@ export function CreateAgreementSection() {
     console.log('Plan incorporated:', plan);
   }
 
+  async function handleCreateAgreement() {
+    if (!title.trim()) {
+      setFormError("عنوان الاتفاقية مطلوب / Agreement title is required");
+      return;
+    }
+
+    setFormError(null);
+
+    try {
+      const agreement = await createAgreementMutation.mutateAsync({
+        title: title.trim(),
+        description: description.trim() || undefined,
+        durationText: durationText.trim() || undefined,
+        serviceType: serviceType.trim() || undefined,
+        expectedDeliveryDate: expectedDeliveryDate || undefined,
+        currency: currency.trim() || undefined,
+      });
+
+      router.push(`/agreements/${agreement.id}`);
+    } catch (error) {
+      const apiError = error as ApiError;
+      setFormError(
+        apiError.message ||
+          "تعذر إنشاء الاتفاقية الآن / Could not create the agreement right now",
+      );
+    }
+  }
+
   return (
     <>
       <CreateAgreementHeader />
       <section dir="ltr" className="flex flex-col gap-4 xl:flex-row xl:items-start">
         <CreateAgreementSidebar />
         <div dir="rtl" className="min-w-0 flex-1 space-y-4">
-          <ProjectDetailsCard />
+          <ProjectDetailsCard
+            title={title}
+            description={description}
+            durationText={durationText}
+            serviceType={serviceType}
+            expectedDeliveryDate={expectedDeliveryDate}
+            onTitleChange={setTitle}
+            onDescriptionChange={setDescription}
+            onDurationTextChange={setDurationText}
+            onServiceTypeChange={setServiceType}
+            onExpectedDeliveryDateChange={setExpectedDeliveryDate}
+          />
           <ClientDetailsCard />
-          <PaymentDetailsCard incorporatedMilestones={incorporatedPlan?.milestones} />
+          <PaymentDetailsCard
+            currency={currency}
+            onCurrencyChange={setCurrency}
+            incorporatedMilestones={incorporatedPlan?.milestones}
+          />
           <PoliciesCard incorporatedPolicies={incorporatedPlan?.policies} />
           <AiPlanSection onIncorporate={handleIncorporate} />
+          {formError ? (
+            <section className="rounded-[12px] border border-red-500/20 bg-red-500/10 px-4 py-3 text-[12px] leading-6 text-red-100/90">
+              {formError}
+            </section>
+          ) : null}
           <div className="flex flex-col gap-3 pb-10 sm:flex-row sm:items-center sm:justify-between">
             <p className="max-w-sm text-[12px] leading-6 text-[#737b99]">{content.footerNote}</p>
             <div className="flex flex-wrap gap-2">
-              <Button variant="secondary" className="h-10 rounded-[10px] border border-[#252a42] bg-[#15192b] px-4 text-[13px] font-bold text-[#c7cce0] hover:bg-[#1d2135] hover:text-white">
+              <Button variant="secondary" className="h-10 rounded-[10px] border border-[#252a42] bg-[#15192b] px-4 text-[13px] font-bold text-[#c7cce0] hover:bg-[#1d2135] hover:text-white" onClick={handleCreateAgreement} disabled={createAgreementMutation.isPending}>
                 <Save className="size-4" />
-                {content.saveDraftLabel}
+                {createAgreementMutation.isPending ? "جارٍ الإنشاء..." : content.saveDraftLabel}
               </Button>
               <Button asChild className="h-10 rounded-[10px] bg-[#6f52ff] px-5 text-[13px] font-bold text-white shadow-[0_12px_28px_rgba(111,82,255,0.26)] hover:bg-[#7b63ff]">
                 <Link href="/agreements/review">

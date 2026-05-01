@@ -104,7 +104,7 @@ describe("email notification API actions", () => {
       response.data,
     );
     expect(mockPost).toHaveBeenCalledWith(
-      "/agreements/agreement%201/resend-invite",
+      "/agreements/agreement%201/send-invite",
     );
   });
 });

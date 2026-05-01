@@ -1,35 +1,104 @@
-import type {
-  ApiItemResponse,
-  ApiListResponse,
-  PaginatedQueryParams,
-} from "@/types/common";
+export type AgreementStatus =
+  | "DRAFT"
+  | "SENT"
+  | "APPROVED"
+  | "ACTIVE"
+  | "COMPLETED"
+  | "CANCELLED"
+  | "DISPUTED";
 
-export type AgreementStatus = "draft" | "active" | "expired" | "cancelled";
+export interface ClientSummary {
+  id: string;
+  name: string;
+  email: string;
+}
+
+export interface MilestoneSummary {
+  id: string;
+  title: string;
+  amount: number;
+  order: number;
+  status: string;
+  paymentStatus: string;
+}
+
+export interface AgreementPolicySummary {
+  id: string;
+  revisionLimit: number | null;
+}
 
 export interface Agreement {
   id: string;
-  clientId: string;
+  freelancerId: string;
+  clientId: string | null;
+  client: ClientSummary | null;
   title: string;
+  description: string | null;
+  serviceType: string | null;
+  totalAmount: number;
+  currency: string;
+  durationText: string | null;
+  expectedDeliveryDate: string | null;
   status: AgreementStatus;
-  startDate?: string;
-  endDate?: string;
+  inviteToken: string | null;
+  portalToken: string | null;
+  approvedAt: string | null;
+  sentAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  milestones: MilestoneSummary[];
+  policy: AgreementPolicySummary | null;
 }
 
-export interface AgreementListParams extends PaginatedQueryParams {
-  status?: AgreementStatus;
-  clientId?: string;
-}
-
-export interface AgreementMutationPayload {
-  clientId: string;
+export interface AgreementListItem {
+  id: string;
   title: string;
-  status?: AgreementStatus;
-  startDate?: string;
-  endDate?: string;
+  clientId: string | null;
+  clientName: string | null;
+  totalAmount: number;
+  currency: string;
+  status: AgreementStatus;
+  milestonesCount: number;
+  sentAt: string | null;
+  createdAt: string;
 }
 
-export type AgreementsListResponse = ApiListResponse<Agreement>;
-export type AgreementDetailsResponse = ApiItemResponse<Agreement>;
+export interface AgreementsListResponse {
+  data: AgreementListItem[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface AgreementListParams {
+  status?: AgreementStatus;
+  search?: string;
+  clientId?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface CreateAgreementPayload {
+  title: string;
+  description?: string;
+  serviceType?: string;
+  clientId?: string;
+  currency?: string;
+  durationText?: string;
+  expectedDeliveryDate?: string;
+}
+
+export interface UpdateAgreementPayload {
+  title?: string;
+  description?: string;
+  serviceType?: string;
+  clientId?: string;
+  currency?: string;
+  durationText?: string;
+  expectedDeliveryDate?: string;
+  totalAmount?: number;
+}
 
 export type AgreementsMetricTone = "purple" | "amber" | "violet" | "emerald";
 export type AgreementsStatusTone = "active" | "review" | "pending" | "ready" | "closed";

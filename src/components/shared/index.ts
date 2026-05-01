@@ -1,5 +1,6 @@
 export * from "./button";
 export * from "./avatar";
+export * from "./alert-dialog";
 export * from "./breadcrumb";
 export * from "./collapsible";
 export * from "./dropdown-menu";

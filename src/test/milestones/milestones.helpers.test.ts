@@ -22,7 +22,7 @@ function makeMilestone(overrides?: Partial<Milestone>): Milestone {
     orderIndex: 1,
     status: "ACTIVE",
     paymentStatus: "RESERVED",
-    deliveryStatus: "NOT_SUBMITTED",
+    deliveryStatus: "DRAFT" as const,
     acceptanceCriteria: [{ description: "Wireframe delivered", required: true }],
     revisionLimit: 2,
     createdAt: "2026-05-01T00:00:00.000Z",
@@ -47,7 +47,7 @@ describe("milestone display helpers", () => {
       paymentStatus: "محجوزة",
       active: true,
       revisionLimit: "حد التعديلات: 2",
-      operationStatus: "بانتظار التسليم",
+      operationStatus: "مسودة",
     });
     expect(mapped.acceptanceCriteria).toEqual(["Wireframe delivered"]);
   });
@@ -60,7 +60,7 @@ describe("milestone display helpers", () => {
         title: "Phase 2",
         amount: "200.00",
         paymentStatus: "CLIENT_REVIEW",
-        deliveryStatus: "IN_REVIEW",
+        deliveryStatus: "CLIENT_REVIEW" as const,
       }),
     ]);
 
@@ -68,13 +68,13 @@ describe("milestone display helpers", () => {
     expect(rows[0]).toMatchObject({
       milestone: "Phase 1",
       status: "محجوزة",
-      operation: "بانتظار التسليم",
+      operation: "مسودة",
       tone: "reserved",
     });
     expect(rows[1]).toMatchObject({
       milestone: "Phase 2",
       status: "مراجعة العميل",
-      operation: "تحت المراجعة",
+      operation: "تحت مراجعة العميل",
       tone: "review",
     });
   });

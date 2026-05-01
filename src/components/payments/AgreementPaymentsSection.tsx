@@ -38,6 +38,7 @@ export function AgreementPaymentsSection({
     return (
       <div className="flex items-center justify-center py-16">
         <Loader2 className="size-6 animate-spin text-[#6f52ff]" />
+        <span className="sr-only">Loading</span>
       </div>
     );
   }

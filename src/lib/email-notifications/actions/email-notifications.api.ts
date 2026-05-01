@@ -48,7 +48,7 @@ export async function sendTestEmailNotification(
 // EN: This action resends a client invite for a specific agreement and returns the created email log.
 export async function resendAgreementInvite(agreementId: string) {
   const response = await axiosInstance.post<EmailNotificationResponse>(
-    API_PATHS.AGREEMENTS.RESEND_INVITE(agreementId),
+    API_PATHS.AGREEMENTS.SEND_INVITE(agreementId),
   );
 
   return response.data;

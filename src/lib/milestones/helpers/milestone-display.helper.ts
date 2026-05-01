@@ -28,11 +28,12 @@ const paymentStatusLabels: Record<Milestone["paymentStatus"], string> = {
 };
 
 const deliveryStatusLabels: Record<Milestone["deliveryStatus"], string> = {
-  NOT_SUBMITTED: "بانتظار التسليم",
-  SUBMITTED: "تم التسليم",
-  IN_REVIEW: "تحت المراجعة",
-  ACCEPTED: "تم القبول",
+  DRAFT: "مسودة",
+  SUBMITTED: "تم الإرسال",
+  CLIENT_REVIEW: "تحت مراجعة العميل",
   CHANGES_REQUESTED: "طُلبت تعديلات",
+  ACCEPTED: "تم القبول",
+  DISPUTED: "نزاع",
 };
 
 // AR: تنسق هذه الدالة مبلغ المرحلة بنفس أسلوب الواجهة الحالية مع حماية من القيم غير الصالحة.

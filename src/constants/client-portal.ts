@@ -2251,3 +2251,66 @@ export const clientPortalContent = {
     },
   },
 } as const satisfies ClientPortalContentMap;
+
+export const portalCopy = {
+  titles: {
+    invite: { ar: "مراجعة الدعوة", en: "Invite Review" },
+    workspace: { ar: "بوابة العميل", en: "Client Portal" },
+    delivery: { ar: "مراجعة التسليم", en: "Delivery Review" },
+    payments: { ar: "الدفعات", en: "Payments" },
+    paymentHistory: { ar: "سجل الدفعات", en: "Payment History" },
+    timeline: { ar: "الخط الزمني", en: "Timeline" },
+  },
+  actions: {
+    approve: { ar: "موافقة", en: "Approve" },
+    requestChanges: { ar: "طلب تعديلات", en: "Request Changes" },
+    reject: { ar: "رفض", en: "Reject" },
+    accept: { ar: "اعتماد التسليم", en: "Accept Delivery" },
+    fund: { ar: "تمويل", en: "Fund" },
+    release: { ar: "إطلاق الدفعة", en: "Release" },
+    submit: { ar: "إرسال", en: "Submit" },
+    retry: { ar: "إعادة المحاولة", en: "Retry" },
+    reset: { ar: "إعادة التحميل", en: "Reset" },
+  },
+  statuses: {
+    WAITING: { ar: "بانتظار التمويل", en: "Waiting" },
+    RESERVED: { ar: "محجوزة", en: "Reserved" },
+    READY_TO_RELEASE: { ar: "جاهزة للإطلاق", en: "Ready to Release" },
+    RELEASED: { ar: "تم إطلاقها", en: "Released" },
+    PENDING_REVIEW: { ar: "بانتظار المراجعة", en: "Pending Review" },
+    ACCEPTED: { ar: "تم الاعتماد", en: "Accepted" },
+    CHANGES_REQUESTED: { ar: "تم طلب تعديلات", en: "Changes Requested" },
+    SENT: { ar: "مرسلة", en: "Sent" },
+    APPROVED: { ar: "موافق عليها", en: "Approved" },
+    ACTIVE: { ar: "نشطة", en: "Active" },
+    CHANGE_REQUESTED: { ar: "تم طلب تعديل", en: "Change Requested" },
+    CANCELLED: { ar: "ملغاة", en: "Cancelled" },
+  },
+  timeline: {
+    AGREEMENT_APPROVED: { ar: "تمت الموافقة على الاتفاق", en: "Agreement approved" },
+    AGREEMENT_CHANGES_REQUESTED: { ar: "تم طلب تعديل الاتفاق", en: "Agreement changes requested" },
+    AGREEMENT_REJECTED: { ar: "تم رفض الاتفاق", en: "Agreement rejected" },
+    DELIVERY_ACCEPTED: { ar: "تم اعتماد التسليم", en: "Delivery accepted" },
+    DELIVERY_CHANGES_REQUESTED: { ar: "تم طلب تعديلات على التسليم", en: "Delivery changes requested" },
+    PAYMENT_RESERVED: { ar: "تم حجز الدفعة", en: "Payment reserved" },
+    PAYMENT_RELEASED: { ar: "تم إطلاق الدفعة", en: "Payment released" },
+  },
+  errors: {
+    PORTAL_TOKEN_INVALID: {
+      ar: "رابط بوابة العميل غير صالح.",
+      en: "Client portal link is invalid.",
+    },
+    PORTAL_TOKEN_EXPIRED: {
+      ar: "انتهت صلاحية رابط بوابة العميل.",
+      en: "Client portal link has expired.",
+    },
+    PORTAL_TOKEN_REVOKED: {
+      ar: "تم إلغاء رابط بوابة العميل.",
+      en: "Client portal link has been revoked.",
+    },
+    generic: {
+      ar: "حدث خطأ غير متوقع. حاول مرة أخرى.",
+      en: "Something went wrong. Please try again.",
+    },
+  },
+} as const;

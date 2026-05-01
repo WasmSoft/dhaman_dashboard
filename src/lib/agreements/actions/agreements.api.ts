@@ -1,10 +1,11 @@
 import { axiosInstance } from "@/lib/axios-instance";
 import { API_PATHS } from "@/lib/api-paths";
 import type {
-  AgreementDetailsResponse,
+  Agreement,
   AgreementListParams,
-  AgreementMutationPayload,
   AgreementsListResponse,
+  CreateAgreementPayload,
+  UpdateAgreementPayload,
 } from "@/types";
 
 // AR: تجلب قائمة الاتفاقيات باستخدام params خام حتى تبقى الفلاتر والـ pagination قابلة لإعادة الاستخدام.
@@ -23,15 +24,17 @@ export async function getAgreements(params?: AgreementListParams) {
 // AR: تجلب تفاصيل اتفاقية واحدة للاستخدام في الصفحات أو server components.
 // EN: Fetches a single agreement details payload for pages or server components.
 export async function getAgreementById(agreementId: string) {
-  const response = await axiosInstance.get<AgreementDetailsResponse>(
+  const response = await axiosInstance.get<Agreement>(
     API_PATHS.AGREEMENTS.DETAILS(agreementId),
   );
 
   return response.data;
 }
 
-export async function createAgreement(payload: AgreementMutationPayload) {
-  const response = await axiosInstance.post<AgreementDetailsResponse>(
+// AR: تنشئ هذه الدالة اتفاقية جديدة بصيغة DRAFT وتعيد الكائن الكامل القادم من الخادم.
+// EN: This function creates a new DRAFT agreement and returns the full agreement object from the backend.
+export async function createAgreement(payload: CreateAgreementPayload) {
+  const response = await axiosInstance.post<Agreement>(
     API_PATHS.AGREEMENTS.CREATE,
     payload,
   );
@@ -39,11 +42,13 @@ export async function createAgreement(payload: AgreementMutationPayload) {
   return response.data;
 }
 
+// AR: تحدّث هذه الدالة بيانات الاتفاقية عبر PATCH بما يطابق عقد الـ backend الحالي.
+// EN: This function updates agreement fields via PATCH to match the current backend contract.
 export async function updateAgreement(
   agreementId: string,
-  payload: AgreementMutationPayload,
+  payload: UpdateAgreementPayload,
 ) {
-  const response = await axiosInstance.put<AgreementDetailsResponse>(
+  const response = await axiosInstance.patch<Agreement>(
     API_PATHS.AGREEMENTS.UPDATE(agreementId),
     payload,
   );
@@ -53,4 +58,34 @@ export async function updateAgreement(
 
 export async function deleteAgreement(agreementId: string) {
   await axiosInstance.delete(API_PATHS.AGREEMENTS.DELETE(agreementId));
+}
+
+// AR: ترسل هذه الدالة دعوة الاتفاقية للعميل وتعيد حالة الاتفاقية بعد الانتقال إلى SENT عند النجاح.
+// EN: This function sends the agreement invite to the client and returns the updated agreement after the SENT transition.
+export async function sendInvite(agreementId: string) {
+  const response = await axiosInstance.post<Agreement>(
+    API_PATHS.AGREEMENTS.SEND_INVITE(agreementId),
+  );
+
+  return response.data;
+}
+
+// AR: تفعّل هذه الدالة اتفاقية معتمدة وتعيد النسخة المحدثة بعد الانتقال إلى ACTIVE.
+// EN: This function activates an approved agreement and returns the updated object after the ACTIVE transition.
+export async function activateAgreement(agreementId: string) {
+  const response = await axiosInstance.post<Agreement>(
+    API_PATHS.AGREEMENTS.ACTIVATE(agreementId),
+  );
+
+  return response.data;
+}
+
+// AR: تؤرشف هذه الدالة الاتفاقية وتعيد النسخة المحدثة بعد الانتقال إلى CANCELLED.
+// EN: This function archives the agreement and returns the updated object after the CANCELLED transition.
+export async function archiveAgreement(agreementId: string) {
+  const response = await axiosInstance.post<Agreement>(
+    API_PATHS.AGREEMENTS.ARCHIVE(agreementId),
+  );
+
+  return response.data;
 }

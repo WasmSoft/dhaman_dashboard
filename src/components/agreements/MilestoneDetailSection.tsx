@@ -7,6 +7,7 @@ import {
   CircleDollarSign,
   ClipboardList,
   RefreshCw,
+  Send,
   ShieldCheck,
 } from "lucide-react";
 
@@ -18,6 +19,7 @@ import {
   getMilestonePaymentStatusLabel,
   getMilestoneStatusLabel,
 } from "@/lib/milestones";
+import { isDeliveryEditable } from "@/lib/deliveries/helpers/delivery-status.helper";
 
 interface MilestoneDetailSectionProps {
   agreementId: string;
@@ -217,6 +219,22 @@ export function MilestoneDetailSection({
               ) : null}
             </article>
           </section>
+
+          {/* AR: رابط إنشاء أو تعديل التسليم لحالات DRAFT و CHANGES_REQUESTED. */}
+          {/* EN: Create or edit delivery link for DRAFT and CHANGES_REQUESTED milestone delivery statuses. */}
+          {(milestone.deliveryStatus === "DRAFT" || milestone.deliveryStatus === "CHANGES_REQUESTED") && (
+            <div className="flex items-center justify-end pt-2">
+              <Button
+                asChild
+                className="h-10 rounded-[10px] bg-[#6f52ff] px-6 text-[13px] font-bold text-white hover:bg-[#7b63ff]"
+              >
+                <Link href={`/agreements/${agreementId}?createDelivery=${milestoneId}`}>
+                  <Send className="me-2 size-4" />
+                  {milestone.deliveryStatus === "DRAFT" ? "تقديم تسليم" : "تعديل التسليم"}
+                </Link>
+              </Button>
+            </div>
+          )}
         </>
       ) : null}
     </section>

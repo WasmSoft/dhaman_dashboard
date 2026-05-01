@@ -76,7 +76,7 @@ export function MilestonesSection({ milestones }: MilestonesSectionProps) {
                       {milestone.description}
                     </p>
                     <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-                      {milestone.acceptanceCriteria.map((criterion) => (
+                      {(milestone.acceptanceCriteria ?? []).map((criterion) => (
                         <li
                           key={criterion}
                           className="flex items-start gap-2 rounded-lg bg-[#101323] px-3 py-2 text-[11px] leading-5 text-[#b8bdd8]"

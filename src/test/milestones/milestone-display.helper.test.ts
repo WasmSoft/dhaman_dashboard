@@ -22,7 +22,7 @@ function makeMilestone(overrides?: Partial<Milestone>): Milestone {
     orderIndex: 1,
     status: "ACTIVE",
     paymentStatus: "RESERVED",
-    deliveryStatus: "NOT_SUBMITTED",
+    deliveryStatus: "DRAFT" as const,
     acceptanceCriteria: [{ description: "Wireframe delivered", required: true }],
     revisionLimit: 2,
     createdAt: "2026-05-01T00:00:00.000Z",
@@ -63,7 +63,7 @@ describe("milestone display helpers", () => {
         title: "Phase 2",
         amount: "200.00",
         paymentStatus: "CLIENT_REVIEW",
-        deliveryStatus: "IN_REVIEW",
+        deliveryStatus: "CLIENT_REVIEW" as const,
       }),
     ]);
     expect(rows).toHaveLength(2);

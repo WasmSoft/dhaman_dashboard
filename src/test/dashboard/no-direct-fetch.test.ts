@@ -22,7 +22,7 @@ function getTsFiles(dir: string): string[] {
         typeof f === "string" &&
         (f.endsWith(".ts") || f.endsWith(".tsx")),
     )
-    .map((f) => path.join(abs, f));
+    .map((f) => path.join(abs, String(f)));
 }
 
 function readFile(filePath: string): string {

@@ -32,6 +32,7 @@ describe("email notification mutation options", () => {
         notificationResponse,
         agreementId,
         undefined,
+        undefined as never,
       );
 
       expect(mockQueryClient.invalidateQueries).toHaveBeenCalledTimes(2);
@@ -80,6 +81,7 @@ describe("email notification mutation options", () => {
         { data: { id: "email-1" } } as EmailNotificationResponse,
         testPayload,
         undefined,
+        undefined as never,
       );
 
       expect(mockQueryClient.invalidateQueries).toHaveBeenCalledWith({

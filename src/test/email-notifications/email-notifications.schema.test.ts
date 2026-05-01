@@ -145,6 +145,10 @@ describe("email notification schemas", () => {
       });
 
       expect(result.success).toBe(true);
+      if (!result.success) {
+        throw new Error("Expected preview email payload to be valid");
+      }
+
       expect(result.data.metadata).toEqual({ milestoneId: "m-1" });
     });
 

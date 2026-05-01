@@ -1,6 +1,28 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+vi.mock("@/hooks/payments", () => ({
+  usePortalPaymentsQuery: () => ({
+    data: undefined,
+    isLoading: true,
+    isError: false,
+    error: null,
+  }),
+  usePortalReleasePaymentMutation: () => ({
+    mutateAsync: vi.fn(),
+    isPending: false,
+    isSuccess: false,
+    isError: false,
+  }),
+  usePortalPaymentHistoryQuery: () => ({
+    rows: [],
+    summary: null,
+    isLoading: true,
+    isError: false,
+    error: null,
+  }),
+}));
 
 function createWrapper() {
   const queryClient = new QueryClient({

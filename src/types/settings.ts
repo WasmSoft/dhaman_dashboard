@@ -74,8 +74,10 @@ export interface SettingsOverviewCard {
 
 export interface SettingsPolicyField {
   label: string;
-  value: string;
-  inputType?: "text" | "select" | "textarea" | "pill-list";
+  value: string | number | null;
+  name?: string;
+  placeholder?: string;
+  inputType?: "text" | "number" | "select" | "textarea" | "pill-list";
   options?: readonly string[];
   pills?: readonly string[];
 }
@@ -87,6 +89,7 @@ export interface SettingsPolicyCard {
   icon: SettingsIconName;
   fields: readonly SettingsPolicyField[];
   enabledByDefault: boolean;
+  showDefaultToggle?: boolean;
 }
 
 export interface SettingsAiPreferenceOption {

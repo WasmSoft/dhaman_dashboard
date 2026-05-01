@@ -48,7 +48,7 @@ describe("payments.api — portal release and history", () => {
 
     expect(result.data.status).toBe("RELEASED");
     expect(mockPost).toHaveBeenCalledWith(
-      expect.stringContaining("/portal/tok-r/payments/pay-1/release-confirmation"),
+      expect.stringContaining("/portal/tok-r/payments/pay-1/release"),
       expect.objectContaining({ confirmed: true }),
     );
   });
