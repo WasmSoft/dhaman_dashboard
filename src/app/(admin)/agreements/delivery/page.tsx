@@ -1,5 +1,5 @@
-import { AgreementDeliverySection } from "@/components/agreements";
+import { redirect } from "next/navigation";
 
 export default function AgreementDeliveryPage() {
-  return <AgreementDeliverySection />;
+  redirect("/agreements");
 }

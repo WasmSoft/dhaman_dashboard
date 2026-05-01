@@ -12,6 +12,10 @@ import {
   formatMilestoneAmount,
   mapMilestoneToWorkspaceMilestone,
 } from "@/lib/milestones";
+import {
+  buildMilestoneDeliveryHref,
+  buildMilestoneDetailHref,
+} from "@/lib/milestones/helpers";
 import { cn } from "@/lib/utils";
 import { AgreementTimelineSection } from "@/components/agreements/AgreementTimelineSection";
 import type {
@@ -63,7 +67,7 @@ function WorkspaceHeader() {
 
       <div className="order-1 flex flex-wrap gap-2 lg:order-2">
         <Button asChild className="h-10 rounded-[10px] bg-[#6f52ff] px-4 text-sm font-bold text-white shadow-[0_12px_28px_rgba(111,82,255,0.26)] hover:bg-[#7b63ff]">
-          <Link href="/agreements/delivery">
+          <Link href="/agreements">
             <Send className="size-[15px]" />
             {content.submitLabel}
           </Link>
@@ -129,7 +133,11 @@ function MilestoneCard({
 }) {
   const detailsHref =
     agreementId && milestone.id
-      ? `/agreements/${agreementId}/milestones/${milestone.id}`
+      ? buildMilestoneDetailHref(agreementId, milestone.id)
+      : null;
+  const deliveryHref =
+    agreementId && milestone.id
+      ? buildMilestoneDeliveryHref(agreementId, milestone.id)
       : null;
 
   return (
@@ -144,6 +152,7 @@ function MilestoneCard({
               <span className="text-[#737b99]">{milestone.due}</span>
               <span className={cn("rounded-md px-2 py-0.5 font-bold", milestone.active ? "bg-emerald-500/15 text-emerald-300" : "bg-amber-500/15 text-amber-300")}>{milestone.status}</span>
               <span className="rounded-md bg-[#6f52ff]/15 px-2 py-0.5 font-bold text-[#a898ff]">{milestone.paymentStatus}</span>
+              <span className="rounded-md bg-blue-500/15 px-2 py-0.5 font-bold text-blue-300">{milestone.operationStatus}</span>
             </div>
           </div>
         </div>
@@ -195,7 +204,7 @@ function MilestoneCard({
               </Button>
             )}
             <Button asChild className="h-8 rounded-[8px] bg-[#6f52ff] px-3 text-[12px] font-bold text-white hover:bg-[#7b63ff]">
-              <Link href="/agreements/delivery">
+              <Link href={deliveryHref ?? "/agreements"}>
                 <Send className="size-3.5" />
                 {agreementsContent.agreementWorkspacePage.submitLabel}
               </Link>
@@ -460,7 +469,7 @@ function WorkspaceSidebar() {
         <h2 className="text-[14px] font-extrabold">{content.nextStepTitle}</h2>
         <p className="mt-3 text-[12px] leading-6 text-white/75">{content.nextStepDescription}</p>
         <Button asChild className="mt-4 h-9 w-full rounded-[9px] bg-white text-[12px] font-extrabold text-[#4c35c7] hover:bg-white/90">
-          <Link href="/agreements/delivery">
+          <Link href="/agreements">
             <Send className="size-3.5" />
             {content.nextStepAction}
           </Link>

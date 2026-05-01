@@ -1,16 +1,19 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo } from "react";
 import {
   ArrowRight,
   CalendarClock,
   CircleDollarSign,
   ClipboardList,
+  FileText,
   RefreshCw,
   ShieldCheck,
 } from "lucide-react";
 
 import { Button } from "@/components/shared";
+import { useDeliveriesQuery } from "@/hooks/deliveries";
 import { useMilestoneDetailsQuery } from "@/hooks/milestones";
 import {
   formatMilestoneAmount,
@@ -18,6 +21,15 @@ import {
   getMilestonePaymentStatusLabel,
   getMilestoneStatusLabel,
 } from "@/lib/milestones";
+import {
+  findLatestMilestoneDelivery,
+  getDeliveryPaymentStatusLabel,
+  getDeliveryStatusLabel,
+} from "@/lib/deliveries";
+import {
+  buildMilestoneDeliveryHref,
+  buildMilestoneDetailHref,
+} from "@/lib/milestones/helpers";
 
 interface MilestoneDetailSectionProps {
   agreementId: string;
@@ -38,8 +50,19 @@ export function MilestoneDetailSection({
 }: MilestoneDetailSectionProps) {
   const { data, isLoading, isError, error, refetch } =
     useMilestoneDetailsQuery(milestoneId);
+  const { data: deliveryListResponse } = useDeliveriesQuery({
+    milestoneId,
+    limit: 20,
+    page: 1,
+  });
 
   const milestone = data?.data;
+  const latestDelivery = useMemo(
+    () => findLatestMilestoneDelivery(deliveryListResponse?.data.deliveries ?? []),
+    [deliveryListResponse],
+  );
+  const deliveryHref = buildMilestoneDeliveryHref(agreementId, milestoneId);
+  const workspaceHref = buildMilestoneDetailHref(agreementId, milestoneId);
 
   return (
     <section dir="rtl" className="mx-auto max-w-[980px] space-y-4 pb-10">
@@ -63,6 +86,12 @@ export function MilestoneDetailSection({
               عرض حالة المرحلة، شروط القبول، وحالة الدفعة المرتبطة بها.
             </p>
           </div>
+          <Button
+            asChild
+            className="h-10 rounded-[10px] bg-[#6f52ff] px-4 text-[13px] font-bold text-white hover:bg-[#7b63ff]"
+          >
+            <Link href={deliveryHref}>إدارة التسليم</Link>
+          </Button>
           {milestone ? (
             <span className="inline-flex w-fit items-center gap-2 rounded-md bg-[#6f52ff]/15 px-3 py-1.5 text-[12px] font-bold text-[#a898ff]">
               <span className="size-1.5 rounded-full bg-[#a898ff]" />
@@ -216,6 +245,59 @@ export function MilestoneDetailSection({
                 </div>
               ) : null}
             </article>
+          </section>
+
+          <section className="rounded-[14px] border border-[#252a42] bg-[#15192b] p-5 text-start md:p-6">
+            <div className="mb-5 flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-[18px] font-extrabold text-white">
+                  حالة التسليم الحالية
+                </h2>
+                <p className="mt-1 text-[12px] leading-6 text-[#737b99]">
+                  يعرض هذا القسم أحدث تسليم مرتبط بهذه المرحلة وروابط المتابعة.
+                </p>
+              </div>
+              <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-[#6f52ff]/20 text-[#a898ff]">
+                <FileText className="size-4" />
+              </span>
+            </div>
+
+            {latestDelivery ? (
+              <div className="grid gap-4 md:grid-cols-2">
+                <article className="rounded-[10px] border border-[#252a42] bg-[#1d2135] p-4">
+                  <p className="text-[12px] text-[#737b99]">حالة التسليم</p>
+                  <strong className="mt-2 block text-[15px] font-extrabold text-white">
+                    {getDeliveryStatusLabel(latestDelivery.status)}
+                  </strong>
+                  <p className="mt-3 text-[12px] leading-6 text-[#a7aecb]">
+                    {latestDelivery.clientFeedback ??
+                      latestDelivery.notes ??
+                      "لا توجد ملاحظات إضافية على هذا التسليم حتى الآن."}
+                  </p>
+                </article>
+
+                <article className="rounded-[10px] border border-[#252a42] bg-[#1d2135] p-4">
+                  <p className="text-[12px] text-[#737b99]">حالة الدفعة المرتبطة</p>
+                  <strong className="mt-2 block text-[15px] font-extrabold text-white">
+                    {getDeliveryPaymentStatusLabel(
+                      latestDelivery.payment?.status ?? latestDelivery.milestone.paymentStatus,
+                    )}
+                  </strong>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <Button asChild className="h-9 rounded-[9px] bg-[#6f52ff] px-4 text-[12px] font-bold text-white hover:bg-[#7b63ff]">
+                      <Link href={deliveryHref}>فتح التسليم</Link>
+                    </Button>
+                    <Button asChild variant="secondary" className="h-9 rounded-[9px] border border-[#252a42] bg-[#101323] px-4 text-[12px] font-bold text-[#c7cce0] hover:bg-[#262b49] hover:text-white">
+                      <Link href={workspaceHref}>تحديث المرحلة</Link>
+                    </Button>
+                  </div>
+                </article>
+              </div>
+            ) : (
+              <div className="rounded-[10px] border border-dashed border-[#252a42] bg-[#12162a] px-4 py-5 text-[12px] text-[#8a91ac]">
+                لا يوجد تسليم محفوظ لهذه المرحلة حتى الآن. يمكنك بدء التسليم من الزر العلوي.
+              </div>
+            )}
           </section>
         </>
       ) : null}

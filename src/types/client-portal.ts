@@ -1059,11 +1059,11 @@ export interface PortalTrackingFooter {
 export interface PortalDeliveryPreviewContent {
   title: string;
   description: string;
-  hero: PortalDeliveryPreviewHero;
-  stageDetails: PortalDeliveryPreviewStageDetails;
-  submission: PortalDeliveryPreviewSubmission;
-  contextSummary: PortalDeliveryPreviewContextSummary;
-  review: PortalDeliveryPreviewReview;
+  hero?: PortalDeliveryPreviewHero;
+  stageDetails?: PortalDeliveryPreviewStageDetails;
+  submission?: PortalDeliveryPreviewSubmission;
+  contextSummary?: PortalDeliveryPreviewContextSummary;
+  review?: PortalDeliveryPreviewReview;
 }
 
 export interface PortalDeliveryPreviewHero {
