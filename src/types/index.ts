@@ -43,3 +43,4 @@ export * from "./email-notifications";
 export * from "./timeline-events";
 export * from "./change-requests";
 export * from "./milestones";
+export * from "./payments";

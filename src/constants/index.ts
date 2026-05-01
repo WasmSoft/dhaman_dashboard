@@ -9,3 +9,4 @@ export * from "./settings";
 export * from "./not-found";
 export * from "./timeline-events";
 export * from "./change-requests";
+export * from "./payments";

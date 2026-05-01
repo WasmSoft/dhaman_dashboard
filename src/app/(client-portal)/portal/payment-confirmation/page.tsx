@@ -1,5 +1,7 @@
-import { PaymentConfirmationSection } from "@/components/client-portal";
+// AR: صفحة تأكيد الدفع القديمة — تم استبدالها.
+// EN: Legacy mock payment confirmation page — replaced.
+import { notFound } from "next/navigation";
 
-export default function PaymentConfirmationPage() {
-  return <PaymentConfirmationSection />;
+export default function LegacyPaymentConfirmationPage() {
+  notFound();
 }

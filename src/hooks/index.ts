@@ -8,3 +8,4 @@ export * from "./shared";
 export * from "./email-notifications";
 export * from "./change-requests";
 export * from "./milestones";
+export * from "./payments";

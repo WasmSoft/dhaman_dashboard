@@ -85,6 +85,26 @@ export const API_PATHS = {
     GENERATE_FOR_AGREEMENT: (agreementId: PathParam) =>
       `/agreements/${encodePathParam(agreementId)}/generate-plan`,
   },
+  PAYMENTS: {
+    AGREEMENT_PAYMENTS: (agreementId: PathParam) =>
+      `/agreements/${encodePathParam(agreementId)}/payments`,
+    FUND_MILESTONE: "/payments/fund-milestone",
+    RELEASE: "/payments/release",
+    DETAILS: (paymentId: PathParam) =>
+      `/payments/${encodePathParam(paymentId)}`,
+    RECEIPT: (paymentId: PathParam) =>
+      `/payments/${encodePathParam(paymentId)}/receipt`,
+  },
+  PORTAL_PAYMENTS: {
+    LIST: (token: PathParam) =>
+      `/portal/${encodePathParam(token)}/payments`,
+    HISTORY: (token: PathParam) =>
+      `/portal/${encodePathParam(token)}/payment-history`,
+    FUND: (token: PathParam, paymentId: PathParam) =>
+      `/portal/${encodePathParam(token)}/payments/${encodePathParam(paymentId)}/fund`,
+    RELEASE_CONFIRMATION: (token: PathParam, paymentId: PathParam) =>
+      `/portal/${encodePathParam(token)}/payments/${encodePathParam(paymentId)}/release-confirmation`,
+  },
   CHANGE_REQUESTS: {
     LIST: (agreementId: PathParam) =>
       `/agreements/${encodePathParam(agreementId)}/change-requests`,
