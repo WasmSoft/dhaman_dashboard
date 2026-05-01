@@ -38,9 +38,9 @@ For demo and testing purposes, you can access the freelancer dashboard using the
 }
 ```
 
----
-
 Use this account to test the main dashboard flows, including agreement creation, milestone creation, and client invitation workflows.
+
+---
 
 ## 📚 Table of Contents
 
