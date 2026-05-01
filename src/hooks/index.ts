@@ -6,6 +6,7 @@ export * from "./ai-review";
 export * from "./shared";
 export * from "./email-notifications";
 export * from "./change-requests";
+export * from "./deliveries";
 export * from "./milestones";
 export * from "./payments";
 export * from "./agreement-policies";

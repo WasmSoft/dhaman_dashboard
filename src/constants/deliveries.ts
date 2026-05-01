@@ -51,6 +51,7 @@ export const deliveriesUiStrings = {
 export const deliveriesContent = {
   title: "التسليمات",
   subtitle: "تابع كل تسليمات المراحل، مراجعات العملاء، وحالة الدفعات المرتبطة بها.",
+<<<<<<< HEAD
   searchPlaceholder: "ابحث باسم المشروع أو العميل...",
   exportLabel: "تصدير التقرير",
   createLabel: "تقديم تسليم جديد",
@@ -143,24 +144,39 @@ export const deliveriesContent = {
       actionLabel: "عرض مراجعة AI",
     },
   ],
+=======
+  searchPlaceholder: "الفلاتر المدعومة من الخادم تظهر أسفل الصفحة",
+  exportLabel: "عرض البيانات الحية",
+  createLabel: "ابدأ من مساحة العمل",
+  metrics: [],
+  filters: [],
+  sortFilters: [],
+  tableHeaders: ["المشروع / العميل", "المرحلة", "التسليم", "حالة التسليم", "حالة الدفعة", "المبلغ", "آخر تحديث", "الإجراء"],
+  deliveries: [],
+>>>>>>> 376aec6939d214e5014cc9fa065f5e9a54ce38a7
   selectedSummary: {
     title: "ملخص التسليم المحدد",
-    project: "تصميم صفحة هبوط لشركة ناشئة",
-    milestone: "المرحلة الأولى: الهيكل والتصميم الأولي",
+    project: "سيظهر اسم الاتفاق هنا",
+    milestone: "ستظهر المرحلة المرتبطة هنا",
     statusLabel: "الحالة",
-    status: "تحت مراجعة العميل",
+    status: "اختر تسليماً لعرض التفاصيل",
     paymentLabel: "الدفعة",
-    payment: "Client Review",
-    amount: "$150",
+    payment: "ستظهر من البيانات الحية",
+    amount: "--",
     deliveryTimeLabel: "وقت التسليم",
-    deliveryTime: "منذ ساعتين",
+    deliveryTime: "--",
     reviewDueLabel: "موعد المراجعة",
-    reviewDue: "بعد 3 أيام عمل",
+    reviewDue: "--",
     criteriaTitle: "شروط القبول",
-    criteria: ["تسليم Wireframe واضح للصفحة", "تحديد أقسام الصفحة الرئيسية", "اعتماد الاتجاه البصري الأولي"],
-    note: "بانتظار مراجعة العميل للتسليم.",
+    criteria: [],
+    note: "سيظهر وصف التسليم أو ملاحظات العميل عند تحديد عنصر من الجدول.",
   },
   aiNotice: "إذا اعترض العميل، يمكن فتح AI Review وربط الاعتراض بشروط القبول.",
   quickActionsTitle: "إجراءات سريعة",
+<<<<<<< HEAD
   quickActions: ["فتح التسليم", "نسخ رابط التسليم", "فتح مساحة العمل"],
 } as const satisfies DeliveriesContent;
+=======
+  quickActions: ["فتح التسليم", "فتح المرحلة", "العودة لمساحة العمل"],
+} as const satisfies DeliveriesContent;
+>>>>>>> 376aec6939d214e5014cc9fa065f5e9a54ce38a7

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { describe, it, expect } from "vitest";
 
 import { deliveriesQueryKeys } from "@/lib/deliveries/actions/deliveries.keys";
@@ -46,3 +47,25 @@ describe("deliveriesQueryKeys", () => {
     expect(key1).not.toEqual(key2);
   });
 });
+=======
+import { describe, expect, it } from "vitest";
+
+import { deliveriesQueryKeys } from "@/lib/deliveries/actions";
+
+describe("deliveries.keys", () => {
+  it("builds stable list keys with filter params", () => {
+    expect(
+      deliveriesQueryKeys.list({ status: "DRAFT", page: 1, limit: 20 }),
+    ).toEqual(["deliveries", "list", { status: "DRAFT", page: 1, limit: 20 }]);
+  });
+
+  it("builds stable portal detail keys", () => {
+    expect(deliveriesQueryKeys.portalDetail("tok-1", "del-1")).toEqual([
+      "deliveries",
+      "portal-detail",
+      "tok-1",
+      "del-1",
+    ]);
+  });
+});
+>>>>>>> 376aec6939d214e5014cc9fa065f5e9a54ce38a7

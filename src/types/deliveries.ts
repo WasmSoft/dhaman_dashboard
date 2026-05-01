@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // AR: أنواع التسليمات المستخدمة في الواجهة — تتضمن الاستجابات، الفلاتر، الحمولات، وملخص الدفع.
 // EN: Delivery types for the frontend — includes responses, filters, payloads, and payment summary.
 
@@ -97,10 +98,198 @@ export interface DeliveryApiError {
 
 // AR: أنواع واجهة المستخدم الثابتة — تستخدم في الثوابت وبطاقات العرض.
 // EN: UI-only types used in constants and display cards.
+=======
+import type { ApiItemResponse } from "./common";
+import type {
+  DeliveryStatus as MilestoneDeliveryStatus,
+  MilestoneStatus,
+  PaymentStatus,
+} from "./dashboard";
+>>>>>>> 376aec6939d214e5014cc9fa065f5e9a54ce38a7
 
 export type DeliveryMetricTone = "amber" | "violet" | "emerald" | "red";
-export type DeliveryStatusTone = "review" | "change" | "accepted" | "pending" | "ai";
-export type DeliveryPaymentTone = "client" | "hold" | "ready" | "reserved" | "ai";
+export type DeliveryStatusTone =
+  | "review"
+  | "change"
+  | "accepted"
+  | "pending"
+  | "ai"
+  | "draft"
+  | "disputed";
+export type DeliveryPaymentTone =
+  | "client"
+  | "hold"
+  | "ready"
+  | "reserved"
+  | "ai"
+  | "released";
+
+export type DeliveryRecordStatus =
+  | "DRAFT"
+  | "SUBMITTED"
+  | "CLIENT_REVIEW"
+  | "CHANGES_REQUESTED"
+  | "ACCEPTED"
+  | "DISPUTED";
+
+export type DeliveryStatusValue =
+  | DeliveryRecordStatus
+  | MilestoneDeliveryStatus;
+
+export interface DeliveryMilestoneSummaryDto {
+  id: string;
+  title: string;
+  status: MilestoneStatus;
+  paymentStatus: PaymentStatus;
+  deliveryStatus: DeliveryStatusValue;
+  revisionLimit: number;
+}
+
+export interface DeliveryPaymentSummaryDto {
+  status: PaymentStatus;
+  demoMode: boolean;
+  reservedAt?: string | null;
+  releasedAt?: string | null;
+}
+
+export interface DeliveryTimelineReferenceDto {
+  agreementId: string;
+  milestoneId?: string | null;
+}
+
+export interface DeliveryRecordDto {
+  id: string;
+  agreementId: string;
+  milestoneId: string;
+  submittedById: string;
+  deliveryUrl?: string | null;
+  fileUrl?: string | null;
+  fileName?: string | null;
+  fileType?: string | null;
+  summary: string;
+  notes?: string | null;
+  status: DeliveryRecordStatus;
+  submittedAt?: string | null;
+  acceptedAt?: string | null;
+  changesRequestedAt?: string | null;
+  clientFeedback?: string | null;
+  milestone: DeliveryMilestoneSummaryDto;
+  payment?: DeliveryPaymentSummaryDto | null;
+  timeline: DeliveryTimelineReferenceDto;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DeliveriesListDto {
+  deliveries: DeliveryRecordDto[];
+  page: number;
+  limit: number;
+  total: number;
+}
+
+export interface DeliveryListParams {
+  agreementId?: string;
+  milestoneId?: string;
+  status?: DeliveryRecordStatus;
+  page?: number;
+  limit?: number;
+}
+
+export interface CreateDeliveryInput {
+  deliveryUrl?: string;
+  fileUrl?: string;
+  fileName?: string;
+  fileType?: string;
+  summary: string;
+  notes?: string;
+}
+
+export interface UpdateDeliveryInput {
+  deliveryUrl?: string;
+  fileUrl?: string;
+  fileName?: string;
+  fileType?: string;
+  summary?: string;
+  notes?: string;
+}
+
+export interface SubmitDeliveryInput {
+  noteToClient?: string;
+}
+
+export interface PortalDeliverySummaryDto {
+  id: string;
+  milestoneId: string;
+  milestoneTitle: string;
+  status: DeliveryStatusValue | string;
+  submittedAt?: string;
+  notes?: string;
+}
+
+export interface PortalWorkspaceMilestoneDto {
+  id: string;
+  order: number;
+  title: string;
+  description?: string;
+  amount: string;
+  currency: string;
+  status: string;
+  dueDate?: string;
+}
+
+export interface PortalWorkspacePaymentDto {
+  milestoneId: string;
+  milestoneTitle: string;
+  amount: string;
+  currency: string;
+  status: PaymentStatus;
+}
+
+export interface PortalWorkspaceDeliveryDto {
+  id: string;
+  milestoneId: string;
+  milestoneTitle: string;
+  status: DeliveryStatusValue | string;
+  submittedAt?: string;
+  notes?: string;
+}
+
+export interface PortalWorkspaceResponseDto {
+  agreementId: string;
+  title: string;
+  status: string;
+  totalAmount: string;
+  currency: string;
+  freelancerName: string;
+  milestones: PortalWorkspaceMilestoneDto[];
+  payments: PortalWorkspacePaymentDto[];
+  deliveries: PortalWorkspaceDeliveryDto[];
+}
+
+export interface PortalDeliveryActionDto {
+  agreementId: string;
+  status: string;
+  message: string;
+  timelineEventId?: string;
+}
+
+export interface PortalRequestDeliveryChangesInput {
+  reason: string;
+  requestedChanges?: string[];
+}
+
+export type DeliveriesListResponse = ApiItemResponse<DeliveriesListDto>;
+export type DeliveryDetailsResponse = ApiItemResponse<DeliveryRecordDto>;
+export type PortalDeliverySummaryResponse = ApiItemResponse<PortalDeliverySummaryDto>;
+export type PortalWorkspaceResponse = ApiItemResponse<PortalWorkspaceResponseDto>;
+export type PortalDeliveryActionResponse = ApiItemResponse<PortalDeliveryActionDto>;
+
+export type DeliveryDraftFormValues = CreateDeliveryInput;
+
+export interface DeliverySubmitFormValues extends CreateDeliveryInput {
+  noteToClient?: string;
+  confirmationAccepted: boolean;
+}
 
 export interface DeliveryMetricCard {
   label: string;
@@ -118,6 +307,8 @@ export interface DeliveryFilterChip {
 
 export interface DeliveryTableItem {
   id: string;
+  agreementId?: string;
+  milestoneId?: string;
   project: string;
   client: string;
   milestone: string;
@@ -129,6 +320,8 @@ export interface DeliveryTableItem {
   amount: string;
   lastUpdate: string;
   actionLabel: string;
+  actionHref?: string;
+  detailHref?: string;
   active?: boolean;
 }
 

@@ -15,3 +15,10 @@ export function buildMilestoneDetailHref(
 ) {
   return `/agreements/${encodeURIComponent(agreementId)}/milestones/${encodeURIComponent(milestoneId)}`;
 }
+
+export function buildMilestoneDeliveryHref(
+  agreementId: string,
+  milestoneId: string,
+) {
+  return `/agreements/${encodeURIComponent(agreementId)}/milestones/${encodeURIComponent(milestoneId)}/delivery`;
+}
