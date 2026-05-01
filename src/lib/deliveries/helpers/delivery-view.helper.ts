@@ -15,7 +15,7 @@ import {
   getDeliveryPaymentStatusLabel,
   getDeliveryPaymentTone,
   getDeliveryStatusLabel,
-  getDeliveryStatusTone,
+  getDeliveryStatusToneValue,
   isEditableDeliveryStatus,
 } from "./delivery-status.helper";
 
@@ -144,7 +144,7 @@ export function buildDeliveryTableItems(deliveries: DeliveryRecordDto[]): Delive
       milestone: delivery.milestone.title,
       delivery: buildDeliveryEvidenceLabel(delivery),
       deliveryStatus: getDeliveryStatusLabel(delivery.status),
-      deliveryTone: getDeliveryStatusTone(delivery.status),
+      deliveryTone: getDeliveryStatusToneValue(delivery.status),
       paymentStatus: getDeliveryPaymentStatusLabel(
         delivery.payment?.status ?? delivery.milestone.paymentStatus,
       ),

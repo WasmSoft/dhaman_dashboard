@@ -27,11 +27,6 @@ export type MilestoneStatus =
   | "CHANGES_REQUESTED"
   | "CANCELLED";
 
-<<<<<<< HEAD
-// AR: DeliveryStatus نجمعها من ملف التسليمات لأن القيم الكنونية موجودة هناك.
-// EN: DeliveryStatus is re-exported from deliveries.ts where canonical values live.
-export type { DeliveryStatus } from "./deliveries";
-=======
 export type DeliveryStatus =
   | "DRAFT"
   | "NOT_SUBMITTED"
@@ -41,7 +36,6 @@ export type DeliveryStatus =
   | "ACCEPTED"
   | "CHANGES_REQUESTED"
   | "DISPUTED";
->>>>>>> 376aec6939d214e5014cc9fa065f5e9a54ce38a7
 
 export type AIReviewStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
 

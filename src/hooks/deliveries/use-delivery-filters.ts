@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useMemo } from "react";
 
-import type { DeliveryStatus } from "@/types";
+import type { DeliveryRecordStatus } from "@/types";
 
 // AR: حالة الفلاتر الافتراضية لقائمة التسليمات — صفحة أولى وحد الصفحة.
 // EN: Default filter state for the deliveries list — first page and page size.
@@ -12,7 +12,7 @@ const DEFAULT_PAGE = 1;
 interface UseDeliveryFiltersOptions {
   defaultAgreementId?: string;
   defaultMilestoneId?: string;
-  defaultStatus?: DeliveryStatus;
+  defaultStatus?: DeliveryRecordStatus;
 }
 
 // AR: hook يدير فلاتر التسليمات — اتفاقية، مرحلة، حالة، صفحة، مع إعادة التعيين.
@@ -24,7 +24,7 @@ export function useDeliveryFilters(options?: UseDeliveryFiltersOptions) {
   const [milestoneId, setMilestoneId] = useState(
     options?.defaultMilestoneId ?? "",
   );
-  const [status, setStatus] = useState<DeliveryStatus | "">(
+  const [status, setStatus] = useState<DeliveryRecordStatus | "">(
     options?.defaultStatus ?? "",
   );
   const [page, setPage] = useState(DEFAULT_PAGE);
@@ -41,7 +41,7 @@ export function useDeliveryFilters(options?: UseDeliveryFiltersOptions) {
     () => ({
       agreementId: agreementId || undefined,
       milestoneId: milestoneId || undefined,
-      status: (status || undefined) as DeliveryStatus | undefined,
+      status: (status || undefined) as DeliveryRecordStatus | undefined,
       page,
       limit,
     }),

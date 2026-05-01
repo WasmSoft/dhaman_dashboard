@@ -27,7 +27,6 @@ export const API_PATHS = {
     AGREEMENTS: "/client-portal/agreements",
   },
   PORTAL: {
-<<<<<<< HEAD
     INVITE: (token: PathParam) =>
       `/portal/${encodePathParam(token)}/invite`,
     WORKSPACE: (token: PathParam) => `/portal/${encodePathParam(token)}`,
@@ -43,9 +42,6 @@ export const API_PATHS = {
       `/portal/${encodePathParam(token)}/deliveries/${encodePathParam(deliveryId)}/accept`,
     DELIVERY_REQUEST_CHANGES: (token: PathParam, deliveryId: PathParam) =>
       `/portal/${encodePathParam(token)}/deliveries/${encodePathParam(deliveryId)}/request-changes`,
-=======
-    WORKSPACE: (token: PathParam) => `/portal/${encodePathParam(token)}`,
->>>>>>> 376aec6939d214e5014cc9fa065f5e9a54ce38a7
     TIMELINE: (token: PathParam) =>
       `/portal/${encodePathParam(token)}/timeline`,
   },
@@ -93,6 +89,8 @@ export const API_PATHS = {
     DETAILS: (deliveryId: PathParam) =>
       `/deliveries/${encodePathParam(deliveryId)}`,
     CREATE: (milestoneId: PathParam) =>
+      `/milestones/${encodePathParam(milestoneId)}/deliveries`,
+    CREATE_FOR_MILESTONE: (milestoneId: PathParam) =>
       `/milestones/${encodePathParam(milestoneId)}/deliveries`,
     UPDATE: (deliveryId: PathParam) =>
       `/deliveries/${encodePathParam(deliveryId)}`,
@@ -150,17 +148,6 @@ export const API_PATHS = {
       `/portal/${encodePathParam(token)}/payments/${encodePathParam(paymentId)}/fund`,
     RELEASE: (token: PathParam, paymentId: PathParam) =>
       `/portal/${encodePathParam(token)}/payments/${encodePathParam(paymentId)}/release`,
-  },
-  DELIVERIES: {
-    LIST: "/deliveries",
-    DETAILS: (deliveryId: PathParam) =>
-      `/deliveries/${encodePathParam(deliveryId)}`,
-    UPDATE: (deliveryId: PathParam) =>
-      `/deliveries/${encodePathParam(deliveryId)}`,
-    SUBMIT: (deliveryId: PathParam) =>
-      `/deliveries/${encodePathParam(deliveryId)}/submit`,
-    CREATE_FOR_MILESTONE: (milestoneId: PathParam) =>
-      `/milestones/${encodePathParam(milestoneId)}/deliveries`,
   },
   CHANGE_REQUESTS: {
     LIST: (agreementId: PathParam) =>

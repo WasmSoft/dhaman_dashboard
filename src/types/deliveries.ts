@@ -1,14 +1,20 @@
-<<<<<<< HEAD
-// AR: أنواع التسليمات المستخدمة في الواجهة — تتضمن الاستجابات، الفلاتر، الحمولات، وملخص الدفع.
-// EN: Delivery types for the frontend — includes responses, filters, payloads, and payment summary.
+import type { ApiItemResponse } from "./common";
+import type { MilestoneStatus, PaymentStatus } from "./dashboard";
 
+// AR: أنواع التسليمات المشتركة بين الواجهة القديمة وتدفّقات البيانات الأحدث.
+// EN: Shared delivery types used by both the legacy UI flow and the newer data-driven flows.
 export type DeliveryStatus =
   | "DRAFT"
+  | "NOT_SUBMITTED"
   | "SUBMITTED"
   | "CLIENT_REVIEW"
+  | "IN_REVIEW"
   | "CHANGES_REQUESTED"
   | "ACCEPTED"
   | "DISPUTED";
+
+export type DeliveryRecordStatus = Exclude<DeliveryStatus, "NOT_SUBMITTED" | "IN_REVIEW">;
+export type DeliveryStatusValue = DeliveryStatus;
 
 export interface DeliveryPaymentSummary {
   id: string;
@@ -43,7 +49,7 @@ export interface Delivery {
 export interface DeliveryFilters {
   agreementId?: string;
   milestoneId?: string;
-  status?: DeliveryStatus;
+  status?: DeliveryRecordStatus;
   page?: number;
   limit?: number;
 }
@@ -96,17 +102,6 @@ export interface DeliveryApiError {
   message: string;
 }
 
-// AR: أنواع واجهة المستخدم الثابتة — تستخدم في الثوابت وبطاقات العرض.
-// EN: UI-only types used in constants and display cards.
-=======
-import type { ApiItemResponse } from "./common";
-import type {
-  DeliveryStatus as MilestoneDeliveryStatus,
-  MilestoneStatus,
-  PaymentStatus,
-} from "./dashboard";
->>>>>>> 376aec6939d214e5014cc9fa065f5e9a54ce38a7
-
 export type DeliveryMetricTone = "amber" | "violet" | "emerald" | "red";
 export type DeliveryStatusTone =
   | "review"
@@ -123,18 +118,6 @@ export type DeliveryPaymentTone =
   | "reserved"
   | "ai"
   | "released";
-
-export type DeliveryRecordStatus =
-  | "DRAFT"
-  | "SUBMITTED"
-  | "CLIENT_REVIEW"
-  | "CHANGES_REQUESTED"
-  | "ACCEPTED"
-  | "DISPUTED";
-
-export type DeliveryStatusValue =
-  | DeliveryRecordStatus
-  | MilestoneDeliveryStatus;
 
 export interface DeliveryMilestoneSummaryDto {
   id: string;
@@ -195,27 +178,11 @@ export interface DeliveryListParams {
   limit?: number;
 }
 
-export interface CreateDeliveryInput {
-  deliveryUrl?: string;
-  fileUrl?: string;
-  fileName?: string;
-  fileType?: string;
-  summary: string;
-  notes?: string;
-}
+export interface CreateDeliveryInput extends CreateDeliveryPayload {}
 
-export interface UpdateDeliveryInput {
-  deliveryUrl?: string;
-  fileUrl?: string;
-  fileName?: string;
-  fileType?: string;
-  summary?: string;
-  notes?: string;
-}
+export interface UpdateDeliveryInput extends UpdateDeliveryPayload {}
 
-export interface SubmitDeliveryInput {
-  noteToClient?: string;
-}
+export interface SubmitDeliveryInput extends SubmitDeliveryPayload {}
 
 export interface PortalDeliverySummaryDto {
   id: string;
@@ -280,9 +247,9 @@ export interface PortalRequestDeliveryChangesInput {
 
 export type DeliveriesListResponse = ApiItemResponse<DeliveriesListDto>;
 export type DeliveryDetailsResponse = ApiItemResponse<DeliveryRecordDto>;
-export type PortalDeliverySummaryResponse = ApiItemResponse<PortalDeliverySummaryDto>;
-export type PortalWorkspaceResponse = ApiItemResponse<PortalWorkspaceResponseDto>;
-export type PortalDeliveryActionResponse = ApiItemResponse<PortalDeliveryActionDto>;
+export type DeliveryPortalSummaryResponse = ApiItemResponse<PortalDeliverySummaryDto>;
+export type DeliveryPortalWorkspaceResponse = ApiItemResponse<PortalWorkspaceResponseDto>;
+export type DeliveryPortalActionResponse = ApiItemResponse<PortalDeliveryActionDto>;
 
 export type DeliveryDraftFormValues = CreateDeliveryInput;
 

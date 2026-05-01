@@ -202,17 +202,12 @@ function WorkspaceHeader({
       </div>
 
       <div className="order-1 flex flex-wrap gap-2 lg:order-2">
-<<<<<<< HEAD
         {canSendInvite ? (
           <Button
             className="h-10 rounded-[10px] bg-[#6f52ff] px-4 text-sm font-bold text-white shadow-[0_12px_28px_rgba(111,82,255,0.26)] hover:bg-[#7b63ff]"
             disabled={isSendInvitePending}
             onClick={onSendInvite}
           >
-=======
-        <Button asChild className="h-10 rounded-[10px] bg-[#6f52ff] px-4 text-sm font-bold text-white shadow-[0_12px_28px_rgba(111,82,255,0.26)] hover:bg-[#7b63ff]">
-          <Link href="/agreements">
->>>>>>> 376aec6939d214e5014cc9fa065f5e9a54ce38a7
             <Send className="size-[15px]" />
             {isSendInvitePending ? "جارٍ الإرسال..." : "إرسال الدعوة"}
           </Button>
@@ -762,7 +757,6 @@ function WorkspaceSidebar({
       <article className="rounded-[14px] border border-[#6f52ff]/40 bg-gradient-to-l from-[#6f52ff] to-[#8b74ff] p-5 text-white shadow-[0_16px_34px_rgba(111,82,255,0.24)]">
         <h2 className="text-[14px] font-extrabold">{content.nextStepTitle}</h2>
         <p className="mt-3 text-[12px] leading-6 text-white/75">{content.nextStepDescription}</p>
-<<<<<<< HEAD
         {agreement.status === "ACTIVE" ? (
           <Button asChild className="mt-4 h-9 w-full rounded-[9px] bg-white text-[12px] font-extrabold text-[#4c35c7] hover:bg-white/90">
             <Link href="/agreements/delivery">
@@ -775,10 +769,6 @@ function WorkspaceSidebar({
             className="mt-4 h-9 w-full rounded-[9px] bg-white/70 text-[12px] font-extrabold text-[#4c35c7]"
             disabled
           >
-=======
-        <Button asChild className="mt-4 h-9 w-full rounded-[9px] bg-white text-[12px] font-extrabold text-[#4c35c7] hover:bg-white/90">
-          <Link href="/agreements">
->>>>>>> 376aec6939d214e5014cc9fa065f5e9a54ce38a7
             <Send className="size-3.5" />
             {agreementStatusLabels[agreement.status]}
           </Button>

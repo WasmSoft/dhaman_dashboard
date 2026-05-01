@@ -25,8 +25,6 @@ import { useMilestoneDetailsQuery } from "@/hooks/milestones";
 import {
   deliveryDraftSchema,
   deliverySubmitSchema,
-  findLatestEditableDelivery,
-  findLatestMilestoneDelivery,
   getDeliveryPaymentStatusLabel,
   getDeliveryStatusLabel,
 } from "@/lib/deliveries";
@@ -35,7 +33,7 @@ import {
   buildMilestoneDetailHref,
 } from "@/lib/milestones/helpers";
 import { formatMilestoneAmount } from "@/lib/milestones";
-import type { DeliverySubmitFormValues } from "@/types";
+import type { Delivery, DeliveryDetailsResponse, DeliverySubmitFormValues } from "@/types";
 
 interface AgreementDeliverySectionProps {
   agreementId?: string;
@@ -79,16 +77,17 @@ export function AgreementDeliverySection({
     );
 
   const milestoneDeliveries = useMemo(
-    () => milestoneDeliveriesResponse?.data.deliveries ?? [],
+    () => milestoneDeliveriesResponse?.items ?? [],
     [milestoneDeliveriesResponse],
   );
 
-  const editableDelivery = useMemo(
-    () => findLatestEditableDelivery(milestoneDeliveries),
-    [milestoneDeliveries],
-  );
+  const editableDelivery = useMemo(() => {
+    return [...milestoneDeliveries]
+      .filter((delivery) => delivery.status === "DRAFT" || delivery.status === "CHANGES_REQUESTED")
+      .sort(sortDeliveriesByUpdatedAt)[0];
+  }, [milestoneDeliveries]);
   const latestDelivery = useMemo(
-    () => findLatestMilestoneDelivery(milestoneDeliveries),
+    () => [...milestoneDeliveries].sort(sortDeliveriesByUpdatedAt)[0],
     [milestoneDeliveries],
   );
 
@@ -199,7 +198,7 @@ export function AgreementDeliverySection({
 
       const savedDraft = await saveDraft();
       await submitDeliveryMutation.mutateAsync({
-        deliveryId: savedDraft.data.id,
+        deliveryId: getMutationDeliveryId(savedDraft),
         payload: {
           noteToClient: submitValidation.data.noteToClient || undefined,
         },
@@ -510,4 +509,12 @@ export function AgreementDeliverySection({
       ) : null}
     </section>
   );
+}
+
+function sortDeliveriesByUpdatedAt(left: Delivery, right: Delivery) {
+  return new Date(right.updatedAt).getTime() - new Date(left.updatedAt).getTime();
+}
+
+function getMutationDeliveryId(result: Delivery | DeliveryDetailsResponse) {
+  return "data" in result ? result.data.id : result.id;
 }

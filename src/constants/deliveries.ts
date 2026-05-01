@@ -1,11 +1,13 @@
-import type { DeliveryStatus, DeliveriesContent } from "@/types";
+import type { DeliveryRecordStatus, DeliveryStatus, DeliveriesContent } from "@/types";
 
 // AR: ملصقات الفلاتر العربية لحالات التسليم المستخدمة في الشريط العلوي.
 // EN: Arabic filter labels for delivery statuses used in the filter bar.
 export const deliveryStatusLabelMap: Record<DeliveryStatus, string> = {
   DRAFT: "مسودة",
+  NOT_SUBMITTED: "بانتظار التسليم",
   SUBMITTED: "تم الإرسال",
   CLIENT_REVIEW: "تحت مراجعة العميل",
+  IN_REVIEW: "تحت المراجعة",
   CHANGES_REQUESTED: "طلب تعديل",
   ACCEPTED: "مقبولة",
   DISPUTED: "نزاع",
@@ -17,7 +19,7 @@ export const deliveryStatusFallbackLabel = "غير معروف";
 
 // AR: فلاتر الحالات كقائمة ثابتة بالقيم والأسماء العربية.
 // EN: Status filter options as a static array of values and Arabic labels.
-export const deliveryStatusFilterOptions: { value: DeliveryStatus; label: string }[] = [
+export const deliveryStatusFilterOptions: { value: DeliveryRecordStatus; label: string }[] = [
   { value: "DRAFT", label: "مسودة" },
   { value: "SUBMITTED", label: "تم الإرسال" },
   { value: "CLIENT_REVIEW", label: "تحت مراجعة العميل" },
@@ -51,7 +53,6 @@ export const deliveriesUiStrings = {
 export const deliveriesContent = {
   title: "التسليمات",
   subtitle: "تابع كل تسليمات المراحل، مراجعات العملاء، وحالة الدفعات المرتبطة بها.",
-<<<<<<< HEAD
   searchPlaceholder: "ابحث باسم المشروع أو العميل...",
   exportLabel: "تصدير التقرير",
   createLabel: "تقديم تسليم جديد",
@@ -144,16 +145,6 @@ export const deliveriesContent = {
       actionLabel: "عرض مراجعة AI",
     },
   ],
-=======
-  searchPlaceholder: "الفلاتر المدعومة من الخادم تظهر أسفل الصفحة",
-  exportLabel: "عرض البيانات الحية",
-  createLabel: "ابدأ من مساحة العمل",
-  metrics: [],
-  filters: [],
-  sortFilters: [],
-  tableHeaders: ["المشروع / العميل", "المرحلة", "التسليم", "حالة التسليم", "حالة الدفعة", "المبلغ", "آخر تحديث", "الإجراء"],
-  deliveries: [],
->>>>>>> 376aec6939d214e5014cc9fa065f5e9a54ce38a7
   selectedSummary: {
     title: "ملخص التسليم المحدد",
     project: "سيظهر اسم الاتفاق هنا",
@@ -173,10 +164,5 @@ export const deliveriesContent = {
   },
   aiNotice: "إذا اعترض العميل، يمكن فتح AI Review وربط الاعتراض بشروط القبول.",
   quickActionsTitle: "إجراءات سريعة",
-<<<<<<< HEAD
   quickActions: ["فتح التسليم", "نسخ رابط التسليم", "فتح مساحة العمل"],
 } as const satisfies DeliveriesContent;
-=======
-  quickActions: ["فتح التسليم", "فتح المرحلة", "العودة لمساحة العمل"],
-} as const satisfies DeliveriesContent;
->>>>>>> 376aec6939d214e5014cc9fa065f5e9a54ce38a7

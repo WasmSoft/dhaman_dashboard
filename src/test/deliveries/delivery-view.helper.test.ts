@@ -70,6 +70,6 @@ describe("delivery-view.helper", () => {
     ]);
 
     expect(summary.criteria).toContain("تسليم نسخة الموبايل");
-    expect(summary.status).toBe("مراجعة العميل");
+    expect(summary.status).toBe("تحت مراجعة العميل");
   });
 });

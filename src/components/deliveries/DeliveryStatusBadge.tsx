@@ -10,8 +10,10 @@ interface DeliveryStatusBadgeProps {
 // EN: Delivery status color map with Arabic labels for each status.
 const statusConfig: Record<DeliveryStatus, { label: string; tone: string }> = {
   DRAFT: { label: "مسودة", tone: "bg-amber-500/20 text-amber-300" },
+  NOT_SUBMITTED: { label: "بانتظار التسليم", tone: "bg-amber-500/20 text-amber-300" },
   SUBMITTED: { label: "تم الإرسال", tone: "bg-[#6f52ff]/20 text-[#a898ff]" },
   CLIENT_REVIEW: { label: "تحت مراجعة العميل", tone: "bg-[#6f52ff]/20 text-[#cfc6ff]" },
+  IN_REVIEW: { label: "تحت المراجعة", tone: "bg-[#6f52ff]/20 text-[#cfc6ff]" },
   CHANGES_REQUESTED: { label: "طلب تعديل", tone: "bg-amber-500/20 text-amber-300" },
   ACCEPTED: { label: "مقبولة", tone: "bg-emerald-500/15 text-emerald-300" },
   DISPUTED: { label: "نزاع", tone: "bg-red-500/20 text-red-300" },
