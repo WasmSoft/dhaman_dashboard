@@ -27,6 +27,7 @@ export const API_PATHS = {
     AGREEMENTS: "/client-portal/agreements",
   },
   PORTAL: {
+    WORKSPACE: (token: PathParam) => `/portal/${encodePathParam(token)}`,
     TIMELINE: (token: PathParam) =>
       `/portal/${encodePathParam(token)}/timeline`,
   },
@@ -60,6 +61,25 @@ export const API_PATHS = {
       `/milestones/${encodePathParam(milestoneId)}`,
     REORDER: (milestoneId: PathParam) =>
       `/milestones/${encodePathParam(milestoneId)}/reorder`,
+  },
+  DELIVERIES: {
+    LIST: "/deliveries",
+    DETAILS: (deliveryId: PathParam) =>
+      `/deliveries/${encodePathParam(deliveryId)}`,
+    CREATE: (milestoneId: PathParam) =>
+      `/milestones/${encodePathParam(milestoneId)}/deliveries`,
+    UPDATE: (deliveryId: PathParam) =>
+      `/deliveries/${encodePathParam(deliveryId)}`,
+    SUBMIT: (deliveryId: PathParam) =>
+      `/deliveries/${encodePathParam(deliveryId)}/submit`,
+  },
+  PORTAL_DELIVERIES: {
+    DETAILS: (token: PathParam, deliveryId: PathParam) =>
+      `/portal/${encodePathParam(token)}/deliveries/${encodePathParam(deliveryId)}`,
+    ACCEPT: (token: PathParam, deliveryId: PathParam) =>
+      `/portal/${encodePathParam(token)}/deliveries/${encodePathParam(deliveryId)}/accept`,
+    REQUEST_CHANGES: (token: PathParam, deliveryId: PathParam) =>
+      `/portal/${encodePathParam(token)}/deliveries/${encodePathParam(deliveryId)}/request-changes`,
   },
   CLIENTS: {
     ROOT: "/clients",

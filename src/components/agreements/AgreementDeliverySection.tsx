@@ -1,327 +1,513 @@
+"use client";
+
 import Link from "next/link";
-import type { ReactNode } from "react";
-import { ArrowLeft, ArrowRight, CalendarClock, Check, CheckCircle2, CircleHelp, ClipboardCheck, FileText, Link2, LockKeyhole, MessageSquareText, Save, Send, Upload, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import {
+  ArrowRight,
+  CheckCircle2,
+  FileText,
+  Link2,
+  LockKeyhole,
+  Save,
+  Send,
+} from "lucide-react";
 
 import { Button } from "@/components/shared";
 import { Input } from "@/components/shared/input";
 import { TimelineEvidencePanel } from "@/components/timeline-events";
 import { agreementsContent } from "@/constants";
-import { cn } from "@/lib/utils";
+import { useDeliveriesQuery } from "@/hooks/deliveries/use-deliveries-query";
+import { useCreateDeliveryMutation } from "@/hooks/deliveries/use-create-delivery-mutation";
+import { useSubmitDeliveryMutation } from "@/hooks/deliveries/use-submit-delivery-mutation";
+import { useUpdateDeliveryMutation } from "@/hooks/deliveries/use-update-delivery-mutation";
+import { useMilestoneDetailsQuery } from "@/hooks/milestones";
+import {
+  deliveryDraftSchema,
+  deliverySubmitSchema,
+  findLatestEditableDelivery,
+  findLatestMilestoneDelivery,
+  getDeliveryPaymentStatusLabel,
+  getDeliveryStatusLabel,
+} from "@/lib/deliveries";
+import {
+  buildAgreementWorkspaceHref,
+  buildMilestoneDetailHref,
+} from "@/lib/milestones/helpers";
+import { formatMilestoneAmount } from "@/lib/milestones";
+import type { DeliverySubmitFormValues } from "@/types";
 
-function DeliveryHeader() {
-  const content = agreementsContent.agreementDeliveryPage;
-
-  return (
-    <section className="mb-5 max-w-[904px] text-start">
-      <Button asChild variant="link" className="mb-2 h-auto justify-start p-0 text-[12px] font-bold text-[#8a91ac] hover:text-white">
-        <Link href="/agreements/workspace">
-          <ArrowRight className="size-3.5" />
-          {content.backLabel}
-        </Link>
-      </Button>
-      <h1 className="text-2xl font-extrabold tracking-[-0.02em] text-white md:text-[28px]">{content.title}</h1>
-      <p className="mt-1 text-sm leading-6 text-[#737b99]">{content.subtitle}</p>
-    </section>
-  );
+interface AgreementDeliverySectionProps {
+  agreementId?: string;
+  milestoneId?: string;
 }
 
-function DeliveryInfoStrip() {
-  const content = agreementsContent.agreementDeliveryPage;
+const defaultFormValues: DeliverySubmitFormValues = {
+  deliveryUrl: "",
+  fileUrl: "",
+  fileName: "",
+  fileType: "",
+  summary: "",
+  notes: "",
+  noteToClient: "",
+  confirmationAccepted: false,
+};
 
-  return (
-    <section className="mb-5 rounded-[14px] border border-[#252a42] bg-[#15192b] p-4 md:p-5">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.45fr_0.75fr_1.55fr_0.55fr_0.7fr] lg:divide-x lg:divide-x-reverse lg:divide-[#252a42]">
-        {content.infoItems.map((item) => (
-          <div key={item.label} className="text-start lg:px-4 lg:first:pe-0 lg:last:ps-0">
-            <span className="block text-[11px] font-bold text-[#58607c]">{item.label}</span>
-            <strong className="mt-1 flex items-center gap-1.5 text-[13px] font-extrabold leading-6 text-white">
-              {item.value}
-              {"icon" in item && item.icon === "calendar" ? <CalendarClock className="size-3.5 text-[#a898ff]" /> : null}
-            </strong>
-          </div>
-        ))}
-      </div>
-      <div className="mt-4 flex flex-wrap justify-start gap-2 lg:justify-end">
-        {content.statusChips.map((chip, index) => (
-          <span key={chip} className={cn("rounded-md px-2.5 py-1 text-[11px] font-bold", index === 0 && "bg-emerald-500/15 text-emerald-300", index === 1 && "bg-[#6f52ff]/20 text-[#a898ff]", index === 2 && "bg-amber-500/20 text-amber-300")}>{chip}</span>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function SectionCard({ children, icon, title }: { children: ReactNode; icon: ReactNode; title: string }) {
-  return (
-    <section className="rounded-[14px] border border-[#252a42] bg-[#15192b] p-4 shadow-[0_18px_45px_rgba(4,7,20,0.14)] md:p-6">
-      <div className="mb-4 flex items-center justify-between gap-4">
-        <h2 className="text-[16px] font-extrabold text-white">{title}</h2>
-        <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-[#6f52ff]/20 text-[#a898ff]">{icon}</span>
-      </div>
-      {children}
-    </section>
-  );
-}
-
-function DeliveryLinkCard() {
-  const content = agreementsContent.agreementDeliveryPage;
-
-  return (
-    <SectionCard title={content.linkTitle} icon={<Link2 className="size-4" />}>
-      <div className="mb-4 flex flex-wrap justify-start gap-2 lg:justify-end">
-        {content.linkTypes.map((type) => {
-          const isActive = "active" in type && type.active;
-
-          return (
-            <button key={type.label} className={cn("inline-flex h-7 items-center gap-1.5 rounded-full border px-3 text-[11px] font-bold transition", isActive ? "border-[#6f52ff]/50 bg-[#6f52ff]/25 text-[#cfc6ff]" : "border-[#252a42] bg-[#101323] text-[#737b99] hover:text-white")} type="button">
-              <Link2 className="size-3" />
-              {type.label}
-            </button>
-          );
-        })}
-      </div>
-      <label className="block text-start text-[12px] font-bold text-[#c7cce0]" htmlFor="delivery-link">{content.linkLabel}</label>
-      <Input id="delivery-link" dir="ltr" defaultValue={content.linkPlaceholder} className="mt-2 h-[41px] rounded-[10px] border-[#252a42] bg-[#1d2135] px-4 text-start text-[13px] text-[#c7cce0] focus-visible:ring-[#6f52ff]/25" />
-      <p className="mt-2 text-start text-[12px] leading-6 text-[#737b99]">{content.linkHelp}</p>
-    </SectionCard>
-  );
-}
-
-function AttachmentCard() {
-  const content = agreementsContent.agreementDeliveryPage;
-
-  return (
-    <SectionCard title={content.attachmentTitle} icon={<Upload className="size-4" />}>
-      <div className="flex items-center gap-3 rounded-[10px] border border-[#252a42] bg-[#1d2135] p-3">
-        <button className="grid size-7 shrink-0 place-items-center rounded-md bg-red-500/15 text-red-300" type="button" aria-label="حذف الملف">
-          <X className="size-3.5" />
-        </button>
-        <div className="min-w-0 flex-1 text-start">
-          <strong className="block truncate text-[12px] font-extrabold text-white">{content.attachmentFileName}</strong>
-          <span className="mt-2 inline-flex w-full items-center justify-end rounded-full bg-emerald-500/15 px-2 py-1 text-[11px] font-bold text-emerald-300">
-            <span className="me-1 size-1.5 rounded-full bg-emerald-300" />
-            {content.attachmentStatus}
-          </span>
-        </div>
-        <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-[#6f52ff]/20 text-[#a898ff]">
-          <FileText className="size-4" />
-        </span>
-      </div>
-    </SectionCard>
-  );
-}
-
-function TextareaField({ help, label, placeholder }: { help: string; label: string; placeholder: string }) {
-  return (
-    <div>
-      <label className="block text-start text-[12px] font-bold text-[#c7cce0]">{label}</label>
-      <textarea className="mt-2 min-h-[104px] w-full resize-none rounded-[10px] border border-[#252a42] bg-[#1d2135] px-4 py-3 text-start text-[13px] leading-6 text-white outline-none transition placeholder:text-[#636b8a] focus:border-[#6f52ff]/50 focus:ring-2 focus:ring-[#6f52ff]/20" placeholder={placeholder} />
-      <p className="mt-2 text-start text-[12px] leading-6 text-[#737b99]">{help}</p>
-    </div>
-  );
-}
-
-function DescriptionCard() {
-  const content = agreementsContent.agreementDeliveryPage;
-
-  return (
-    <SectionCard title={content.summaryTitle} icon={<FileText className="size-4" />}>
-      <TextareaField label={content.summaryLabel} placeholder={content.summaryPlaceholder} help={content.summaryHelp} />
-    </SectionCard>
-  );
-}
-
-function NotesCard() {
-  const content = agreementsContent.agreementDeliveryPage;
-
-  return (
-    <SectionCard title={content.notesTitle} icon={<MessageSquareText className="size-4" />}>
-      <p className="-mt-3 mb-4 text-start text-[12px] text-[#737b99]">{content.notesOptional}</p>
-      <TextareaField label={content.notesLabel} placeholder={content.notesPlaceholder} help={content.notesHelp} />
-    </SectionCard>
-  );
-}
-
-function ConfirmationCard() {
-  const content = agreementsContent.agreementDeliveryPage;
-
-  return (
-    <SectionCard title={content.confirmationTitle} icon={<LockKeyhole className="size-4" />}>
-      <label className="flex items-start gap-3 rounded-[10px] text-start text-[12px] leading-6 text-[#c7cce0]">
-        <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-md border border-[#6f52ff] bg-[#6f52ff]/20 text-[#a898ff]">
-          <Check className="size-3" />
-        </span>
-        {content.confirmationLabel}
-      </label>
-      <div className="mt-4 flex items-center gap-2 rounded-[9px] bg-[#101323] px-4 py-3 text-start text-[11px] leading-5 text-[#737b99]">
-        <CircleHelp className="size-3.5 shrink-0 text-[#8a91ac]" />
-        {content.confirmationWarning}
-      </div>
-    </SectionCard>
-  );
-}
-
-function DeliveryFooter() {
-  const content = agreementsContent.agreementDeliveryPage;
-
-  return (
-    <section className="rounded-[14px] border border-[#252a42] bg-[#15192b] p-4 md:px-5">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <p className="max-w-[160px] text-start text-[12px] leading-6 text-[#737b99]">{content.footerNote}</p>
-        <div className="flex flex-wrap justify-start gap-2 lg:justify-end">
-          <Button variant="secondary" className="h-10 rounded-[10px] border border-[#252a42] bg-[#101323] px-4 text-[13px] font-bold text-[#c7cce0] hover:bg-[#1d2135] hover:text-white">
-            <X className="size-4" />
-            {content.cancelLabel}
-          </Button>
-          <Button variant="secondary" className="h-10 rounded-[10px] border border-[#252a42] bg-[#101323] px-4 text-[13px] font-bold text-[#c7cce0] hover:bg-[#1d2135] hover:text-white">
-            <Save className="size-4" />
-            {content.draftLabel}
-          </Button>
-          <Button className="h-10 rounded-[10px] bg-[#6f52ff] px-5 text-[13px] font-bold text-white shadow-[0_12px_28px_rgba(111,82,255,0.26)] hover:bg-[#7b63ff]">
-            <Send className="size-4" />
-            {content.sendLabel}
-          </Button>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function RequirementsCard() {
-  const content = agreementsContent.agreementDeliveryPage;
-
-  return (
-    <article className="rounded-[14px] border border-[#252a42] bg-[#15192b] p-5 text-start">
-      <h2 className="mb-5 flex items-center gap-2 text-[14px] font-extrabold text-white">
-        <span className="grid size-7 place-items-center rounded-lg bg-[#6f52ff]/25 text-[#a898ff]"><Check className="size-3.5" /></span>
-        {content.requirementsTitle}
-      </h2>
-      <ul className="space-y-3 text-[12px] leading-6 text-[#c7cce0]">
-        {content.requirements.map((item) => (
-          <li key={item.label} className="flex items-center gap-2">
-            <CheckCircle2 className="size-3.5 shrink-0 text-emerald-300" />
-            {item.label}
-          </li>
-        ))}
-      </ul>
-      <p className="mt-5 rounded-[10px] bg-[#1d2135] px-4 py-3 text-[12px] leading-6 text-[#8a91ac]">{content.requirementsNote}</p>
-    </article>
-  );
-}
-
-function ChecklistCard() {
-  const content = agreementsContent.agreementDeliveryPage;
-
-  return (
-    <article className="rounded-[14px] border border-[#252a42] bg-[#15192b] p-5 text-start">
-      <h2 className="mb-5 flex items-center gap-2 text-[14px] font-extrabold text-[#a898ff]">
-        <ClipboardCheck className="size-4" />
-        {content.checklistTitle}
-      </h2>
-      <ul className="space-y-3 text-[12px] leading-6">
-        {content.checklist.map((item) => {
-          const isDone = "done" in item && item.done;
-
-          return (
-            <li key={item.label} className={cn("flex items-center gap-2", isDone ? "text-white" : "text-[#737b99]")}> 
-              <span className={cn("grid size-4 shrink-0 place-items-center rounded-full border", isDone ? "border-emerald-400 bg-emerald-500/15 text-emerald-300" : "border-[#323858] text-[#58607c]")}>{isDone ? <Check className="size-2.5" /> : null}</span>
-              {item.label}
-            </li>
-          );
-        })}
-      </ul>
-    </article>
-  );
-}
-
-function AfterSubmitCard() {
-  const content = agreementsContent.agreementDeliveryPage;
-
-  return (
-    <article className="rounded-[14px] border border-[#252a42] bg-[#15192b] p-5 text-start">
-      <h2 className="mb-5 flex items-center gap-2 text-[14px] font-extrabold text-white">
-        <ArrowLeft className="size-4 text-[#a898ff]" />
-        {content.afterSubmitTitle}
-      </h2>
-      <ol className="space-y-4 text-[12px] leading-6 text-[#c7cce0]">
-        {content.afterSubmitItems.map((item) => (
-          <li key={item.number} className="flex items-start gap-3">
-            <span className="grid size-5 shrink-0 place-items-center rounded-full bg-[#6f52ff]/25 text-[11px] font-bold text-[#cfc6ff]">{item.number}</span>
-            {item.label}
-          </li>
-        ))}
-      </ol>
-    </article>
-  );
-}
-
-function PaymentStatusCard() {
-  const { paymentStatus } = agreementsContent.agreementDeliveryPage;
-  const content = agreementsContent.agreementDeliveryPage;
-
-  return (
-    <article className="rounded-[14px] border border-[#252a42] bg-[#15192b] p-5 text-start">
-      <h2 className="mb-5 flex items-center gap-2 text-[14px] font-extrabold text-[#a898ff]">
-        <LockKeyhole className="size-4" />
-        {content.paymentStatusTitle}
-      </h2>
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-[10px] bg-[#1d2135] p-3 text-center">
-        <div>
-          <span className="block text-[11px] text-[#737b99]">{paymentStatus.beforeLabel}</span>
-          <strong className="mt-2 inline-flex rounded-md bg-amber-500/20 px-3 py-1 text-[12px] text-amber-300">{paymentStatus.beforeValue}</strong>
-        </div>
-        <ArrowLeft className="size-4 text-[#8a91ac]" />
-        <div>
-          <span className="block text-[11px] text-[#737b99]">{paymentStatus.afterLabel}</span>
-          <strong className="mt-2 inline-flex rounded-md bg-blue-500/20 px-3 py-1 text-[12px] text-blue-300">{paymentStatus.afterValue}</strong>
-        </div>
-      </div>
-      <strong className="mt-5 block text-center text-[20px] font-extrabold text-emerald-300" dir="ltr">{paymentStatus.amount}</strong>
-      <p className="mt-2 text-[12px] leading-6 text-[#737b99]">{paymentStatus.note}</p>
-    </article>
-  );
-}
-
-function DeliverySidebar() {
-  return (
-    <aside className="space-y-3 xl:w-[264px] xl:shrink-0">
-      <RequirementsCard />
-      <ChecklistCard />
-      <AfterSubmitCard />
-      <PaymentStatusCard />
-    </aside>
-  );
-}
-
+// AR: نموذج تسليم المرحلة الحي — يسمح بإنشاء المسودة وتحديثها وإرسالها من نفس الصفحة.
+// EN: Live milestone delivery form — supports creating, updating, and submitting a delivery from one page.
 export function AgreementDeliverySection({
   agreementId,
-}: {
-  agreementId?: string;
-}) {
+  milestoneId,
+}: AgreementDeliverySectionProps) {
+  const content = agreementsContent.agreementDeliveryPage;
+  const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const { data: milestoneResponse, isLoading: isMilestoneLoading } =
+    useMilestoneDetailsQuery(milestoneId);
+  const milestone = milestoneResponse?.data;
+
+  const { data: milestoneDeliveriesResponse, isLoading: isDeliveriesLoading } =
+    useDeliveriesQuery(
+      milestoneId
+        ? {
+            milestoneId,
+            limit: 20,
+            page: 1,
+          }
+        : undefined,
+    );
+
+  const milestoneDeliveries = useMemo(
+    () => milestoneDeliveriesResponse?.data.deliveries ?? [],
+    [milestoneDeliveriesResponse],
+  );
+
+  const editableDelivery = useMemo(
+    () => findLatestEditableDelivery(milestoneDeliveries),
+    [milestoneDeliveries],
+  );
+  const latestDelivery = useMemo(
+    () => findLatestMilestoneDelivery(milestoneDeliveries),
+    [milestoneDeliveries],
+  );
+
+  const form = useForm<DeliverySubmitFormValues>({
+    defaultValues: defaultFormValues,
+  });
+
+  const { register, getValues, reset } = form;
+
+  useEffect(() => {
+    if (!editableDelivery) {
+      reset(defaultFormValues);
+      return;
+    }
+
+    reset({
+      deliveryUrl: editableDelivery.deliveryUrl ?? "",
+      fileUrl: editableDelivery.fileUrl ?? "",
+      fileName: editableDelivery.fileName ?? "",
+      fileType: editableDelivery.fileType ?? "",
+      summary: editableDelivery.summary,
+      notes: editableDelivery.notes ?? "",
+      noteToClient: "",
+      confirmationAccepted: false,
+    });
+  }, [editableDelivery, reset]);
+
+  const createDeliveryMutation = useCreateDeliveryMutation();
+  const updateDeliveryMutation = useUpdateDeliveryMutation();
+  const submitDeliveryMutation = useSubmitDeliveryMutation();
+
+  const isBusy =
+    createDeliveryMutation.isPending ||
+    updateDeliveryMutation.isPending ||
+    submitDeliveryMutation.isPending;
+
+  async function saveDraft() {
+    setErrorMessage(null);
+    setFeedbackMessage(null);
+
+    const values = getValues();
+    const draftPayload = {
+      deliveryUrl: values.deliveryUrl?.trim() || undefined,
+      fileUrl: values.fileUrl?.trim() || undefined,
+      fileName: values.fileName?.trim() || undefined,
+      fileType: values.fileType?.trim() || undefined,
+      summary: values.summary?.trim() ?? "",
+      notes: values.notes?.trim() || undefined,
+    };
+
+    const validation = deliveryDraftSchema.safeParse(draftPayload);
+
+    if (!validation.success) {
+      setErrorMessage(validation.error.issues[0]?.message ?? "بيانات المسودة غير صالحة.");
+      throw new Error("INVALID_DRAFT");
+    }
+
+    if (!milestoneId) {
+      setErrorMessage("تعذر تحديد المرحلة الحالية للتسليم.");
+      throw new Error("MISSING_MILESTONE");
+    }
+
+    if (editableDelivery) {
+      const result = await updateDeliveryMutation.mutateAsync({
+        deliveryId: editableDelivery.id,
+        payload: validation.data,
+      });
+      setFeedbackMessage("تم تحديث المسودة بنجاح.");
+      return result;
+    }
+
+    const result = await createDeliveryMutation.mutateAsync({
+      milestoneId,
+      payload: validation.data,
+    });
+    setFeedbackMessage("تم إنشاء مسودة التسليم بنجاح.");
+    return result;
+  }
+
+  async function handleSaveDraft() {
+    try {
+      await saveDraft();
+    } catch (error) {
+      if (error instanceof Error && error.message === "INVALID_DRAFT") {
+        return;
+      }
+
+      setErrorMessage(
+        error instanceof Error ? error.message : "تعذر حفظ مسودة التسليم.",
+      );
+    }
+  }
+
+  async function handleSubmitDelivery() {
+    try {
+      const values = getValues();
+      const submitValidation = deliverySubmitSchema.safeParse({
+        noteToClient: values.noteToClient?.trim() || undefined,
+        confirmationAccepted: values.confirmationAccepted,
+      });
+
+      if (!submitValidation.success) {
+        setErrorMessage(
+          submitValidation.error.issues[0]?.message ?? "تعذر إرسال التسليم.",
+        );
+        return;
+      }
+
+      const savedDraft = await saveDraft();
+      await submitDeliveryMutation.mutateAsync({
+        deliveryId: savedDraft.data.id,
+        payload: {
+          noteToClient: submitValidation.data.noteToClient || undefined,
+        },
+      });
+
+      setErrorMessage(null);
+      setFeedbackMessage("تم إرسال التسليم إلى العميل بنجاح.");
+    } catch (error) {
+      if (error instanceof Error && error.message === "INVALID_DRAFT") {
+        return;
+      }
+
+      setErrorMessage(
+        error instanceof Error ? error.message : "تعذر إرسال التسليم الحالي.",
+      );
+    }
+  }
+
+  const workspaceHref = agreementId
+    ? buildAgreementWorkspaceHref(agreementId)
+    : "/agreements";
+  const milestoneDetailsHref = agreementId && milestoneId
+    ? buildMilestoneDetailHref(agreementId, milestoneId)
+    : workspaceHref;
+
   return (
-    <>
-      <DeliveryHeader />
-      <DeliveryInfoStrip />
-      {/* AR: نموذج التسليم يحافظ على العمود الجانبي يساراً والمحتوى الرئيسي يميناً كما في Figma داخل RTL. EN: The delivery form preserves the left sidebar and right main content from Figma in RTL. */}
-      <section dir="ltr" className="mx-auto flex max-w-[904px] flex-col gap-4 xl:flex-row xl:items-start">
-        <DeliverySidebar />
-        <div dir="rtl" className="min-w-0 flex-1 space-y-4 pb-10">
-          <DeliveryLinkCard />
-          <AttachmentCard />
-          <DescriptionCard />
-          <NotesCard />
-          <ConfirmationCard />
-          <DeliveryFooter />
-          {/* AR: أدلة السجل الزمني المرتبطة بالتسليم.
-              EN: Timeline evidence related to the delivery. */}
+    <section dir="rtl" className="mx-auto max-w-[980px] space-y-4 pb-10">
+      <header className="rounded-[14px] border border-[#252a42] bg-[radial-gradient(circle_at_top_right,rgba(111,82,255,0.22),transparent_42%),#15192b] p-5 text-start md:p-6">
+        <Button
+          asChild
+          variant="link"
+          className="mb-2 h-auto justify-start p-0 text-[12px] font-bold text-[#8a91ac] hover:text-white"
+        >
+          <Link href={workspaceHref}>
+            <ArrowRight className="size-3.5" />
+            {content.backLabel}
+          </Link>
+        </Button>
+        <h1 className="text-2xl font-extrabold tracking-[-0.02em] text-white md:text-[28px]">
+          {content.title}
+        </h1>
+        <p className="mt-1 text-sm leading-6 text-[#737b99]">{content.subtitle}</p>
+      </header>
+
+      <section className="grid gap-4 lg:grid-cols-[1.4fr_0.9fr]">
+        <article className="rounded-[14px] border border-[#252a42] bg-[#15192b] p-5 text-start">
+          <div className="mb-4 flex items-center gap-2 text-[14px] font-extrabold text-white">
+            <FileText className="size-4 text-[#a898ff]" />
+            معلومات المرحلة الحالية
+          </div>
+          {isMilestoneLoading ? (
+            <p className="text-[13px] text-[#8a91ac]">جاري تحميل بيانات المرحلة...</p>
+          ) : milestone ? (
+            <dl className="grid gap-3 sm:grid-cols-2 text-[13px]">
+              <div className="rounded-[10px] bg-[#101323] p-4">
+                <dt className="text-[#737b99]">المرحلة</dt>
+                <dd className="mt-2 font-bold text-white">{milestone.title}</dd>
+              </div>
+              <div className="rounded-[10px] bg-[#101323] p-4">
+                <dt className="text-[#737b99]">حالة الدفعة</dt>
+                <dd className="mt-2 font-bold text-white">
+                  {getDeliveryPaymentStatusLabel(milestone.paymentStatus)}
+                </dd>
+              </div>
+              <div className="rounded-[10px] bg-[#101323] p-4">
+                <dt className="text-[#737b99]">حالة التسليم</dt>
+                <dd className="mt-2 font-bold text-white">
+                  {getDeliveryStatusLabel(milestone.deliveryStatus)}
+                </dd>
+              </div>
+              <div className="rounded-[10px] bg-[#101323] p-4">
+                <dt className="text-[#737b99]">قيمة المرحلة</dt>
+                <dd className="mt-2 font-bold text-emerald-300" dir="ltr">
+                  {formatMilestoneAmount(milestone.amount, milestone.currency)}
+                </dd>
+              </div>
+            </dl>
+          ) : (
+            <p className="text-[13px] text-red-200">تعذر تحميل تفاصيل المرحلة الحالية.</p>
+          )}
+        </article>
+
+        <article className="rounded-[14px] border border-[#252a42] bg-[#15192b] p-5 text-start">
+          <div className="mb-4 flex items-center gap-2 text-[14px] font-extrabold text-[#a898ff]">
+            <CheckCircle2 className="size-4" />
+            حالة التسليم
+          </div>
+          <div className="space-y-3 text-[13px]">
+            <div className="rounded-[10px] bg-[#101323] p-4">
+              <span className="block text-[#737b99]">أحدث حالة</span>
+              <strong className="mt-2 block text-white">
+                {latestDelivery
+                  ? getDeliveryStatusLabel(latestDelivery.status)
+                  : "لا يوجد تسليم بعد"}
+              </strong>
+            </div>
+            <div className="rounded-[10px] bg-[#101323] p-4">
+              <span className="block text-[#737b99]">آخر ملاحظة</span>
+              <p className="mt-2 leading-6 text-white/85">
+                {latestDelivery?.clientFeedback ??
+                  latestDelivery?.notes ??
+                  "لا توجد ملاحظات محفوظة حالياً."}
+              </p>
+            </div>
+            <Button asChild variant="secondary" className="h-10 w-full rounded-[10px] border border-[#252a42] bg-[#101323] text-[13px] font-bold text-[#c7cce0] hover:bg-[#1d2135] hover:text-white">
+              <Link href={milestoneDetailsHref}>عرض تفاصيل المرحلة</Link>
+            </Button>
+          </div>
+        </article>
+      </section>
+
+      {feedbackMessage ? (
+        <section className="rounded-[12px] border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-[13px] text-emerald-200">
+          {feedbackMessage}
+        </section>
+      ) : null}
+
+      {errorMessage ? (
+        <section className="rounded-[12px] border border-red-500/30 bg-red-500/10 px-4 py-3 text-[13px] text-red-200">
+          {errorMessage}
+        </section>
+      ) : null}
+
+      <section className="grid gap-4 lg:grid-cols-[1.35fr_0.95fr]">
+        <article className="space-y-4 rounded-[14px] border border-[#252a42] bg-[#15192b] p-5 text-start md:p-6">
+          <div className="flex items-center gap-2 text-[15px] font-extrabold text-white">
+            <Link2 className="size-4 text-[#a898ff]" />
+            بيانات التسليم
+          </div>
+
+          <div>
+            <label className="block text-[12px] font-bold text-[#c7cce0]">
+              {content.linkLabel}
+            </label>
+            <Input
+              dir="ltr"
+              className="mt-2 h-11 rounded-[10px] border-[#252a42] bg-[#1d2135] text-start text-white"
+              placeholder={content.linkPlaceholder}
+              {...register("deliveryUrl")}
+            />
+            <p className="mt-2 text-[12px] leading-6 text-[#737b99]">{content.linkHelp}</p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className="block text-[12px] font-bold text-[#c7cce0]">
+                رابط الملف الاختياري
+              </label>
+              <Input
+                dir="ltr"
+                className="mt-2 h-11 rounded-[10px] border-[#252a42] bg-[#1d2135] text-start text-white"
+                placeholder="https://cdn.example.com/file.zip"
+                {...register("fileUrl")}
+              />
+            </div>
+            <div>
+              <label className="block text-[12px] font-bold text-[#c7cce0]">
+                اسم الملف
+              </label>
+              <Input
+                className="mt-2 h-11 rounded-[10px] border-[#252a42] bg-[#1d2135] text-start text-white"
+                placeholder={content.attachmentFileName}
+                {...register("fileName")}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-[12px] font-bold text-[#c7cce0]">
+              نوع الملف
+            </label>
+            <Input
+              className="mt-2 h-11 rounded-[10px] border-[#252a42] bg-[#1d2135] text-start text-white"
+              placeholder="application/pdf"
+              {...register("fileType")}
+            />
+          </div>
+
+          <div>
+            <label className="block text-[12px] font-bold text-[#c7cce0]">
+              {content.summaryLabel}
+            </label>
+            <textarea
+              className="mt-2 min-h-[140px] w-full rounded-[10px] border border-[#252a42] bg-[#1d2135] px-4 py-3 text-start text-[13px] leading-6 text-white outline-none"
+              placeholder={content.summaryPlaceholder}
+              {...register("summary")}
+            />
+            <p className="mt-2 text-[12px] leading-6 text-[#737b99]">{content.summaryHelp}</p>
+          </div>
+
+          <div>
+            <label className="block text-[12px] font-bold text-[#c7cce0]">
+              {content.notesLabel}
+            </label>
+            <textarea
+              className="mt-2 min-h-[120px] w-full rounded-[10px] border border-[#252a42] bg-[#1d2135] px-4 py-3 text-start text-[13px] leading-6 text-white outline-none"
+              placeholder={content.notesPlaceholder}
+              {...register("notes")}
+            />
+            <p className="mt-2 text-[12px] leading-6 text-[#737b99]">{content.notesHelp}</p>
+          </div>
+
+          <div>
+            <label className="block text-[12px] font-bold text-[#c7cce0]">
+              رسالة مرفقة للعميل عند الإرسال
+            </label>
+            <textarea
+              className="mt-2 min-h-[100px] w-full rounded-[10px] border border-[#252a42] bg-[#1d2135] px-4 py-3 text-start text-[13px] leading-6 text-white outline-none"
+              placeholder="يمكنك كتابة ملاحظة تساعد العميل أثناء المراجعة."
+              {...register("noteToClient")}
+            />
+          </div>
+
+          <label className="flex items-start gap-3 rounded-[10px] border border-[#252a42] bg-[#101323] px-4 py-3 text-[12px] leading-6 text-[#c7cce0]">
+            <input
+              type="checkbox"
+              className="mt-1 size-4 rounded border-[#6f52ff] accent-[#6f52ff]"
+              {...register("confirmationAccepted")}
+            />
+            <span>{content.confirmationLabel}</span>
+          </label>
+
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button
+              onClick={handleSaveDraft}
+              type="button"
+              disabled={isBusy}
+              variant="secondary"
+              className="h-10 rounded-[10px] border border-[#252a42] bg-[#101323] px-4 text-[13px] font-bold text-[#c7cce0] hover:bg-[#1d2135] hover:text-white"
+            >
+              <Save className="size-4" />
+              {editableDelivery ? "تحديث المسودة" : content.draftLabel}
+            </Button>
+            <Button
+              onClick={handleSubmitDelivery}
+              type="button"
+              disabled={isBusy || !milestoneId}
+              className="h-10 rounded-[10px] bg-[#6f52ff] px-5 text-[13px] font-bold text-white shadow-[0_12px_28px_rgba(111,82,255,0.26)] hover:bg-[#7b63ff]"
+            >
+              <Send className="size-4" />
+              {content.sendLabel}
+            </Button>
+          </div>
+        </article>
+
+        <aside className="space-y-4">
+          <article className="rounded-[14px] border border-[#252a42] bg-[#15192b] p-5 text-start">
+            <div className="mb-4 flex items-center gap-2 text-[14px] font-extrabold text-[#a898ff]">
+              <CheckCircle2 className="size-4" />
+              {content.requirementsTitle}
+            </div>
+            <ul className="space-y-2 text-[12px] leading-6 text-[#c7cce0]">
+              {milestone?.acceptanceCriteria?.length
+                ? milestone.acceptanceCriteria.map((criterion, index) => (
+                    <li key={`${criterion.description}-${index}`} className="flex items-start gap-2">
+                      <CheckCircle2 className="mt-1 size-3.5 shrink-0 text-emerald-300" />
+                      <span>{criterion.description}</span>
+                    </li>
+                  ))
+                : content.requirements.map((item) => (
+                    <li key={item.label} className="flex items-start gap-2">
+                      <CheckCircle2 className="mt-1 size-3.5 shrink-0 text-emerald-300" />
+                      <span>{item.label}</span>
+                    </li>
+                  ))}
+            </ul>
+          </article>
+
+          <article className="rounded-[14px] border border-[#252a42] bg-[#15192b] p-5 text-start">
+            <div className="mb-4 flex items-center gap-2 text-[14px] font-extrabold text-white">
+              <LockKeyhole className="size-4 text-[#a898ff]" />
+              {content.paymentStatusTitle}
+            </div>
+            <div className="space-y-3 text-[13px]">
+              <div className="rounded-[10px] bg-[#101323] p-4">
+                <span className="block text-[#737b99]">قبل الإرسال</span>
+                <strong className="mt-2 block text-white">
+                  {milestone
+                    ? getDeliveryPaymentStatusLabel(milestone.paymentStatus)
+                    : content.paymentStatus.beforeValue}
+                </strong>
+              </div>
+              <div className="rounded-[10px] bg-[#101323] p-4">
+                <span className="block text-[#737b99]">بعد الإرسال</span>
+                <strong className="mt-2 block text-emerald-300">مراجعة العميل</strong>
+              </div>
+            </div>
+          </article>
+
           {agreementId ? (
             <TimelineEvidencePanel
               agreementId={agreementId}
-              eventTypes={["DELIVERY_SUBMITTED", "DELIVERY_ACCEPTED", "DELIVERY_CHANGES_REQUESTED"]}
+              eventTypes={[
+                "DELIVERY_SUBMITTED",
+                "DELIVERY_ACCEPTED",
+                "DELIVERY_CHANGES_REQUESTED",
+              ]}
               maxItems={3}
             />
           ) : null}
-        </div>
+        </aside>
       </section>
-    </>
+
+      {isDeliveriesLoading && !latestDelivery ? (
+        <p className="text-center text-[12px] text-[#8a91ac]">
+          جاري تحميل بيانات التسليمات الحالية...
+        </p>
+      ) : null}
+    </section>
   );
 }

@@ -28,11 +28,14 @@ export type MilestoneStatus =
   | "CANCELLED";
 
 export type DeliveryStatus =
+  | "DRAFT"
   | "NOT_SUBMITTED"
   | "SUBMITTED"
+  | "CLIENT_REVIEW"
   | "IN_REVIEW"
   | "ACCEPTED"
-  | "CHANGES_REQUESTED";
+  | "CHANGES_REQUESTED"
+  | "DISPUTED";
 
 export type AIReviewStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
 

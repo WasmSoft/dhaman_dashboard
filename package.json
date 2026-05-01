@@ -1,6 +1,6 @@
 {
   "name": "dhaman_dashboard",
-  "version": "0.33.0",
+  "version": "0.34.0",
   "private": true,
   "scripts": {
     "dev": "next dev --port 3032",
@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "@hookform/resolvers": "^5.2.2",
+    "@rolldown/binding-win32-x64-msvc": "^1.0.0-rc.17",
     "@tailwindcss/postcss": "^4",
     "@tanstack/react-query-devtools": "^5.100.5",
     "@testing-library/jest-dom": "^6.9.1",
