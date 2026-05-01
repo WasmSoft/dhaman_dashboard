@@ -186,9 +186,9 @@ export const settingsContent = {
     aiPreferenceTitle: "تفضيلات AI للاتفاقات الجديدة",
     aiPreferenceLevelLabel: "مستوى دقة AI عند توليد الاتفاق",
     aiPreferenceOptions: [
-      { key: "strict", label: "صارم" },
+      { key: "lenient", label: "متساهل" },
       { key: "balanced", label: "متوازن" },
-      { key: "flexible", label: "مرن" },
+      { key: "strict", label: "صارم" },
     ],
     aiPreferenceToggles: [
       { label: "إظهار تنبيهات الغموض", enabled: true },
