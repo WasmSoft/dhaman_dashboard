@@ -7,6 +7,7 @@ import { Bell, CircleHelp, Mail, Menu, Search, Shield } from "lucide-react";
 
 import { Button } from "@/components/shared";
 import { Input } from "@/components/shared/input";
+import { UserIdentityBadge } from "@/components/users";
 import {
   Sidebar,
   SidebarContent,
@@ -24,6 +25,7 @@ import {
   SidebarTrigger,
 } from "@/components/shared/sidebar";
 import { dashboardContent } from "@/constants";
+import { useCurrentUserQuery } from "@/hooks/users";
 import { cn } from "@/lib/utils";
 
 import { DashboardIcon } from "./DashboardIcon";
@@ -97,6 +99,7 @@ function DashboardSidebar() {
 
 function DashboardHeader() {
   const { dashboard } = dashboardContent;
+  const currentUserQuery = useCurrentUserQuery();
 
   return (
     <header className="sticky top-0 z-20 flex min-h-14 items-center gap-3 border-b border-[#252a42] bg-[#101323]/95 px-4 backdrop-blur md:px-6">
@@ -130,7 +133,7 @@ function DashboardHeader() {
           <Bell className="size-[15px]" />
           <span className="absolute end-2 top-2 size-1.5 rounded-full bg-violet-400" />
         </Button>
-        <div className="grid size-[34px] place-items-center rounded-full bg-blue-500 text-sm font-bold text-white">ح</div>
+        <UserIdentityBadge user={currentUserQuery.data ?? null} compact className="ps-1" />
       </div>
     </header>
   );

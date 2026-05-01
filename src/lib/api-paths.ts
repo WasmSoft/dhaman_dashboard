@@ -43,4 +43,8 @@ export const API_PATHS = {
     UPDATE: (clientId: PathParam) => `/clients/${encodePathParam(clientId)}`,
     DELETE: (clientId: PathParam) => `/clients/${encodePathParam(clientId)}`,
   },
+  USERS: {
+    CURRENT_USER: "/api/v1/users/me",
+    CURRENT_USER_PROFILE: "/api/v1/users/me/profile",
+  },
 } as const;

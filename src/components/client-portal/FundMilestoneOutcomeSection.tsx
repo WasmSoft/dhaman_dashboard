@@ -3,7 +3,6 @@ import {
   Eye,
   FileText,
   ListChecks,
-  ShieldCheck,
   ShieldQuestion,
   Zap,
 } from "lucide-react";
