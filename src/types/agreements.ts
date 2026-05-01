@@ -254,6 +254,7 @@ export interface AgreementWorkspaceSummaryMetric {
 }
 
 export interface AgreementWorkspaceMilestone {
+  id?: string;
   number: string;
   title: string;
   amount: string;

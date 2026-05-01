@@ -1,4 +1,8 @@
 export { AgreementDeliverySection } from "./AgreementDeliverySection";
+export { AgreementMilestoneBuilderSection } from "./AgreementMilestoneBuilderSection";
+export { MilestoneDetailSection } from "./MilestoneDetailSection";
+export { MilestoneDraftForm } from "./MilestoneDraftForm";
+export { MilestoneDraftList } from "./MilestoneDraftList";
 export { AgreementTimelineSection } from "./AgreementTimelineSection";
 export { AgreementWorkspaceSection } from "./AgreementWorkspaceSection";
 export { CreateAgreementSection } from "./CreateAgreementSection";

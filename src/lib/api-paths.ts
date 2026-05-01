@@ -47,6 +47,20 @@ export const API_PATHS = {
     RESEND_INVITE: (agreementId: PathParam) =>
       `/agreements/${encodePathParam(agreementId)}/resend-invite`,
   },
+  MILESTONES: {
+    LIST: (agreementId: PathParam) =>
+      `/agreements/${encodePathParam(agreementId)}/milestones`,
+    CREATE: (agreementId: PathParam) =>
+      `/agreements/${encodePathParam(agreementId)}/milestones`,
+    DETAILS: (milestoneId: PathParam) =>
+      `/milestones/${encodePathParam(milestoneId)}`,
+    UPDATE: (milestoneId: PathParam) =>
+      `/milestones/${encodePathParam(milestoneId)}`,
+    DELETE: (milestoneId: PathParam) =>
+      `/milestones/${encodePathParam(milestoneId)}`,
+    REORDER: (milestoneId: PathParam) =>
+      `/milestones/${encodePathParam(milestoneId)}/reorder`,
+  },
   CLIENTS: {
     ROOT: "/clients",
     LIST: "/clients",

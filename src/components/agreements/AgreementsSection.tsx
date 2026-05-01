@@ -172,7 +172,7 @@ function AgreementsTable() {
                 <td className="py-0 pe-0">
                   <div className="flex items-center gap-2">
                     <Button asChild variant="secondary" className="h-8 rounded-[8px] border border-transparent bg-[#6f52ff]/20 px-3 text-[12px] font-bold text-[#a898ff] hover:bg-[#6f52ff]/30 hover:text-white">
-                      <Link href="/agreements/workspace">تفاصيل</Link>
+                      <Link href={`/agreements/${agreement.id}`}>تفاصيل</Link>
                     </Button>
                     <Button size="icon-sm" variant="ghost" className="text-[#737b99] hover:bg-[#1d2135] hover:text-white">
                       <MoreHorizontal className="size-4" />
