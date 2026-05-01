@@ -5,7 +5,7 @@ A professional web application dashboard for **Dhaman**, a fintech MVP designed 
 The dashboard represents the main operational interface of the Dhaman system. It allows freelancers to manage agreements, clients, milestones, deliveries, and payment states, while clients can access a secure portal link to review agreements, track project progress, approve deliveries, request changes, or open AI-assisted dispute reviews.
 
 > **Core Principle:**  
-> Dhaman protects both sides of the freelance agreement: clients gain confidence before releasing funds, while freelancers gain assurance before delivering work.
+> Dhaman creates balanced financial protection between clients and freelancers: clients pay with confidence, and freelancers work with secured payment assurance.
 
 ---
 
