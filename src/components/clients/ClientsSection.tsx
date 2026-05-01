@@ -1,484 +1,86 @@
-// AR: صفحة العملاء — تعرض الإحصائيات، فلاتر، وجدول العملاء مع شريط جانبي للتفاصيل.
-// EN: Clients page — displays stats, filters, client table, and detail sidebar.
+// AR: هذا القسم يربط قائمة العملاء الحية بالبحث والترقيم وحالات الفراغ والأخطاء.
+// EN: This section wires the live clients list to search, pagination, and empty/error states.
 "use client";
 
-import { useState } from "react";
-import {
-  Users,
-  UserCheck,
-  Clock,
-  DollarSign,
-  Search,
-  Download,
-  Eye,
-  ArrowUpDown,
-  ChevronDown,
-  ExternalLink,
-  FileText,
-  Copy,
-  Bell,
-  ShieldCheck,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/shared/button";
-import { Input } from "@/components/shared/input";
-import { StatusBadge } from "@/components/shared/status-badge";
+import { useMemo } from "react";
+import { Search, RotateCcw } from "lucide-react";
+
+import { Button, Input } from "@/components/shared";
+import { ClientEmptyState, ClientListTable } from "@/components/clients";
 import { clientContent } from "@/constants";
-import type {
-  ClientRow,
-  ClientFilterTab,
-  ClientActionBadge,
-  ClientStatus,
-} from "@/types";
-
-type StatusTone = "success" | "purple" | "blue" | "amber" | "red" | "muted" | "cyan";
-
-const statIconMap: Record<string, React.ReactNode> = {
-  total: <Users className="size-4" />,
-  active: <UserCheck className="size-4" />,
-  pendingAction: <Clock className="size-4" />,
-  totalValue: <DollarSign className="size-4" />,
-};
-
-const statBgMap: Record<string, string> = {
-  total: "bg-[#0f2a1e] border border-[#1a3d2a]",
-  active: "bg-[#0f1a2e] border border-[#1a2d4a]",
-  pendingAction: "bg-[#2a1a0f] border border-[#3d2a1a]",
-  totalValue: "bg-[#1a0f2a] border border-[#2a1a3d]",
-};
-
-const statIconBgMap: Record<string, string> = {
-  total: "bg-emerald-500/20 text-emerald-400",
-  active: "bg-blue-500/20 text-blue-400",
-  pendingAction: "bg-amber-500/20 text-amber-400",
-  totalValue: "bg-violet-500/20 text-violet-400",
-};
-
-const statusToneMap: Record<ClientStatus, StatusTone> = {
-  "نشط": "success",
-  "يحتاج متابعة": "amber",
-  "مكتمل": "blue",
-  "معلّق": "muted",
-};
-
-const actionBadgeToneMap: Record<ClientActionBadge, StatusTone> = {
-  "بانتظار مراجعة تسليم": "cyan",
-  "طلب تعديل مفتوح": "amber",
-  "لا يوجد": "muted",
-  "مراجعة AI مفتوحة": "purple",
-  "بانتظار AI": "cyan",
-};
-
-// AR: مكون الشريط الجانبي لتفاصيل العميل. EN: Client detail sidebar component.
-function ClientDetailSidebar({ row }: { row: ClientRow }) {
-  return (
-    <div className="flex h-full flex-col overflow-y-auto" dir="rtl">
-      {/* AR: رأس الشريط الجانبي مع اسم العميل. EN: Sidebar header with client name. */}
-      <div className="flex items-center justify-between px-[18.8px] pt-[18.8px]">
-        <div className="flex items-center gap-3">
-          <div className="grid size-[42px] shrink-0 place-items-center rounded-full bg-violet-500/20 text-[16px] font-bold text-violet-400">
-            {row.avatarInitial}
-          </div>
-          <div className="flex flex-col">
-            <span className="text-[14px] font-semibold text-white">{row.name}</span>
-            <span className="text-[12px] text-[#636b8a]">{row.email}</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="mx-[18.8px] my-4 h-px bg-[#252a42]" />
-
-      {/* AR: بطاقات القيمة والاتفاقات. EN: Value and agreement cards. */}
-      <div className="grid grid-cols-2 gap-2 px-[18.8px]">
-        <div className="rounded-xl bg-[#1d2135] px-[10.8px] py-[10.8px]">
-          <span className="text-[18px] font-bold leading-none text-white">{row.totalValue}</span>
-          <p className="mt-2 text-[11px] text-[#636b8a]">محجوز</p>
-        </div>
-        <div className="rounded-xl bg-[#1d2135] px-[10.8px] py-[10.8px]">
-          <span className="text-[18px] font-bold leading-none text-white">
-            ${row.totalValue.replace("$", "").replace(",", "") === "0" ? "0" : row.totalValue.replace("$", "")}
-          </span>
-          <p className="mt-2 text-[11px] text-[#636b8a]">إجمالي القيمة</p>
-        </div>
-        <div className="rounded-xl bg-[#1d2135] px-[10.8px] py-[10.8px]">
-          <span className="text-[18px] font-bold leading-none text-emerald-400">$0</span>
-          <p className="mt-2 text-[11px] text-[#636b8a]">محرر</p>
-        </div>
-        <div className="rounded-xl bg-[#1d2135] px-[10.8px] py-[10.8px]">
-          <span className="text-[18px] font-bold leading-none text-amber-400">{row.totalValue}</span>
-          <p className="mt-2 text-[11px] text-[#636b8a]">تحت المراجعة</p>
-        </div>
-      </div>
-
-      <div className="mx-[18.8px] my-4 h-px bg-[#252a42]" />
-
-      {/* AR: حالة العميل والبوابة. EN: Client status and portal. */}
-      <div className="px-[18.8px]">
-        <div className="flex items-center justify-between">
-          <StatusBadge
-            label={row.statusBadge}
-            tone={statusToneMap[row.statusBadge] ?? "muted"}
-            className="text-[13px]"
-          />
-          <span className="text-[11px] text-[#636b8a]">الحالة</span>
-        </div>
-
-        {row.portalActive && (
-          <div className="mt-3 flex items-center justify-between">
-            <div className="flex items-center gap-1.5 rounded-lg bg-emerald-500/15 px-2.5 py-1">
-              <ShieldCheck className="size-3 text-emerald-400" />
-              <span className="text-[12px] text-emerald-400">مفعّلة</span>
-            </div>
-            <span className="text-[11px] text-[#636b8a]">البوابة</span>
-          </div>
-        )}
-
-        <div className="mt-3 flex items-center justify-between">
-          <span className="text-[13px] text-[#8b90a8]">{row.agreementLabel}</span>
-          <span className="text-[11px] text-[#636b8a]">الاتفاقات</span>
-        </div>
-
-        <div className="mt-3 flex items-start justify-between gap-2">
-          <p className="text-[13px] leading-snug text-[#a7aecb]">{row.latestAgreement}</p>
-          <span className="shrink-0 text-[11px] text-[#636b8a]">المشروع الحالي</span>
-        </div>
-      </div>
-
-      <div className="mx-[18.8px] my-4 h-px bg-[#252a42]" />
-
-      {/* AR: إجراء مطلوب ونشاط. EN: Action required and activity. */}
-      <div className="px-[18.8px]">
-        <StatusBadge
-          label={row.actionBadge}
-          tone={actionBadgeToneMap[row.actionBadge] ?? "muted"}
-          icon={<ChevronDown className="size-2.5" />}
-          className="text-[13px]"
-        />
-        <div className="mt-3 flex items-center gap-1.5 text-[12px] text-[#636b8a]">
-          <Clock className="size-3" />
-          <span>تم إرسال تسليم المرحلة الأولى منذ ساعتين.</span>
-        </div>
-        <p className="mt-2 text-[12px] leading-relaxed text-[#8b90a8]">
-          يمكن للعميل مراجعة الاتفاق والتسليمات عبر رابط البوابة.
-        </p>
-      </div>
-
-      <div className="mx-[18.8px] my-4 h-px bg-[#252a42]" />
-
-      {/* AR: إجراءات سريعة. EN: Quick actions. */}
-      <div className="px-[18.8px]">
-        <div className="mb-3 flex items-center justify-between">
-          <span className="text-[14px] font-bold text-white">إجراءات سريعة</span>
-        </div>
-        <div className="flex flex-col gap-2">
-          <Button
-            variant="outline"
-            className="h-[37.6px] w-full justify-between rounded-[10px] border-[#252a42] bg-[#1d2135] text-[13px] text-[#a7aecb] hover:bg-[#262b49] hover:text-white"
-          >
-            <span>فتح الاتفاق</span>
-            <ExternalLink className="size-3" />
-          </Button>
-          <Button
-            variant="outline"
-            className="h-[37.6px] w-full justify-between rounded-[10px] border-[#252a42] bg-[#1d2135] text-[13px] text-[#a7aecb] hover:bg-[#262b49] hover:text-white"
-          >
-            <span>عرض بوابة العميل</span>
-            <ExternalLink className="size-3" />
-          </Button>
-          <Button
-            variant="outline"
-            className="h-[37.6px] w-full justify-between rounded-[10px] border-[#252a42] bg-[#1d2135] text-[13px] text-[#a7aecb] hover:bg-[#262b49] hover:text-white"
-          >
-            <span>نسخ رابط البوابة</span>
-            <Copy className="size-3" />
-          </Button>
-          <Button
-            variant="outline"
-            className="h-[37.6px] w-full justify-between rounded-[10px] border-[#252a42] bg-[#1d2135] text-[13px] text-[#a7aecb] hover:bg-[#262b49] hover:text-white"
-          >
-            <span>إرسال تذكير</span>
-            <Bell className="size-3" />
-          </Button>
-        </div>
-      </div>
-
-      <div className="h-6" />
-    </div>
-  );
-}
+import { useClientListState, useClientsQuery } from "@/hooks/clients";
+import { getClientErrorMessage, isClientUnauthorizedError } from "@/lib/clients";
 
 export function ClientsSection() {
-  const { clients } = clientContent;
-  const [activeTab, setActiveTab] = useState<ClientFilterTab>("الكل");
-  const [selectedRow, setSelectedRow] = useState<ClientRow | null>(clients.rows[0]);
+  const content = clientContent.clients;
+  const { search, page, params, setSearch, setPage } = useClientListState();
+  const clientsQuery = useClientsQuery(params);
 
-  const filteredRows =
-    activeTab === "الكل"
-      ? clients.rows
-      : clients.rows.filter((row) => {
-          if (activeTab === "نشطون") return row.status === "نشط";
-          if (activeTab === "بانتظار إجراء") return row.status === "يحتاج متابعة";
-          if (activeTab === "مكتملون") return row.status === "مكتمل";
-          if (activeTab === "لديهم مراجعات AI")
-            return row.actionBadge === "مراجعة AI مفتوحة" || row.actionBadge === "بانتظار AI";
-          return true;
-        });
+  const clients = useMemo(() => clientsQuery.data?.data ?? [], [clientsQuery.data?.data]);
+  const totalPages = clientsQuery.data?.totalPages ?? 1;
+  const totalItems = clientsQuery.data?.total ?? 0;
+
+  const hasSearch = search.trim().length > 0;
+  const showEmpty = !clientsQuery.isLoading && !clientsQuery.isError && totalItems === 0 && !hasSearch;
+  const showNoResults = !clientsQuery.isLoading && !clientsQuery.isError && totalItems === 0 && hasSearch;
 
   return (
-    <div className="w-full" dir="rtl">
-      {/* AR: عنوان الصفحة وأزرار الإجراءات. EN: Page title and action buttons. */}
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-[28px] font-bold leading-tight text-white">{clients.pageTitle}</h1>
-          <p className="text-[13px] leading-relaxed text-[#8b90a8]">{clients.pageDescription}</p>
+    <section className="space-y-4" dir="rtl">
+      <header className="flex flex-col gap-3 rounded-[18px] border border-[#252a42] bg-[#15192b] p-4 shadow-[0_18px_45px_rgba(4,7,20,0.18)] md:flex-row md:items-start md:justify-between">
+        <div>
+          <h1 className="text-[24px] font-extrabold text-white md:text-[30px]">{content.title}</h1>
+          <p className="mt-1 max-w-2xl text-[13px] leading-7 text-[#8b90a8]">{content.subtitle}</p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button className="h-[35.6px] rounded-[10px] bg-[#6f52ff] text-[13px] text-white hover:bg-[#5b42e6]">
-            <Users className="ms-1 size-3" />
-            {clients.addClientLabel}
-          </Button>
-          <Button
-            variant="outline"
-            className="h-[35.6px] rounded-[10px] border-[#252a42] bg-[#1d2135] text-[13px] text-[#a7aecb] hover:bg-[#262b49] hover:text-white"
-          >
-            <Download className="ms-1 size-3" />
-            {clients.exportLabel}
-          </Button>
-          <div className="relative">
-            <Input
-              placeholder={clients.searchPlaceholder}
-              className="h-[35.6px] w-full rounded-[10px] border-[#252a42] bg-[#1d2135] pe-9 text-[13px] text-white placeholder:text-[#636b8a] focus-visible:ring-violet-500/20 sm:w-[240px]"
-              dir="rtl"
-            />
-            <Search className="pointer-events-none absolute start-3 top-1/2 size-3 -translate-y-1/2 text-[#636b8a]" />
-          </div>
-        </div>
-      </div>
-
-      {/* AR: بطاقات الإحصائيات الأربع بتصميم بطاقات لوحة التحكم. EN: Four stats cards matching dashboard card style. */}
-      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {clients.stats.map((stat) => (
-          <div
-            key={stat.key}
-            className={cn(
-              "relative overflow-hidden rounded-[12px] border border-[#252a42] bg-[#15192b] p-5 text-start shadow-[0_18px_45px_rgba(4,7,20,0.18)]",
-            )}
-          >
-            <div
-              className={cn(
-                "absolute start-4 top-4 grid size-10 place-items-center rounded-[9px]",
-                statIconBgMap[stat.key] ?? "bg-[#22264a] text-[#8b90a8]",
-              )}
-            >
-              {statIconMap[stat.key]}
-            </div>
-            <div className="flex flex-col gap-0.5 ps-14">
-              {/* AR: الاتجاه أو الوصف الإضافي. EN: Trend or extra description. */}
-              {stat.trend && (
-                <span className="text-[11px] text-[#636b8a]">{stat.trend}</span>
-              )}
-              <span className="text-[28px] font-bold leading-none text-white">{stat.value}</span>
-              <span className="text-[13px] font-medium text-[#a7aecb]">{stat.label}</span>
-              <span className="text-[11px] text-[#636b8a]">{stat.description}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* AR: تبويبات الفلترة والقوائم المنسدلة. EN: Filter tabs and dropdowns. */}
-      <div className="mb-4 flex flex-wrap gap-2">
-        {clients.filterTabs.map((tab) => (
-          <button
-            key={tab.label}
-            type="button"
-            onClick={() => setActiveTab(tab.label)}
-            className={cn(
-              "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors",
-              activeTab === tab.label
-                ? "bg-[#6f52ff] text-white"
-                : "bg-[#1d2135] text-[#8b90a8] hover:bg-[#262b49] hover:text-white",
-            )}
-          >
-            {tab.label}
-            <span
-              className={cn(
-                "inline-flex size-[17px] items-center justify-center rounded text-[11px] font-semibold leading-none",
-                activeTab === tab.label
-                  ? "bg-white/20 text-white"
-                  : "bg-[#363b54]/60 text-[#8b90a8]",
-              )}
-            >
-              {tab.count}
-            </span>
-          </button>
-        ))}
-      </div>
-
-      <div className="mb-4 flex flex-wrap gap-2">
-        {clients.filterDropdowns.map((dropdown) => (
-          <button
-            key={dropdown.key}
-            type="button"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-[#252a42] bg-[#1d2135] px-2.5 py-1.5 text-[13px] text-[#a7aecb] hover:border-[#6f52ff]/40 hover:text-white"
-          >
-            <ArrowUpDown className="size-3 text-[#636b8a]" />
-            {dropdown.label}
-            <ChevronDown className="size-3 text-[#636b8a]" />
-          </button>
-        ))}
-      </div>
-
-      {/* AR: الجدول والشريط الجانبي. EN: Table and sidebar layout. */}
-      <div className="flex gap-4">
-        {/* AR: جدول العملاء. EN: Clients table. */}
-        <div className="flex-1 overflow-x-auto rounded-xl border border-[#252a42] bg-[#131729]">
-          <table className="w-full min-w-[760px]">
-            <thead>
-              <tr className="border-b border-[#252a42] text-[13px]">
-                {clients.tableHeaders.map((header) => (
-                  <th
-                    key={header}
-                    className="px-4 py-2.5 text-start font-medium text-[#636b8a]"
-                  >
-                    {header}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filteredRows.map((row) => (
-                <tr
-                  key={row.id}
-                  className={cn(
-                    "cursor-pointer border-b border-[#1d2135] transition-colors hover:bg-[#1a1f33]/60",
-                    selectedRow?.id === row.id && "bg-[#1a1f33]",
-                  )}
-                  onClick={() => setSelectedRow(row)}
-                >
-                  {/* العميل */}
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2.5">
-                      <div className="grid size-9 shrink-0 place-items-center rounded-full bg-violet-500/20 text-[12px] font-bold text-violet-400">
-                        {row.avatarInitial}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[13px] font-semibold text-white">{row.name}</span>
-                        <span className="text-[11px] text-[#636b8a]">{row.email}</span>
-                      </div>
-                    </div>
-                  </td>
-
-                  {/* الاتفاقات */}
-                  <td className="px-4 py-3">
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-[13px] font-semibold text-white">{row.agreementLabel}</span>
-                      <span className="line-clamp-1 text-[11px] text-[#636b8a]">{row.latestAgreement}</span>
-                    </div>
-                  </td>
-
-                  {/* القيمة */}
-                  <td className="px-4 py-3">
-                    <span className="text-[14px] font-semibold text-white">{row.totalValue}</span>
-                  </td>
-
-                  {/* الحالة */}
-                  <td className="px-4 py-3">
-                    <div className="flex flex-col gap-1.5">
-                      <StatusBadge
-                        label={row.statusBadge}
-                        tone={statusToneMap[row.statusBadge] ?? "muted"}
-                        className="text-[13px]"
-                      />
-                      {row.portalActive && (
-                        <div className="flex items-center gap-1 text-[11px] text-emerald-400">
-                          <ShieldCheck className="size-3" />
-                          <span>بوابة مفعّلة</span>
-                        </div>
-                      )}
-                    </div>
-                  </td>
-
-                  {/* إجراء مطلوب */}
-                  <td className="px-4 py-3">
-                    <StatusBadge
-                      label={row.actionBadge}
-                      tone={actionBadgeToneMap[row.actionBadge] ?? "muted"}
-                      icon={<ChevronDown className="size-2.5" />}
-                      className="text-[13px]"
-                    />
-                  </td>
-
-                  {/* آخر نشاط */}
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-1 text-[13px] text-[#8b90a8]">
-                      {row.lastActivity}
-                      <Clock className="size-2.5 text-[#636b8a]" />
-                    </div>
-                  </td>
-
-                  {/* الإجراء */}
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        className="grid size-[28px] shrink-0 place-items-center rounded-lg border border-[#252a42] bg-[#1d2135] text-[#a7aecb] hover:border-[#6f52ff]/40 hover:text-white"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedRow(row);
-                        }}
-                      >
-                        <Eye className="size-3" />
-                      </button>
-                      <Button
-                        variant="outline"
-                        size="xs"
-                        className="h-[28px] rounded-[8px] border-[#252a42] bg-[#1d2135] text-[13px] text-[#a7aecb] hover:bg-[#6f52ff] hover:text-white"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedRow(row);
-                        }}
-                      >
-                        {row.actionBadge === "لا يوجد" ? "عرض العميل" : "عرض العميل"}
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* AR: الشريط الجانبي الثابت لتفاصيل العميل. EN: Persistent client detail sidebar. */}
-        {selectedRow && (
-          <aside className="hidden w-[300px] shrink-0 rounded-xl border border-[#252a42] bg-[#131729] lg:block">
-            <ClientDetailSidebar row={selectedRow} />
-          </aside>
-        )}
-      </div>
-
-      {/* AR: الشريط الجانبي المنبثق على الجوال. EN: Slide-in sidebar for mobile. */}
-      {selectedRow && (
-        <div className="lg:hidden">
-          <div
-            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
-            onClick={() => setSelectedRow(null)}
-            aria-hidden="true"
+        <div className="relative w-full md:max-w-md">
+          <Input
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder={content.searchPlaceholder}
+            className="h-11 rounded-[10px] border-[#252a42] bg-[#1d2135] pe-10 text-right text-[13px] text-white placeholder:text-[#58607c]"
           />
-          <aside
-            className="fixed inset-y-0 start-0 z-50 w-[300px] max-w-[85vw] border-s border-[#252a42] bg-[#131729] text-white shadow-2xl"
-            dir="rtl"
-          >
-            <ClientDetailSidebar row={selectedRow} />
-            <button
-              type="button"
-              onClick={() => setSelectedRow(null)}
-              className="absolute end-3 top-3 grid size-7 place-items-center rounded-lg text-[#8b90a8] hover:bg-[#1d2135] hover:text-white"
-            >
-              ✕
-            </button>
-          </aside>
+          <Search className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-[#58607c]" />
         </div>
-      )}
-    </div>
+      </header>
+
+      {clientsQuery.isError ? (
+        <ClientEmptyState
+          title={isClientUnauthorizedError(clientsQuery.error as never) ? "تحتاج إلى تسجيل الدخول" : "تعذر تحميل العملاء"}
+          description={getClientErrorMessage(clientsQuery.error as never)}
+          actionLabel={content.retryLabel}
+          actionHref="/clients"
+        />
+      ) : null}
+
+      {showEmpty ? (
+        <ClientEmptyState title={content.emptyTitle} description={content.emptyDescription} />
+      ) : null}
+
+      {showNoResults ? (
+        <ClientEmptyState title={content.noResultsTitle} description={content.noResultsDescription} />
+      ) : null}
+
+      {!showEmpty && !showNoResults && !clientsQuery.isError ? (
+        <ClientListTable clients={clients} isLoading={clientsQuery.isLoading} />
+      ) : null}
+
+      <div className="flex flex-col gap-3 rounded-[18px] border border-[#252a42] bg-[#15192b] p-4 text-[13px] text-[#c7cce0] md:flex-row md:items-center md:justify-between">
+        <div>
+          {content.pageLabel} {page} {content.ofLabel} {totalPages}
+          <span className="ms-2 text-[#8b90a8]">({totalItems})</span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" variant="secondary" className="h-9 rounded-[10px] border border-[#252a42] bg-[#1d2135] px-3 text-[12px] font-bold text-[#c7cce0]" disabled={page <= 1} onClick={() => setPage(Math.max(1, page - 1))}>
+            السابق
+          </Button>
+          <Button type="button" variant="secondary" className="h-9 rounded-[10px] border border-[#252a42] bg-[#1d2135] px-3 text-[12px] font-bold text-[#c7cce0]" disabled={page >= totalPages} onClick={() => setPage(Math.min(totalPages, page + 1))}>
+            التالي
+          </Button>
+          <Button type="button" variant="secondary" className="h-9 rounded-[10px] border border-[#252a42] bg-[#1d2135] px-3 text-[12px] font-bold text-[#c7cce0]" onClick={() => clientsQuery.refetch()}>
+            <RotateCcw className="size-4" />
+            {content.retryLabel}
+          </Button>
+        </div>
+      </div>
+    </section>
   );
 }

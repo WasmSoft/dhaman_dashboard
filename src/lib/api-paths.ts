@@ -111,7 +111,7 @@ export const API_PATHS = {
     CREATE: "/clients",
     DETAILS: (clientId: PathParam) => `/clients/${encodePathParam(clientId)}`,
     UPDATE: (clientId: PathParam) => `/clients/${encodePathParam(clientId)}`,
-    DELETE: (clientId: PathParam) => `/clients/${encodePathParam(clientId)}`,
+    SUMMARY: (clientId: PathParam) => `/clients/${encodePathParam(clientId)}/summary`,
   },
   AI_REVIEWS: {
     ROOT: "/ai-reviews",
