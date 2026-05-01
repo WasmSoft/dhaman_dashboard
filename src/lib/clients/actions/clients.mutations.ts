@@ -3,11 +3,13 @@ import type {
   UseMutationOptions,
 } from "@tanstack/react-query";
 
-import type { ClientMutationPayload } from "@/types";
+import type {
+  CreateClientPayload,
+  UpdateClientPayload,
+} from "@/types";
 
 import {
   createClient,
-  deleteClient,
   updateClient,
 } from "./clients.api";
 import { clientsQueryKeys } from "./clients.keys";
@@ -19,10 +21,10 @@ export function createClientMutationOptions(
 ): UseMutationOptions<
   Awaited<ReturnType<typeof createClient>>,
   Error,
-  ClientMutationPayload
+  CreateClientPayload
 > {
   return {
-    mutationFn: (payload: ClientMutationPayload) => createClient(payload),
+    mutationFn: (payload: CreateClientPayload) => createClient(payload),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: clientsQueryKeys.lists(),
@@ -40,7 +42,7 @@ export function updateClientMutationOptions(
   Error,
   {
     clientId: string;
-    payload: ClientMutationPayload;
+    payload: UpdateClientPayload;
   }
 > {
   return {
@@ -49,7 +51,7 @@ export function updateClientMutationOptions(
       payload,
     }: {
       clientId: string;
-      payload: ClientMutationPayload;
+      payload: UpdateClientPayload;
     }) => updateClient(clientId, payload),
     onSuccess: async (_, variables) => {
       await Promise.all([
@@ -59,25 +61,8 @@ export function updateClientMutationOptions(
         queryClient.invalidateQueries({
           queryKey: clientsQueryKeys.detail(variables.clientId),
         }),
-      ]);
-    },
-  };
-}
-
-// AR: تبني هذه الدالة delete mutation options مع تنظيف كاش التفاصيل بعد حذف العميل.
-// EN: This function builds delete-client mutation options and clears stale detail cache after client deletion.
-export function deleteClientMutationOptions(
-  queryClient: QueryClient,
-): UseMutationOptions<void, Error, string> {
-  return {
-    mutationFn: (clientId: string) => deleteClient(clientId),
-    onSuccess: async (_, clientId) => {
-      await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: clientsQueryKeys.lists(),
-        }),
-        queryClient.removeQueries({
-          queryKey: clientsQueryKeys.detail(clientId),
+          queryKey: clientsQueryKeys.summary(variables.clientId),
         }),
       ]);
     },

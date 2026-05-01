@@ -8,7 +8,7 @@ Do not ignore these rules when building UI, adding logic, using MCP servers, gen
 
 <!-- SPECKIT START -->
 
-Current SpecKit plan: `specs/004-deliveries-frontend/plan.md`
+Current SpecKit plan: `specs/001-clients-frontend-integration/plan.md`
 <!-- SPECKIT END -->
 
 ---

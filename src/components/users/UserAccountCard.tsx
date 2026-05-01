@@ -27,7 +27,7 @@ export function UserAccountCard({ user, onSave, isSaving = false, successMessage
     undefined,
     z.output<typeof usersAccountUpdateSchema>
   >({
-    resolver: zodResolver(usersAccountUpdateSchema),
+    resolver: zodResolver(usersAccountUpdateSchema) as never,
     defaultValues: {
       name: user.name ?? "",
       avatarUrl: user.avatarUrl ?? "",

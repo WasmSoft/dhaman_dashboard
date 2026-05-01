@@ -27,7 +27,7 @@ export function UserProfileForm({ profile, onSave, isSaving = false, successMess
     undefined,
     z.output<typeof usersProfileUpdateSchema>
   >({
-    resolver: zodResolver(usersProfileUpdateSchema),
+    resolver: zodResolver(usersProfileUpdateSchema) as never,
     defaultValues: {
       businessName: profile.businessName ?? "",
       bio: profile.bio ?? "",

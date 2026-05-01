@@ -178,11 +178,11 @@ export interface DeliveryListParams {
   limit?: number;
 }
 
-export interface CreateDeliveryInput extends CreateDeliveryPayload {}
+export type CreateDeliveryInput = CreateDeliveryPayload;
 
-export interface UpdateDeliveryInput extends UpdateDeliveryPayload {}
+export type UpdateDeliveryInput = UpdateDeliveryPayload;
 
-export interface SubmitDeliveryInput extends SubmitDeliveryPayload {}
+export type SubmitDeliveryInput = SubmitDeliveryPayload;
 
 export interface PortalDeliverySummaryDto {
   id: string;

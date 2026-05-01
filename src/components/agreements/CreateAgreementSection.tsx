@@ -3,17 +3,18 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Bot, CalendarDays, CheckCircle2, Circle, ClipboardList, CreditCard, FileText, LockKeyhole, Save, Sparkles, UsersRound } from "lucide-react";
+import { ArrowRight, Bot, CalendarDays, CheckCircle2, Circle, ClipboardList, CreditCard, FileText, LockKeyhole, Save, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/shared";
 import { Input } from "@/components/shared/input";
 import { agreementsContent } from "@/constants";
+import { ClientPicker } from "@/components/clients";
 import { useCreateAgreementMutation } from "@/hooks/agreements";
 import { useSettingsQuery, useDefaultPoliciesQuery } from "@/hooks/settings";
 import { ApiError } from "@/lib/axios-instance";
 import { getAgreementDefaultsFromSettings } from "@/lib/settings";
 import { cn } from "@/lib/utils";
-import type { CreateAgreementStep, GeneratedPlan } from "@/types";
+import type { Client, CreateAgreementStep, GeneratedPlan } from "@/types";
 import { AiPlanSection } from "./AiPlanSection";
 
 const stepClasses: Record<CreateAgreementStep["status"], string> = {
@@ -113,31 +114,6 @@ function ProjectDetailsCard({
           <div className="relative">
             <Input className="h-11 rounded-[10px] border-[#252a42] bg-[#1d2135] pe-10 text-right text-[13px] text-white placeholder:text-[#58607c] focus-visible:ring-[#6f52ff]/20" type="date" value={expectedDeliveryDate} onChange={(event) => onExpectedDeliveryDateChange(event.target.value)} />
             <CalendarDays className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-[#58607c]" />
-          </div>
-        </div>
-      </div>
-    </FormCard>
-  );
-}
-
-function ClientDetailsCard() {
-  const section = agreementsContent.createAgreementPage.sections.client;
-
-  return (
-    <FormCard icon={<UsersRound className="size-4" />} title={section.title} description={section.description}>
-      <div className="space-y-4">
-        <div>
-          <FieldLabel>{section.nameLabel}</FieldLabel>
-          <Input className="h-11 rounded-[10px] border-[#252a42] bg-[#1d2135] text-right text-[13px] text-white placeholder:text-[#58607c] focus-visible:ring-[#6f52ff]/20" placeholder={section.namePlaceholder} />
-        </div>
-        <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <FieldLabel>{section.emailLabel}</FieldLabel>
-            <Input className="h-11 rounded-[10px] border-[#252a42] bg-[#1d2135] text-right text-[13px] text-white placeholder:text-[#58607c] focus-visible:ring-[#6f52ff]/20" placeholder={section.emailPlaceholder} />
-          </div>
-          <div>
-            <FieldLabel>{section.phoneLabel}</FieldLabel>
-            <Input className="h-11 rounded-[10px] border-[#252a42] bg-[#1d2135] text-right text-[13px] text-white placeholder:text-[#58607c] focus-visible:ring-[#6f52ff]/20" placeholder={section.phonePlaceholder} />
           </div>
         </div>
       </div>
@@ -303,6 +279,7 @@ export function CreateAgreementSection() {
   const [serviceType, setServiceType] = useState("");
   const [expectedDeliveryDate, setExpectedDeliveryDate] = useState("");
   const [currency, setCurrency] = useState("SAR");
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
 
   const settingsQuery = useSettingsQuery();
@@ -332,7 +309,6 @@ export function CreateAgreementSection() {
   // EN: Populates the agreement form fields from the generated plan.
   function handleIncorporate(plan: GeneratedPlan) {
     setIncorporatedPlan(plan);
-    console.log('Plan incorporated:', plan);
   }
 
   async function handleCreateAgreement() {
@@ -344,6 +320,11 @@ export function CreateAgreementSection() {
     setFormError(null);
 
     try {
+      if (!selectedClient) {
+        setFormError("اختر عميلًا أولًا أو أنشئ عميلًا جديدًا قبل حفظ الاتفاق.");
+        return;
+      }
+
       const agreement = await createAgreementMutation.mutateAsync({
         title: title.trim(),
         description: description.trim() || undefined,
@@ -351,6 +332,7 @@ export function CreateAgreementSection() {
         serviceType: serviceType.trim() || undefined,
         expectedDeliveryDate: expectedDeliveryDate || undefined,
         currency: currency.trim() || undefined,
+        clientId: selectedClient.id,
       });
 
       router.push(`/agreements/${agreement.id}`);
@@ -381,7 +363,7 @@ export function CreateAgreementSection() {
             onServiceTypeChange={setServiceType}
             onExpectedDeliveryDateChange={setExpectedDeliveryDate}
           />
-          <ClientDetailsCard />
+          <ClientPicker selectedClient={selectedClient} onSelectClient={setSelectedClient} title={content.sections.client.title} description={content.sections.client.description} submitLabel="إنشاء العميل واختياره" />
           <PaymentDetailsCard
             currency={currency}
             onCurrencyChange={setCurrency}

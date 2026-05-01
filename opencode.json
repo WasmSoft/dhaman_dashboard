@@ -8,7 +8,7 @@
         "@_davideast/stitch-mcp",
         "proxy"
       ],
-      "enabled": true,
+      "enabled": false,
       "environment": {
         "STITCH_API_KEY": "{env:STITCH_API_KEY}"
       }
@@ -16,7 +16,7 @@
    "figma-desktop": {
       "type": "remote",
       "url": "http://127.0.0.1:3845/mcp",
-      "enabled": true
+      "enabled": false
     }
   }
 }
