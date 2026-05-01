@@ -3,11 +3,13 @@
 import { AgreementPaymentsSection } from "@/components/payments";
 
 interface AgreementPaymentsPageProps {
-  params: { agreementId: string };
+  params: Promise<{ agreementId: string }>;
 }
 
-export default function AgreementPaymentsPage({
+export default async function AgreementPaymentsPage({
   params,
 }: AgreementPaymentsPageProps) {
-  return <AgreementPaymentsSection agreementId={params.agreementId} />;
+  const { agreementId } = await params;
+
+  return <AgreementPaymentsSection agreementId={agreementId} />;
 }

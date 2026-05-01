@@ -17,12 +17,12 @@ export function useAgreementPaymentHistoryQuery(
   const timeline = useAgreementTimelineQuery(agreementId);
 
   const rows = useMemo(() => {
-    const events = timeline.data?.events ?? [];
+    const events = timeline.data?.items ?? [];
     return buildPaymentHistoryRows(events, locale);
   }, [timeline.data, locale]);
 
   const summary = useMemo(() => {
-    const events = timeline.data?.events ?? [];
+    const events = timeline.data?.items ?? [];
     const fundedEvents = events.filter((e) =>
       e.type?.includes("PAYMENT_RESERVED"),
     );

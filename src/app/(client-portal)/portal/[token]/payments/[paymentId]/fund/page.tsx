@@ -2,17 +2,12 @@
 // EN: Client portal fund payment confirmation page.
 import { PortalFundPaymentSection } from "@/components/payments";
 
-interface PortalFundPaymentPageProps {
-  params: { token: string; paymentId: string };
-}
-
-export default function PortalFundPaymentPage({
+export default async function PortalFundPaymentPage({
   params,
-}: PortalFundPaymentPageProps) {
-  return (
-    <PortalFundPaymentSection
-      token={params.token}
-      paymentId={params.paymentId}
-    />
-  );
+}: {
+  params: Promise<{ token: string; paymentId: string }>;
+}) {
+  const { token, paymentId } = await params;
+
+  return <PortalFundPaymentSection token={token} paymentId={paymentId} />;
 }

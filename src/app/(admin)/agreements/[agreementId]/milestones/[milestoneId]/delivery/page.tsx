@@ -3,19 +3,21 @@
 import { AgreementDeliverySection } from "@/components/agreements";
 
 interface AgreementMilestoneDeliveryPageProps {
-  params: {
+  params: Promise<{
     agreementId: string;
     milestoneId: string;
-  };
+  }>;
 }
 
-export default function AgreementMilestoneDeliveryPage({
+export default async function AgreementMilestoneDeliveryPage({
   params,
 }: AgreementMilestoneDeliveryPageProps) {
+  const { agreementId, milestoneId } = await params;
+
   return (
     <AgreementDeliverySection
-      agreementId={params.agreementId}
-      milestoneId={params.milestoneId}
+      agreementId={agreementId}
+      milestoneId={milestoneId}
     />
   );
 }

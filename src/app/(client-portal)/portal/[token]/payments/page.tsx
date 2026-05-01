@@ -2,12 +2,12 @@
 // EN: Client portal payment setup page with secure access token.
 import { PortalPaymentSetupSection } from "@/components/payments";
 
-interface PortalPaymentsPageProps {
-  params: { token: string };
-}
-
-export default function PortalPaymentsPage({
+export default async function PortalPaymentsPage({
   params,
-}: PortalPaymentsPageProps) {
-  return <PortalPaymentSetupSection token={params.token} />;
+}: {
+  params: Promise<{ token: string }>;
+}) {
+  const { token } = await params;
+
+  return <PortalPaymentSetupSection token={token} />;
 }

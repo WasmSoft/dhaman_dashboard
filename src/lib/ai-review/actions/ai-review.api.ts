@@ -2,6 +2,10 @@
 // EN: Raw API functions for AI Reviews — uses axios and API_PATHS only.
 import { axiosInstance } from "@/lib/axios-instance";
 import { API_PATHS } from "@/lib/api-paths";
+import {
+  resolveAiReviewDetailResponse,
+  resolveAiReviewsListResponse,
+} from "@/lib/ai-review/helpers";
 import type {
   AIReviewApiItem,
   AIReviewApiListResponse,
@@ -19,7 +23,7 @@ export async function getAiReviews(params?: GetAiReviewsParams) {
     API_PATHS.AI_REVIEWS.LIST,
     { params },
   );
-  return response.data;
+  return resolveAiReviewsListResponse(response.data);
 }
 
 // AR: تجلب تفاصيل مراجعة AI واحدة.
@@ -28,7 +32,7 @@ export async function getAiReviewById(reviewId: string) {
   const response = await axiosInstance.get<AIReviewApiDetailResponse>(
     API_PATHS.AI_REVIEWS.DETAILS(reviewId),
   );
-  return response.data;
+  return resolveAiReviewDetailResponse(response.data);
 }
 
 // AR: يفتح مراجعة AI جديدة على تسليم عبر بوابة العميل.

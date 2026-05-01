@@ -476,6 +476,12 @@ export interface AgreementDeliveryContent {
   afterSubmitItems: readonly AgreementDeliveryAfterSubmitItem[];
   paymentStatusTitle: string;
   paymentStatus: AgreementDeliveryPaymentStatus;
+  portalLinkTitle: string;
+  portalLinkDescription: string;
+  portalLinkStatus: string;
+  portalLinkAction: string;
+  portalCopyAction: string;
+  portalLinkPendingLabel: string;
 }
 
 export interface AgreementsContentMap {

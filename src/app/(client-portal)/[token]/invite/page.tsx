@@ -1,9 +1,11 @@
 import { PortalInviteSection } from "@/components/client-portal";
 
-export default function PortalInvitePage({
+export default async function PortalInvitePage({
   params,
 }: {
-  params: { token: string };
+  params: Promise<{ token: string }>;
 }) {
-  return <PortalInviteSection token={params.token} />;
+  const { token } = await params;
+
+  return <PortalInviteSection token={token} />;
 }

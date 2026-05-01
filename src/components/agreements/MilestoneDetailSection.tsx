@@ -20,6 +20,7 @@ import {
   formatMilestoneAmount,
   getMilestoneDeliveryStatusLabel,
   getMilestonePaymentStatusLabel,
+  resolveMilestoneDetail,
   getMilestoneStatusLabel,
 } from "@/lib/milestones";
 import { isDeliveryEditable } from "@/lib/deliveries/helpers/delivery-status.helper";
@@ -49,7 +50,7 @@ export function MilestoneDetailSection({
     page: 1,
   });
 
-  const milestone = data?.data;
+  const milestone = resolveMilestoneDetail(data);
   const editableDelivery = useMemo(
     () => deliveryListResponse?.items.find((delivery) => isDeliveryEditable(delivery.status)),
     [deliveryListResponse],

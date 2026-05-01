@@ -1,5 +1,6 @@
 import { axiosInstance } from "@/lib/axios-instance";
 import { API_PATHS } from "@/lib/api-paths";
+import { resolveDeliveryDetail, resolveDeliveryListResponse } from "@/lib/deliveries/helpers";
 import type {
   CreateDeliveryPayload,
   DeliveryPortalActionResponse,
@@ -21,7 +22,7 @@ export async function getDeliveries(filters?: DeliveryFilters) {
     { params: filters },
   );
 
-  return response.data;
+  return resolveDeliveryListResponse(response.data);
 }
 
 // AR: تجلب تفاصيل تسليم واحد من الـ API لاستخدامه في صفحة التفاصيل.
@@ -31,7 +32,7 @@ export async function getDeliveryById(deliveryId: string) {
     API_PATHS.DELIVERIES.DETAILS(deliveryId),
   );
 
-  return response.data;
+  return resolveDeliveryDetail(response.data);
 }
 
 // AR: تنشئ تسليم مسودة جديد لمرحلة معينة وتعيد الكائن الكامل.

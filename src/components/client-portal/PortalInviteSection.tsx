@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
@@ -13,7 +14,7 @@ import {
   usePortalRequestChangesMutation,
 } from "@/hooks/client-portal";
 import { ApiError } from "@/lib/axios-instance";
-import { portalRejectSchema, portalRequestChangesSchema } from "@/lib/client-portal";
+import { buildPortalPath, portalRejectSchema, portalRequestChangesSchema } from "@/lib/client-portal";
 import type {
   PortalRejectAgreementPayload,
   PortalRequestChangesPayload,
@@ -32,6 +33,7 @@ function isPortalTokenError(error: unknown) {
 }
 
 export function PortalInviteSection({ token }: { token: string }) {
+  const router = useRouter();
   const [activeForm, setActiveForm] = useState<"changes" | "reject" | null>(null);
   const { data, isLoading, error } = usePortalInviteQuery(token);
   const approveMutation = usePortalApproveMutation(token);
@@ -66,6 +68,13 @@ export function PortalInviteSection({ token }: { token: string }) {
 
     return null;
   }, [approveMutation.error, rejectMutation.error, requestChangesMutation.error]);
+
+  async function handleApprove() {
+    await approveMutation.mutateAsync();
+    // AR: بعد الموافقة على الاتفاق، يُوجَّه العميل مباشرة إلى صفحة الدفعات لتمويل أول مرحلة.
+    // EN: After approving the agreement, redirect the client to the payment plan to fund the first milestone.
+    router.push(buildPortalPath(token, "paymentSetup"));
+  }
 
   if (isPortalTokenError(error)) {
     throw error;
@@ -152,7 +161,7 @@ export function PortalInviteSection({ token }: { token: string }) {
 
       <div className="flex flex-col gap-3 rounded-3xl border border-white/10 bg-[#13182b] p-6 sm:flex-row">
         <Button
-          onClick={() => approveMutation.mutate()}
+          onClick={() => void handleApprove()}
           disabled={approveMutation.isPending}
           className="rounded-xl bg-[#6f52ff] px-5 text-white hover:bg-[#7b63ff]"
         >

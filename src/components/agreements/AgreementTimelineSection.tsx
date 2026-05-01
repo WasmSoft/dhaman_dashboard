@@ -32,13 +32,13 @@ export function AgreementTimelineSection({
     listStatus = "loading";
   } else if (isError || error) {
     listStatus = "error";
-  } else if (data && data.events.length === 0) {
+  } else if (data && data.items.length === 0) {
     listStatus = "empty";
   }
 
   // AR: تحويل الأحداث الخام إلى عناصر عرض مع تسميات.
   // EN: Transform raw events into display items with labels.
-  const displayItems = data ? toTimelineDisplayItems(data.events) : [];
+  const displayItems = data ? toTimelineDisplayItems(data.items) : [];
 
   return (
     <section className="rounded-[14px] border border-[#252a42] bg-[#15192b] p-4 md:p-6">
@@ -63,7 +63,7 @@ export function AgreementTimelineSection({
           items={displayItems}
           status={listStatus}
           onRetry={() => refetch()}
-          hasMore={data?.hasMore}
+          hasMore={data?.hasNextPage}
           total={data?.total}
           onLoadMore={nextPage}
         />

@@ -50,77 +50,87 @@ describe("agreements API functions", () => {
 
   it("getAgreements sends a GET request with query params", async () => {
     const params = { search: "landing", status: "DRAFT" as const, page: 2 };
+    const agreementsList = {
+      data: [],
+      total: 0,
+      page: 2,
+      limit: 20,
+      totalPages: 0,
+    };
     const response = {
       data: {
-        data: [],
-        total: 0,
-        page: 2,
-        limit: 20,
-        totalPages: 0,
+        success: true,
+        data: agreementsList,
       },
     };
 
     mockGet.mockResolvedValueOnce(response);
 
-    await expect(getAgreements(params)).resolves.toEqual(response.data);
+    await expect(getAgreements(params)).resolves.toEqual(agreementsList);
     expect(mockGet).toHaveBeenCalledWith("/agreements", { params });
   });
 
   it("getAgreementById sends a GET request to the detail path", async () => {
-    const response = { data: { id: "agr-1", title: "Agreement" } };
+    const agreement = { id: "agr-1", title: "Agreement" };
+    const response = { data: { success: true, data: agreement } };
 
     mockGet.mockResolvedValueOnce(response);
 
-    await expect(getAgreementById("agr-1")).resolves.toEqual(response.data);
+    await expect(getAgreementById("agr-1")).resolves.toEqual(agreement);
     expect(mockGet).toHaveBeenCalledWith("/agreements/agr-1");
   });
 
   it("createAgreement sends a POST request with the payload", async () => {
     const payload = { title: "Landing page" };
-    const response = { data: { id: "agr-1", title: "Landing page" } };
+    const agreement = { id: "agr-1", title: "Landing page" };
+    const response = { data: { success: true, data: agreement } };
 
     mockPost.mockResolvedValueOnce(response);
 
-    await expect(createAgreement(payload)).resolves.toEqual(response.data);
+    await expect(createAgreement(payload)).resolves.toEqual(agreement);
     expect(mockPost).toHaveBeenCalledWith("/agreements", payload);
   });
 
   it("updateAgreement sends a PATCH request to the detail path", async () => {
     const payload = { title: "Updated title" };
-    const response = { data: { id: "agr-1", title: "Updated title" } };
+    const agreement = { id: "agr-1", title: "Updated title" };
+    const response = { data: { success: true, data: agreement } };
 
     mockPatch.mockResolvedValueOnce(response);
 
     await expect(updateAgreement("agr-1", payload)).resolves.toEqual(
-      response.data,
+      agreement,
     );
     expect(mockPatch).toHaveBeenCalledWith("/agreements/agr-1", payload);
   });
 
   it("sendInvite posts to the send-invite path", async () => {
-    const response = { data: { id: "agr-1", status: "SENT" } };
+    const agreement = { id: "agr-1", status: "SENT" };
+    const response = { data: { success: true, data: agreement } };
 
     mockPost.mockResolvedValueOnce(response);
 
-    await expect(sendInvite("agr-1")).resolves.toEqual(response.data);
+    await expect(sendInvite("agr-1")).resolves.toEqual(agreement);
     expect(mockPost).toHaveBeenCalledWith("/agreements/agr-1/send-invite");
   });
 
   it("activateAgreement posts to the activate path", async () => {
-    const response = { data: { id: "agr-1", status: "ACTIVE" } };
+    const agreement = { id: "agr-1", status: "ACTIVE" };
+    const response = { data: { success: true, data: agreement } };
 
     mockPost.mockResolvedValueOnce(response);
 
-    await expect(activateAgreement("agr-1")).resolves.toEqual(response.data);
+    await expect(activateAgreement("agr-1")).resolves.toEqual(agreement);
     expect(mockPost).toHaveBeenCalledWith("/agreements/agr-1/activate");
   });
 
   it("archiveAgreement posts to the archive path", async () => {
-    const response = { data: { id: "agr-1", status: "CANCELLED" } };
+    const agreement = { id: "agr-1", status: "CANCELLED" };
+    const response = { data: { success: true, data: agreement } };
 
     mockPost.mockResolvedValueOnce(response);
 
-    await expect(archiveAgreement("agr-1")).resolves.toEqual(response.data);
+    await expect(archiveAgreement("agr-1")).resolves.toEqual(agreement);
     expect(mockPost).toHaveBeenCalledWith("/agreements/agr-1/archive");
   });
 });

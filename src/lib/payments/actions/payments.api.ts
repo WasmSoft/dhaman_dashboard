@@ -84,10 +84,13 @@ export async function fundPaymentFromPortal(
   paymentId: string,
   input: PortalFundPaymentInput,
 ) {
-  const response = await axiosInstance.post<PaymentDetailsResponse>(
-    API_PATHS.PORTAL_PAYMENTS.FUND(token, paymentId),
-    input,
-  );
+  // AR: يطلب الـ backend قيمة amount كسلسلة Decimal-safe مع تثبيت method=POST صراحة.
+  // EN: The backend requires amount as a Decimal-safe string while method=POST is forced explicitly.
+  const response = await axiosInstance.request<PaymentDetailsResponse>({
+    method: "POST",
+    url: API_PATHS.PORTAL_PAYMENTS.FUND(token, paymentId),
+    data: input,
+  });
   return response.data;
 }
 

@@ -9,6 +9,10 @@ const acceptMutateAsync = vi.fn().mockResolvedValue({
 const requestChangesMutateAsync = vi.fn();
 const openAiReviewMutateAsync = vi.fn();
 
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn() }),
+}));
+
 vi.mock("@/hooks/deliveries", () => ({
   usePortalWorkspaceQuery: () => ({
     data: {

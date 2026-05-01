@@ -5,6 +5,7 @@ import Link from "next/link";
 import { portalCopy } from "@/constants";
 import { usePortalWorkspaceQuery } from "@/hooks/client-portal";
 import { ApiError } from "@/lib/axios-instance";
+import { buildPortalPath } from "@/lib/client-portal";
 
 function isPortalTokenError(error: unknown) {
   return error instanceof ApiError && error.code?.startsWith("PORTAL_TOKEN");
@@ -64,7 +65,7 @@ export function PortalWorkspaceSection({ token }: { token: string }) {
               {data.deliveries.map((delivery) => (
                 <Link
                   key={delivery.id}
-                  href={`/${token}/deliveries/${delivery.id}`}
+                  href={buildPortalPath(token, "deliveryPreview")}
                   className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.03] p-4 transition hover:bg-white/[0.05]"
                 >
                   <div>
@@ -89,7 +90,7 @@ export function PortalWorkspaceSection({ token }: { token: string }) {
                 </div>
               ))}
             </div>
-            <Link href={`/${token}/payments`} className="mt-4 inline-block text-sm font-semibold text-[#9f92ff] hover:text-white">
+            <Link href={buildPortalPath(token, "paymentSetup")} className="mt-4 inline-block text-sm font-semibold text-[#9f92ff] hover:text-white">
               الذهاب إلى صفحة الدفعات
             </Link>
           </section>
@@ -116,7 +117,7 @@ export function PortalWorkspaceSection({ token }: { token: string }) {
                 </div>
               ))}
             </div>
-            <Link href={`/${token}/timeline`} className="mt-4 inline-block text-sm font-semibold text-[#9f92ff] hover:text-white">
+            <Link href={buildPortalPath(token, "tracking")} className="mt-4 inline-block text-sm font-semibold text-[#9f92ff] hover:text-white">
               عرض الخط الزمني الكامل
             </Link>
           </section>

@@ -3,9 +3,11 @@
 import { AgreementMilestoneBuilderSection } from "@/components/agreements";
 
 interface AgreementEditPageProps {
-  params: { agreementId: string };
+  params: Promise<{ agreementId: string }>;
 }
 
-export default function AgreementEditPage({ params }: AgreementEditPageProps) {
-  return <AgreementMilestoneBuilderSection agreementId={params.agreementId} />;
+export default async function AgreementEditPage({ params }: AgreementEditPageProps) {
+  const { agreementId } = await params;
+
+  return <AgreementMilestoneBuilderSection agreementId={agreementId} />;
 }

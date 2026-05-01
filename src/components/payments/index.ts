@@ -7,3 +7,5 @@ export { PortalPaymentSetupSection } from "./PortalPaymentSetupSection";
 export { PortalFundPaymentSection } from "./PortalFundPaymentSection";
 export { PortalPaymentHistorySection } from "./PortalPaymentHistorySection";
 export { PortalReleasePaymentSection } from "./PortalReleasePaymentSection";
+export { PortalFundMilestoneSection } from "./PortalFundMilestoneSection";
+export { PortalReleasePaymentFlowSection } from "./PortalReleasePaymentFlowSection";

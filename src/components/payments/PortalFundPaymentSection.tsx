@@ -1,12 +1,16 @@
 "use client";
 
+import { useEffect } from "react";
 import { usePortalPaymentsQuery, usePortalFundPaymentMutation } from "@/hooks/payments";
 import { Loader2, CheckCircle2, ShieldAlert } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/shared";
 import { formatPaymentAmount } from "@/lib/payments/helpers";
 import { DemoPaymentNotice } from "./DemoPaymentNotice";
 import { PaymentStatusBadge } from "./PaymentStatusBadge";
 import { portalPaymentErrorCopy } from "@/constants";
+import { buildPortalPath } from "@/lib/client-portal";
 
 // AR: صفحة تأكيد تمويل دفعة من بوابة العميل.
 // EN: Portal fund payment confirmation page.
@@ -19,6 +23,7 @@ export function PortalFundPaymentSection({
   paymentId: string;
   locale?: "en" | "ar";
 }) {
+  const router = useRouter();
   const { data, isLoading, isError, error } = usePortalPaymentsQuery(token);
   const fundMutation = usePortalFundPaymentMutation(token, paymentId);
 
@@ -27,6 +32,12 @@ export function PortalFundPaymentSection({
 
   const isTokenError =
     isError && (error as { code?: string })?.code?.includes("PORTAL_TOKEN");
+
+  useEffect(() => {
+    if (fundMutation.isSuccess) {
+      router.push(buildPortalPath(token, "tracking"));
+    }
+  }, [fundMutation.isSuccess, router, token]);
 
   if (isLoading) {
     return (
@@ -120,9 +131,19 @@ export function PortalFundPaymentSection({
           </p>
           <p className="mt-2 text-[13px] text-[#8b92b3]">
             {locale === "ar"
-              ? "الدفعة محجوزة الآن في الوضع التجريبي."
-              : "The payment is now reserved in demo mode."}
+              ? "الدفعة محجوزة الآن في الوضع التجريبي. الاتفاق أصبح نشطاً والمرحلة الأولى جاهزة للعمل."
+              : "The payment is now reserved in demo mode. The agreement is now active and the first milestone is ready."}
           </p>
+          {/* AR: بعد التمويل الناجح، يُوجَّه العميل إلى مساحة العمل لمتابعة تقدم المشروع. */}
+          {/* EN: After successful funding, redirect the client to the workspace to track project progress. */}
+          <Button
+            asChild
+            className="mt-4 h-10 gap-2 rounded-[12px] bg-[#6f52ff] px-6 text-[14px] font-bold text-white hover:bg-[#7b63ff]"
+          >
+            <Link href={buildPortalPath(token, "tracking")}>
+              {locale === "ar" ? "عرض مساحة العمل" : "View Workspace"}
+            </Link>
+          </Button>
         </div>
       ) : (
         <div className="rounded-[14px] border border-white/[0.07] bg-[#15192d] px-5 py-5">

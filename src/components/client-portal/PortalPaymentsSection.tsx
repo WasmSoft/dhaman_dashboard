@@ -10,6 +10,7 @@ import {
   usePortalReleasePaymentMutation,
 } from "@/hooks/client-portal";
 import { ApiError } from "@/lib/axios-instance";
+import { buildPortalPath } from "@/lib/client-portal";
 
 function formatCurrency(amount: number | string, currency: string) {
   const numericAmount = typeof amount === "number" ? amount : Number(amount);
@@ -51,7 +52,7 @@ export function PortalPaymentsSection({ token }: { token: string }) {
       <header className="rounded-3xl border border-white/10 bg-[#13182b] p-6">
         <p className="text-sm text-[#8f97b6]">{portalCopy.titles.payments.ar}</p>
         <h1 className="mt-2 text-3xl font-black">إدارة الدفعات</h1>
-        <Link href={`/${token}/payments/history`} className="mt-4 inline-block text-sm font-semibold text-[#9f92ff] hover:text-white">
+        <Link href={buildPortalPath(token, "paymentHistory")} className="mt-4 inline-block text-sm font-semibold text-[#9f92ff] hover:text-white">
           الانتقال إلى سجل الدفعات
         </Link>
       </header>
@@ -69,6 +70,7 @@ export function PortalPaymentsSection({ token }: { token: string }) {
             <div className="mt-4 flex flex-wrap gap-3">
               {payment.status === "WAITING" ? (
                 <Button
+                  type="button"
                   onClick={() => payment.id && fundMutation.mutate(payment.id)}
                   disabled={fundMutation.isPending || !payment.id}
                   className="rounded-xl bg-[#6f52ff] px-5 text-white hover:bg-[#7b63ff]"
@@ -78,6 +80,7 @@ export function PortalPaymentsSection({ token }: { token: string }) {
               ) : null}
               {payment.status === "READY_TO_RELEASE" ? (
                 <Button
+                  type="button"
                   onClick={() => payment.id && releaseMutation.mutate(payment.id)}
                   disabled={releaseMutation.isPending || !payment.id}
                   className="rounded-xl bg-emerald-600 px-5 text-white hover:bg-emerald-500"

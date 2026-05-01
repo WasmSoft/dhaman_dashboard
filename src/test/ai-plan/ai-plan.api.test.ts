@@ -36,7 +36,23 @@ describe('generatePlan API action', () => {
       clarityScore: 85,
     };
 
-    mockPost.mockResolvedValueOnce({ data: mockResponse });
+    mockPost.mockResolvedValueOnce({
+      data: {
+        success: true,
+        data: {
+          id: mockResponse.id,
+          milestones: mockResponse.milestones,
+          policies: {
+            delayPolicy: mockResponse.policies.delay,
+            cancellationPolicy: mockResponse.policies.cancellation,
+            extraRequestPolicy: mockResponse.policies.extraRequest,
+            reviewPolicy: mockResponse.policies.review,
+          },
+          ambiguityWarnings: mockResponse.ambiguityWarnings,
+          clarityScore: mockResponse.clarityScore,
+        },
+      },
+    });
 
     // Re-import after mock is set up
     const { generatePlan } = await import('@/lib/ai-plan/actions/ai-plan.api');

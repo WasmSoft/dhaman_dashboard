@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import {
   CalendarDays,
   Download,
@@ -93,9 +95,11 @@ function AgreementsPanel() {
   return (
     <aside className="w-full space-y-[14px]">
       <div className="grid grid-cols-2 gap-[10px]">
-        <Button className="h-[46.6px] rounded-[10px] bg-[#6f52ff] text-sm font-bold text-white shadow-[0_12px_28px_rgba(111,82,255,0.26)] hover:bg-[#7b63ff] xl:w-[155px]">
-          <Plus className="size-[15px]" />
-          إنشاء اتفاق
+        <Button asChild className="h-[46.6px] rounded-[10px] bg-[#6f52ff] text-sm font-bold text-white shadow-[0_12px_28px_rgba(111,82,255,0.26)] hover:bg-[#7b63ff] xl:w-[155px]">
+          <Link href="/agreements/create">
+            <Plus className="size-[15px]" />
+            إنشاء اتفاق
+          </Link>
         </Button>
         <Button variant="secondary" className="h-[46.6px] rounded-[10px] border border-[#252a42] bg-[#1d2135] text-sm font-bold text-white hover:bg-[#262b49] xl:w-[155px]">
           <Download className="size-[15px]" />

@@ -1,13 +1,13 @@
-// AR: صفحة سجل الدفعات في بوابة العميل.
-// EN: Client portal payment history page.
+// AR: صفحة سجل الدفعات بالحرفية المطلوبة في مسار بوابة العميل.
+// EN: Payment history page using the required client portal route casing.
 import { PortalPaymentHistorySection } from "@/components/payments";
 
-interface PortalPaymentHistoryPageProps {
-  params: { token: string };
-}
-
-export default function PortalPaymentHistoryPage({
+export default async function PortalTokenPaymentHistoryCasedPage({
   params,
-}: PortalPaymentHistoryPageProps) {
-  return <PortalPaymentHistorySection token={params.token} />;
+}: {
+  params: Promise<{ token: string }>;
+}) {
+  const { token } = await params;
+
+  return <PortalPaymentHistorySection token={token} />;
 }

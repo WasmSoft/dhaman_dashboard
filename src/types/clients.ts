@@ -1,5 +1,7 @@
 import type { ApiItemResponse } from "@/types/common";
 
+// AR: أنواع بيانات العملاء — تشمل أنواع API و أنواع صفحة العملاء.
+// EN: Client data types — includes API types and client page UI types.
 export interface Client {
   id: string;
   name: string;
@@ -36,6 +38,30 @@ export interface UpdateClientPayload {
   email?: string;
   phone?: string | null;
   companyName?: string | null;
+}
+
+export type ClientStatus = "نشط" | "يحتاج متابعة" | "مكتمل" | "معلّق";
+
+export type ClientFilterTab =
+  | "الكل"
+  | "مكتملون"
+  | "لديهم مراجعات AI"
+  | "بانتظار إجراء"
+  | "نشطون";
+
+export type ClientActionBadge =
+  | "بانتظار مراجعة تسليم"
+  | "طلب تعديل مفتوح"
+  | "لا يوجد"
+  | "مراجعة AI مفتوحة"
+  | "بانتظار AI";
+
+export interface ClientStat {
+  key: string;
+  value: string;
+  label: string;
+  description: string;
+  trend?: string;
 }
 
 export interface AgreementReference {
@@ -88,11 +114,20 @@ export interface ClientPageLabels {
   noResultsTitle: string;
   noResultsDescription: string;
   retryLabel: string;
+  createLabel: string;
+  editLabel: string;
+  saveLabel: string;
+  cancelLabel: string;
+  deleteLabel: string;
+  nameLabel: string;
+  emailLabel: string;
+  phoneLabel: string;
+  companyLabel: string;
+  agreementsLabel: string;
+  totalPaymentsLabel: string;
   pageLabel: string;
   ofLabel: string;
   detailsLabel: string;
-  phoneLabel: string;
-  companyLabel: string;
   createdLabel: string;
   updatedLabel: string;
 }

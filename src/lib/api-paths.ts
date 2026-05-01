@@ -126,6 +126,7 @@ export const API_PATHS = {
   },
   AI_PLAN: {
     GENERATE: "/ai/generate-payment-plan",
+    GENERATE_AGREEMENT: "/ai/generate-agreement-draft",
     GENERATE_FOR_AGREEMENT: (agreementId: PathParam) =>
       `/agreements/${encodePathParam(agreementId)}/generate-plan`,
   },

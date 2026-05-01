@@ -30,10 +30,31 @@ export interface GeneratedPolicies {
   review: string;
 }
 
+export interface GenerateAgreementDraftRequest {
+  projectTitle?: string;
+  projectDescription?: string;
+  clientName?: string;
+  serviceType?: string;
+  durationText?: string;
+  expectedDeliveryDate?: string;
+  language?: 'ar' | 'en';
+  totalBudget?: number;
+  currency?: string;
+}
+
 export interface GeneratedPlan {
   id: string;
   milestones: GeneratedMilestone[];
   policies: GeneratedPolicies;
   ambiguityWarnings: string[];
   clarityScore: number;
+}
+
+export interface GeneratedAgreementDraft extends GeneratedPlan {
+  title: string;
+  description: string;
+  serviceType: string | null;
+  durationText: string | null;
+  expectedDeliveryDate: string | null;
+  currency: string;
 }

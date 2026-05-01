@@ -30,12 +30,44 @@ const mockDelivery: Delivery = {
   updatedAt: "2026-05-01T00:00:00.000Z",
 };
 
-const mockListResponse: DeliveryListResponse = {
-  items: [mockDelivery],
+const mockListResponse = {
+  deliveries: [
+    {
+      id: "delivery-001",
+      agreementId: "agreement-001",
+      milestoneId: "milestone-001",
+      submittedById: "user-1",
+      summary: "Initial delivery",
+      status: "DRAFT",
+      deliveryUrl: "https://example.com/review",
+      fileUrl: null,
+      fileName: null,
+      fileType: null,
+      notes: null,
+      submittedAt: null,
+      acceptedAt: null,
+      changesRequestedAt: null,
+      clientFeedback: null,
+      milestone: {
+        id: "milestone-001",
+        title: "Phase 1",
+        status: "ACTIVE",
+        paymentStatus: "RESERVED",
+        deliveryStatus: "DRAFT",
+        revisionLimit: 2,
+      },
+      payment: null,
+      timeline: {
+        agreementId: "agreement-001",
+        milestoneId: "milestone-001",
+      },
+      createdAt: "2026-05-01T00:00:00.000Z",
+      updatedAt: "2026-05-01T00:00:00.000Z",
+    },
+  ],
   page: 1,
   limit: 10,
   total: 1,
-  totalPages: 1,
 };
 
 describe("deliveries API actions", () => {
@@ -52,7 +84,9 @@ describe("deliveries API actions", () => {
     expect(mockGet).toHaveBeenCalledWith(API_PATHS.DELIVERIES.LIST, {
       params: filters,
     });
-    expect(result).toEqual(mockListResponse);
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0]?.milestone.title).toBe("Phase 1");
+    expect(result.totalPages).toBe(1);
   });
 
   it("calls GET /deliveries/:id with correct path", async () => {

@@ -5,6 +5,7 @@ vi.mock("@/lib/axios-instance", () => ({
   axiosInstance: {
     get: vi.fn(),
     post: vi.fn(),
+    request: vi.fn(),
   },
 }));
 
@@ -35,9 +36,9 @@ describe("payments.api — portal", () => {
     );
   });
 
-  it("posts fundPaymentFromPortal with correct token and payment ID", async () => {
-    const mockPost = vi.mocked(axiosInstance.post);
-    mockPost.mockResolvedValueOnce({
+  it("posts fundPaymentFromPortal with explicit POST and amount body", async () => {
+    const mockRequest = vi.mocked(axiosInstance.request);
+    mockRequest.mockResolvedValueOnce({
       data: {
         data: { id: "pay-1", amount: "100.00", status: "RESERVED" },
       },
@@ -51,9 +52,10 @@ describe("payments.api — portal", () => {
     });
 
     expect(result.data.status).toBe("RESERVED");
-    expect(mockPost).toHaveBeenCalledWith(
-      expect.stringContaining("/portal/tok-abc/payments/pay-1/fund"),
-      expect.objectContaining({ amount: "100.00" }),
-    );
+    expect(mockRequest).toHaveBeenCalledWith({
+      method: "POST",
+      url: expect.stringContaining("/portal/tok-abc/payments/pay-1/fund"),
+      data: { amount: "100.00" },
+    });
   });
 });

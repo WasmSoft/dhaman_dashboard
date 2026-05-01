@@ -38,6 +38,7 @@ export function portalInviteQueryOptions(token: string) {
   return queryOptions({
     queryKey: portalQueryKeys.invite(token),
     queryFn: () => getPortalInvite(token),
+    enabled: Boolean(token),
   });
 }
 
@@ -45,6 +46,7 @@ export function portalWorkspaceQueryOptions(token: string) {
   return queryOptions({
     queryKey: portalQueryKeys.workspace(token),
     queryFn: () => getPortalWorkspace(token),
+    enabled: Boolean(token),
   });
 }
 
@@ -59,6 +61,7 @@ export function portalPaymentsQueryOptions(token: string) {
   return queryOptions({
     queryKey: portalQueryKeys.payments(token),
     queryFn: () => getPortalPayments(token),
+    enabled: Boolean(token),
   });
 }
 
@@ -66,6 +69,7 @@ export function portalPaymentHistoryQueryOptions(token: string) {
   return queryOptions({
     queryKey: portalQueryKeys.paymentHistory(token),
     queryFn: () => getPortalPaymentHistory(token),
+    enabled: Boolean(token),
   });
 }
 
@@ -73,5 +77,6 @@ export function portalTimelineQueryOptions(token: string) {
   return queryOptions({
     queryKey: portalQueryKeys.timeline(token),
     queryFn: () => getPortalTimeline(token),
+    enabled: Boolean(token),
   });
 }

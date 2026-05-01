@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import {
   AlertTriangle,
@@ -24,9 +25,9 @@ import { Input } from "@/components/shared/input";
 import { DeliveryStatusBadge } from "@/components/deliveries/DeliveryStatusBadge";
 import { deliveriesContent, deliveriesUiStrings, deliveryStatusFilterOptions } from "@/constants";
 import { useDeliveriesQuery, useDeliveryFilters } from "@/hooks/deliveries";
+import { buildCreateDeliveryHubHref, buildDeliveryMetrics, buildDeliverySelectedSummary, buildDeliveryTableItems, getDeliveryStatusLabel } from "@/lib/deliveries/helpers";
 import { cn } from "@/lib/utils";
-import { getDeliveryStatusLabel } from "@/lib/deliveries/helpers";
-import type { DeliveryMetricTone, DeliveryPaymentTone, DeliveryStatusTone, DeliveryTableItem } from "@/types";
+import type { DeliveryMetricCard, DeliveryMetricTone, DeliveryPaymentTone, DeliverySelectedSummary, DeliveryStatusTone, DeliveryTableItem } from "@/types";
 
 const metricToneClasses: Record<
   DeliveryMetricTone,
@@ -87,7 +88,7 @@ function DeliveriesHeader() {
 
       <div className="order-1 flex gap-2 lg:order-2">
         <Button asChild className="h-[41px] rounded-[10px] bg-[#6f52ff] px-4 text-[13px] font-bold text-white shadow-[0_12px_28px_rgba(111,82,255,0.26)] hover:bg-[#7b63ff]">
-          <Link href="/agreements">
+          <Link href={buildCreateDeliveryHubHref()}>
             <Send className="size-[15px]" />
             {deliveriesContent.createLabel}
           </Link>
@@ -105,10 +106,10 @@ function DeliveriesHeader() {
   );
 }
 
-function DeliveriesMetrics() {
+function DeliveriesMetrics({ metrics }: { metrics: readonly DeliveryMetricCard[] }) {
   return (
     <section className="mb-6 grid max-w-[966px] justify-start gap-4 sm:grid-cols-2 xl:me-[284px] xl:grid-cols-4">
-      {deliveriesContent.metrics.map((metric) => (
+      {metrics.map((metric) => (
         <article key={metric.label} className={cn("relative min-h-[109px] rounded-[12px] border p-[18px] text-start", metricToneClasses[metric.tone].card)}>
           <span className={cn("absolute end-4 top-3 rounded-md px-2 py-1 text-[10px] font-bold", metricToneClasses[metric.tone].badge)}>{metric.badge}</span>
           <span className={cn("grid size-10 place-items-center rounded-[10px]", metricToneClasses[metric.tone].icon)}>{metricIcon(metric.tone)}</span>
@@ -165,8 +166,13 @@ function DeliveryLinkLabel({ delivery }: { delivery: string }) {
 }
 
 function DeliveryRow({ item }: { item: DeliveryTableItem }) {
+  const router = useRouter();
+
   return (
-    <tr className={cn("h-[69px] border-t border-[#252a42] text-[12px] text-[#c7cce0]", item.active && "bg-[#6f52ff]/10 shadow-[inset_0_0_0_1px_rgba(111,82,255,0.55)]")}>
+    <tr
+      className={cn("h-[69px] cursor-pointer border-t border-[#252a42] text-[12px] text-[#c7cce0] transition hover:bg-[#1b2035]", item.active && "bg-[#6f52ff]/10 shadow-[inset_0_0_0_1px_rgba(111,82,255,0.55)]")}
+      onClick={() => router.push(`/deliveries/${item.id}`)}
+    >
       <td className="px-4">
         <div className="flex items-center gap-3">
           <span className={cn("size-2 shrink-0 rounded-full", item.active ? "bg-[#6f52ff]" : "bg-[#323858]")} />
@@ -185,9 +191,9 @@ function DeliveryRow({ item }: { item: DeliveryTableItem }) {
       <td className="px-4">
         <div className="flex items-center gap-2">
           <Button asChild variant="secondary" className="h-7 rounded-[8px] border border-[#6f52ff]/25 bg-[#6f52ff]/20 px-3 text-[11px] font-bold text-[#cfc6ff] hover:bg-[#6f52ff]/30 hover:text-white">
-            <Link href={`/deliveries/${item.id}`}>{item.actionLabel}</Link>
+            <Link href={`/deliveries/${item.id}`} onClick={(event) => event.stopPropagation()}>{item.actionLabel}</Link>
           </Button>
-          <Button size="icon-xs" variant="secondary" className="rounded-[7px] border border-[#252a42] bg-[#101323] text-[#8a91ac] hover:text-white">
+          <Button size="icon-xs" variant="secondary" className="rounded-[7px] border border-[#252a42] bg-[#101323] text-[#8a91ac] hover:text-white" onClick={(event) => event.stopPropagation()}>
             <MoreVertical className="size-3.5" />
           </Button>
         </div>
@@ -219,8 +225,7 @@ function DeliveriesTable({ deliveries }: { deliveries: DeliveryTableItem[] }) {
   );
 }
 
-function SelectedSummaryCard() {
-  const summary = deliveriesContent.selectedSummary;
+function SelectedSummaryCard({ summary }: { summary: DeliverySelectedSummary }) {
 
   return (
     <article className="rounded-[14px] border border-[#252a42] bg-[#15192b] p-5 text-start">
@@ -304,10 +309,10 @@ function QuickActionsCard() {
   );
 }
 
-function DeliveriesSidebar() {
+function DeliveriesSidebar({ summary }: { summary: DeliverySelectedSummary }) {
   return (
     <aside className="space-y-3 xl:w-[270px] xl:shrink-0">
-      <SelectedSummaryCard />
+      <SelectedSummaryCard summary={summary} />
       <SidebarNotice />
       <QuickActionsCard />
     </aside>
@@ -347,25 +352,20 @@ function ErrorState({ message }: { message: string }) {
 export function DeliveriesSection() {
   const { filters } = useDeliveryFilters();
   const { data, isLoading, error } = useDeliveriesQuery(filters);
+  const liveMetrics = useMemo(
+    () => (data?.items?.length ? buildDeliveryMetrics(data.items) : deliveriesContent.metrics),
+    [data],
+  );
 
   const deliveryRows: DeliveryTableItem[] = useMemo(() => {
     if (!data?.items) return [];
 
-    return data.items.map((delivery) => ({
-      id: delivery.id,
-      project: delivery.agreementTitle,
-      client: "",
-      milestone: delivery.milestoneName,
-      delivery: delivery.deliveryUrl ? "رابط" : delivery.fileUrl ? delivery.fileName ?? "ملف" : "—",
-      deliveryStatus: getDeliveryStatusLabel(delivery.status),
-      deliveryTone: "review" as DeliveryStatusTone,
-      paymentStatus: delivery.payment?.status ?? "—",
-      paymentTone: "client" as DeliveryPaymentTone,
-      amount: delivery.payment?.amount ?? "—",
-      lastUpdate: delivery.updatedAt ? new Date(delivery.updatedAt).toLocaleDateString("ar-SA") : "—",
-      actionLabel: "عرض التفاصيل",
-    }));
+    return buildDeliveryTableItems(data.items);
   }, [data]);
+  const selectedSummary = useMemo(
+    () => (data?.items?.[0] ? buildDeliverySelectedSummary(data.items[0]) : deliveriesContent.selectedSummary),
+    [data],
+  );
 
   if (isLoading) {
     return (
@@ -388,9 +388,9 @@ export function DeliveriesSection() {
   return (
     <>
       <DeliveriesHeader />
-      <DeliveriesMetrics />
+      <DeliveriesMetrics metrics={liveMetrics} />
       <section dir="ltr" className="flex max-w-[1230px] flex-col gap-4 xl:flex-row xl:items-start">
-        <DeliveriesSidebar />
+        <DeliveriesSidebar summary={selectedSummary} />
         <div dir="rtl" className="min-w-0 flex-1 space-y-3">
           <FilterBar />
           {data?.items && data.items.length === 0 ? (

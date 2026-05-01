@@ -28,8 +28,8 @@ export function PortalTimelineEvidence({
   }
 
   const filteredEvents = eventTypes
-    ? data.events.filter((event) => eventTypes.includes(event.type))
-    : data.events.slice(0, maxItems);
+    ? data.items.filter((event) => eventTypes.includes(event.type))
+    : data.items.slice(0, maxItems);
 
   if (filteredEvents.length === 0) {
     return null;

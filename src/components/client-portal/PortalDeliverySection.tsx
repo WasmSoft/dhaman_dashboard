@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
@@ -12,7 +13,7 @@ import {
   usePortalRequestDeliveryChangesMutation,
 } from "@/hooks/client-portal";
 import { ApiError } from "@/lib/axios-instance";
-import { portalRequestChangesSchema } from "@/lib/client-portal";
+import { buildPortalPath, portalRequestChangesSchema } from "@/lib/client-portal";
 import type { PortalRequestChangesPayload } from "@/types";
 
 function isPortalTokenError(error: unknown) {
@@ -26,6 +27,7 @@ export function PortalDeliverySection({
   token: string;
   deliveryId: string;
 }) {
+  const router = useRouter();
   const [showForm, setShowForm] = useState(false);
   const { data, isLoading, error } = usePortalDeliveryQuery(token, deliveryId);
   const acceptMutation = usePortalAcceptDeliveryMutation(token, deliveryId);
@@ -56,6 +58,16 @@ export function PortalDeliverySection({
 
   const isReviewable = data.status === "PENDING_REVIEW";
 
+  async function handleAccept() {
+    await acceptMutation.mutateAsync();
+    router.push(buildPortalPath(token, "releasePayment"));
+  }
+
+  async function handleRequestChanges(values: PortalRequestChangesPayload) {
+    await requestChangesMutation.mutateAsync(values);
+    router.push(buildPortalPath(token, "changeRequests"));
+  }
+
   return (
     <section dir="rtl" className="space-y-6 text-start text-white">
       <header className="rounded-3xl border border-white/10 bg-[#13182b] p-6">
@@ -84,7 +96,7 @@ export function PortalDeliverySection({
       {isReviewable ? (
         <div className="flex flex-col gap-3 rounded-3xl border border-white/10 bg-[#13182b] p-6 sm:flex-row">
           <Button
-            onClick={() => acceptMutation.mutate()}
+            onClick={() => void handleAccept()}
             disabled={acceptMutation.isPending}
             className="rounded-xl bg-[#6f52ff] px-5 text-white hover:bg-[#7b63ff]"
           >
@@ -106,7 +118,7 @@ export function PortalDeliverySection({
 
       {showForm ? (
         <form
-          onSubmit={form.handleSubmit((values) => requestChangesMutation.mutate(values))}
+          onSubmit={form.handleSubmit((values) => void handleRequestChanges(values))}
           className="space-y-4 rounded-3xl border border-white/10 bg-[#13182b] p-6"
         >
           <h3 className="text-lg font-bold">ما التعديلات المطلوبة؟</h3>

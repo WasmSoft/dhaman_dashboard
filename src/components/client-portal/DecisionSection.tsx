@@ -8,9 +8,19 @@ import type { PortalAgreement } from "@/types";
 
 interface DecisionSectionProps {
   agreement: PortalAgreement;
+  onApprove?: () => void;
+  onRequestChanges?: () => void;
+  onReject?: () => void;
+  isApprovePending?: boolean;
 }
 
-export function DecisionSection({ agreement }: DecisionSectionProps) {
+export function DecisionSection({
+  agreement,
+  onApprove,
+  onRequestChanges,
+  onReject,
+  isApprovePending = false,
+}: DecisionSectionProps) {
   const [isConfirmed, setIsConfirmed] = useState(false);
 
   return (
@@ -38,19 +48,22 @@ export function DecisionSection({ agreement }: DecisionSectionProps) {
       <div className="mt-5 flex flex-col gap-2 sm:flex-row">
         <Button
           disabled={!isConfirmed}
+          onClick={onApprove}
           className="h-10 bg-gradient-to-br from-[#6d5dfc] to-[#7c6cff] px-5 text-[13px] font-extrabold shadow-[0_2px_6px_rgba(109,93,252,0.35)] hover:opacity-95"
         >
           <CheckCircle2 className="size-3.5" aria-hidden="true" />
-          الموافقة على الاتفاق
+          {isApprovePending ? "جارٍ التنفيذ..." : "الموافقة على الاتفاق"}
         </Button>
         <Button
           variant="outline"
+          onClick={onRequestChanges}
           className="h-10 border-white/10 bg-[#1a1d2e] px-5 text-[13px] font-bold text-[#b8bdd8] hover:bg-[#20243a]"
         >
           طلب تعديل
         </Button>
         <Button
           variant="outline"
+          onClick={onReject}
           className="h-10 border-red-500/30 bg-transparent px-5 text-[13px] font-bold text-[#f87171] hover:bg-red-500/10 hover:text-[#fca5a5]"
         >
           رفض الاتفاق

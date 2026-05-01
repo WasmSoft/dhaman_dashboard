@@ -18,11 +18,13 @@ import {
 
 const mockGet = vi.fn();
 const mockPost = vi.fn();
+const mockRequest = vi.fn();
 
 vi.mock("@/lib/axios-instance", () => ({
   axiosInstance: {
     get: (...args: unknown[]) => mockGet(...args),
     post: (...args: unknown[]) => mockPost(...args),
+    request: (...args: unknown[]) => mockRequest(...args),
   },
 }));
 
@@ -63,9 +65,25 @@ describe("client-portal.api", () => {
   });
 
   it("calls the invite endpoint with GET", async () => {
-    mockGet.mockResolvedValueOnce({ data: { agreement: { id: "agr-1" } } });
+    mockGet.mockResolvedValueOnce({
+      data: {
+        data: {
+          agreementId: "agr-1",
+          title: "Agreement",
+          description: null,
+          serviceType: null,
+          totalAmount: "100",
+          currency: "SAR",
+          status: "SENT",
+          freelancer: { name: "Freelancer" },
+          client: { name: "Client", email: "client@example.com" },
+          milestones: [],
+          paymentSchedule: [],
+        },
+      },
+    });
 
-    await expect(getPortalInvite("tok-1")).resolves.toEqual({
+    await expect(getPortalInvite("tok-1")).resolves.toMatchObject({
       agreement: { id: "agr-1" },
     });
     expect(mockGet).toHaveBeenCalledWith("/portal/tok-1/invite");
@@ -95,9 +113,28 @@ describe("client-portal.api", () => {
   });
 
   it("calls the workspace endpoint with GET", async () => {
-    mockGet.mockResolvedValueOnce({ data: { agreement: { id: "agr-1" } } });
+    mockGet.mockResolvedValueOnce({
+      data: {
+        data: {
+          agreementId: "agr-1",
+          title: "Agreement",
+          status: "ACTIVE",
+          totalAmount: "100",
+          currency: "SAR",
+          freelancerName: "Freelancer",
+          milestones: [],
+          payments: [],
+          deliveries: [],
+          changeRequests: [],
+          aiReviews: [],
+          timeline: [],
+        },
+      },
+    });
 
-    await getPortalWorkspace("tok-1");
+    await expect(getPortalWorkspace("tok-1")).resolves.toMatchObject({
+      agreement: { id: "agr-1" },
+    });
     expect(mockGet).toHaveBeenCalledWith("/portal/tok-1");
   });
 
@@ -134,10 +171,13 @@ describe("client-portal.api", () => {
   });
 
   it("posts fund payment to the fund endpoint", async () => {
-    mockPost.mockResolvedValueOnce({ data: { id: "pay-1", status: "RESERVED" } });
+    mockRequest.mockResolvedValueOnce({ data: { id: "pay-1", status: "RESERVED" } });
 
     await fundPayment("tok-1", "pay-1");
-    expect(mockPost).toHaveBeenCalledWith("/portal/tok-1/payments/pay-1/fund");
+    expect(mockRequest).toHaveBeenCalledWith({
+      method: "POST",
+      url: "/portal/tok-1/payments/pay-1/fund",
+    });
   });
 
   it("posts release payment to the release endpoint", async () => {
@@ -155,9 +195,9 @@ describe("client-portal.api", () => {
   });
 
   it("calls portal timeline with GET", async () => {
-    mockGet.mockResolvedValueOnce({ data: [] });
+    mockGet.mockResolvedValueOnce({ data: { data: { items: [] } } });
 
-    await getPortalTimeline("tok-1");
+    await expect(getPortalTimeline("tok-1")).resolves.toEqual([]);
     expect(mockGet).toHaveBeenCalledWith("/portal/tok-1/timeline");
   });
 });

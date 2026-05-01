@@ -62,6 +62,8 @@ describe("delivery-view.helper", () => {
 
     expect(rows[0]?.actionHref).toContain("/agreements/");
     expect(rows[0]?.detailHref).toContain("/milestones/");
+    expect(rows[0]?.milestone).toBe("Homepage design");
+    expect(rows[0]?.paymentStatus).toBe("مراجعة العميل");
   });
 
   it("builds the selected summary with milestone criteria", () => {

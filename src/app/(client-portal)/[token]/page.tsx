@@ -1,9 +1,11 @@
 import { PortalWorkspaceSection } from "@/components/client-portal";
 
-export default function PortalWorkspacePage({
+export default async function PortalWorkspacePage({
   params,
 }: {
-  params: { token: string };
+  params: Promise<{ token: string }>;
 }) {
-  return <PortalWorkspaceSection token={params.token} />;
+  const { token } = await params;
+
+  return <PortalWorkspaceSection token={token} />;
 }

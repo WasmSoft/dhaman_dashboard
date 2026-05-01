@@ -32,6 +32,33 @@ vi.mock("@/hooks/milestones", () => ({
   }),
 }));
 
+vi.mock("@/hooks/agreements", () => ({
+  useAgreementDetailsQuery: () => ({
+    data: {
+      id: "agr-1",
+      title: "Agreement",
+      description: null,
+      serviceType: null,
+      freelancerId: "fre-1",
+      clientId: "cli-1",
+      client: null,
+      totalAmount: 150,
+      currency: "USD",
+      durationText: null,
+      expectedDeliveryDate: null,
+      status: "ACTIVE",
+      inviteToken: "invite-1",
+      portalToken: "portal-1",
+      approvedAt: null,
+      sentAt: null,
+      createdAt: "2026-05-01T09:00:00.000Z",
+      updatedAt: "2026-05-01T10:00:00.000Z",
+      milestones: [],
+      policy: null,
+    },
+  }),
+}));
+
 vi.mock("@/hooks/deliveries/use-deliveries-query", () => ({
   useDeliveriesQuery: () => ({
     data: { data: { deliveries: [], page: 1, limit: 20, total: 0 } },
@@ -62,6 +89,7 @@ describe("AgreementDeliverySection", () => {
     expect(screen.getByText("تقديم تسليم المرحلة")).toBeTruthy();
     expect(screen.getByText("Homepage design")).toBeTruthy();
     expect(screen.getByText("timeline-evidence")).toBeTruthy();
+    expect(screen.getByText("رابط مراجعة التسليم")).toBeTruthy();
   });
 
   it("blocks submit when the confirmation checkbox is missing", async () => {

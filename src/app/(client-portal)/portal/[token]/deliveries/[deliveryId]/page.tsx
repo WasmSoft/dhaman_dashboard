@@ -1,18 +1,13 @@
-// AR: صفحة مراجعة تسليم واحدة عبر بوابة العميل برمز وصول آمن.
-// EN: Portal page for reviewing one delivery using a secure access token.
-import { DeliveryPreviewSection } from "@/components/client-portal";
+// AR: صفحة مراجعة تسليم بوابة العميل — تستخدم واجهة المراجعة الموحدة للحفاظ على تناسق التصميم.
+// EN: Client portal delivery review page — uses the unified review UI to keep design consistent.
+import { PortalDeliverySection } from "@/components/client-portal";
 
-interface PortalDeliveryReviewPageProps {
-  params: { token: string; deliveryId: string };
-}
-
-export default function PortalDeliveryReviewPage({
+export default async function PortalDeliveryReviewPage({
   params,
-}: PortalDeliveryReviewPageProps) {
-  return (
-    <DeliveryPreviewSection
-      portalToken={params.token}
-      deliveryId={params.deliveryId}
-    />
-  );
+}: {
+  params: Promise<{ token: string; deliveryId: string }>;
+}) {
+  const { token, deliveryId } = await params;
+
+  return <PortalDeliverySection token={token} deliveryId={deliveryId} />;
 }

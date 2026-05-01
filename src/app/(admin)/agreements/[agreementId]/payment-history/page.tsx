@@ -3,11 +3,13 @@
 import { AuthenticatedPaymentHistorySection } from "@/components/payments";
 
 interface AgreementPaymentHistoryPageProps {
-  params: { agreementId: string };
+  params: Promise<{ agreementId: string }>;
 }
 
-export default function AgreementPaymentHistoryPage({
+export default async function AgreementPaymentHistoryPage({
   params,
 }: AgreementPaymentHistoryPageProps) {
-  return <AuthenticatedPaymentHistorySection agreementId={params.agreementId} />;
+  const { agreementId } = await params;
+
+  return <AuthenticatedPaymentHistorySection agreementId={agreementId} />;
 }

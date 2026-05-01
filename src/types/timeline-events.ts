@@ -45,12 +45,11 @@ export interface TimelineQueryParams {
 }
 
 export interface TimelineResponse {
-  events: TimelineEvent[];
+  items: TimelineEvent[];
   page: number;
   limit: number;
   total: number;
-  totalPages: number;
-  hasMore: boolean;
+  hasNextPage: boolean;
 }
 
 export interface TimelineDisplayItem {

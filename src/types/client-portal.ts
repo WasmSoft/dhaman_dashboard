@@ -1313,6 +1313,9 @@ export interface PortalWorkspaceResponse {
   freelancer: {
     name: string;
   };
+  client?: {
+    name: string;
+  };
   milestones: PortalMilestone[];
   payments: PortalPaymentSummary[];
   deliveries: PortalDeliverySummary[];

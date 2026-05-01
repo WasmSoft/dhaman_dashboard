@@ -5,18 +5,23 @@ import type {
   TimelineQueryParams,
 } from "@/types";
 
+type ApiEnvelope<T> = {
+  success: boolean;
+  data: T;
+};
+
 // AR: تجلب السجل الزمني الخاص باتفاقية معينة مع دعم الفلاتر والصفحات.
 // EN: Fetches the timeline events for a specific agreement with filters and pagination support.
 export async function getAgreementTimeline(
   agreementId: string,
   params?: TimelineQueryParams
 ): Promise<TimelineResponse> {
-  const response = await axiosInstance.get<TimelineResponse>(
+  const response = await axiosInstance.get<ApiEnvelope<TimelineResponse>>(
     API_PATHS.TIMELINE.AGREEMENT_TIMELINE(agreementId),
     { params }
   );
 
-  return response.data;
+  return response.data.data;
 }
 
 // AR: تجلب السجل الزمني الخاص ببوابة العميل باستخدام رمز الوصول الآمن.
@@ -25,10 +30,10 @@ export async function getPortalTimeline(
   token: string,
   params?: TimelineQueryParams
 ): Promise<TimelineResponse> {
-  const response = await axiosInstance.get<TimelineResponse>(
+  const response = await axiosInstance.get<ApiEnvelope<TimelineResponse>>(
     API_PATHS.PORTAL.TIMELINE(token),
     { params }
   );
 
-  return response.data;
+  return response.data.data;
 }

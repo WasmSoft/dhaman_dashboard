@@ -28,6 +28,11 @@ import {
 import { useAgreementMilestonesQuery } from "@/hooks/milestones";
 import { ApiError } from "@/lib/axios-instance";
 import {
+  buildPortalPath,
+  buildPortalUrl,
+  resolveClientPortalToken,
+} from "@/lib/client-portal";
+import {
   buildAgreementWorkspacePaymentRows,
   buildAgreementWorkspacePaymentSummary,
   formatMilestoneAmount,
@@ -37,6 +42,7 @@ import {
   buildMilestoneDeliveryHref,
   buildMilestoneDetailHref,
 } from "@/lib/milestones/helpers";
+import { buildCreateDeliveryHubHref } from "@/lib/deliveries/helpers";
 import { cn } from "@/lib/utils";
 import { AgreementTimelineSection } from "@/components/agreements/AgreementTimelineSection";
 import { AgreementPoliciesSection } from "@/components/agreements/AgreementPoliciesSection";
@@ -116,6 +122,25 @@ function getAgreementProgress(status: AgreementStatus) {
   return 65;
 }
 
+function resolvePrimaryDeliveryHref(
+  agreementId: string | undefined,
+  milestones: readonly AgreementWorkspaceMilestone[],
+) {
+  if (!agreementId) {
+    return null;
+  }
+
+  const targetMilestone =
+    milestones.find((milestone) => milestone.active && milestone.id) ??
+    milestones.find((milestone) => milestone.id);
+
+  if (!targetMilestone?.id) {
+    return null;
+  }
+
+  return buildMilestoneDeliveryHref(agreementId, targetMilestone.id);
+}
+
 function getAgreementErrorMessage(error: unknown) {
   const apiError = error as ApiError;
 
@@ -161,6 +186,7 @@ function metricIcon(tone: AgreementWorkspaceMetricTone) {
 
 function WorkspaceHeader({
   agreement,
+  deliveryHref,
   isSendInvitePending,
   isActivatePending,
   isArchivePending,
@@ -170,6 +196,7 @@ function WorkspaceHeader({
   onArchive,
 }: {
   agreement: Agreement;
+  deliveryHref: string | null;
   isSendInvitePending: boolean;
   isActivatePending: boolean;
   isArchivePending: boolean;
@@ -183,6 +210,15 @@ function WorkspaceHeader({
   const canActivate = agreement.status === "APPROVED";
   const canArchive = agreement.status !== "COMPLETED";
   const canSubmitDelivery = agreement.status === "ACTIVE";
+  const portalToken = resolveClientPortalToken(agreement);
+  const portalHref = portalToken
+    ? buildPortalPath(
+        portalToken,
+        agreement.status === "SENT" || agreement.status === "DISPUTED"
+          ? "portalHome"
+          : "tracking",
+      )
+    : null;
 
   return (
     <section className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
@@ -224,9 +260,9 @@ function WorkspaceHeader({
           </Button>
         ) : null}
 
-        {canSubmitDelivery ? (
+        {canSubmitDelivery && deliveryHref ? (
           <Button asChild className="h-10 rounded-[10px] bg-[#6f52ff] px-4 text-sm font-bold text-white shadow-[0_12px_28px_rgba(111,82,255,0.26)] hover:bg-[#7b63ff]">
-            <Link href="/agreements/delivery">
+            <Link href={deliveryHref}>
               <Send className="size-[15px]" />
               {content.submitLabel}
             </Link>
@@ -246,9 +282,9 @@ function WorkspaceHeader({
           </Button>
         ) : null}
 
-        {agreement.portalToken ? (
+        {portalHref ? (
           <Button asChild variant="secondary" className="h-10 rounded-[10px] border border-[#252a42] bg-[#15192b] px-4 text-sm font-bold text-[#c7cce0] hover:bg-[#1d2135] hover:text-white">
-            <Link href={`/portal/${agreement.portalToken}/payments`}>
+            <Link href={portalHref}>
               <ExternalLink className="size-[15px]" />
               {content.portalLabel}
             </Link>
@@ -259,7 +295,7 @@ function WorkspaceHeader({
             {content.portalLabel}
           </Button>
         )}
-        <Button variant="secondary" className="h-10 rounded-[10px] border border-[#252a42] bg-[#15192b] px-4 text-sm font-bold text-[#c7cce0] hover:bg-[#1d2135] hover:text-white" disabled={!agreement.inviteToken} onClick={onCopyInvite}>
+        <Button variant="secondary" className="h-10 rounded-[10px] border border-[#252a42] bg-[#15192b] px-4 text-sm font-bold text-[#c7cce0] hover:bg-[#1d2135] hover:text-white" disabled={!portalToken} onClick={onCopyInvite}>
           <Copy className="size-[15px]" />
           {content.copyInviteLabel}
         </Button>
@@ -658,12 +694,24 @@ function ActivitySection() {
 
 function WorkspaceSidebar({
   agreement,
+  deliveryHref,
   paymentSummary,
 }: {
   agreement: Agreement;
+  deliveryHref: string | null;
   paymentSummary: readonly AgreementWorkspacePaymentSummary[];
 }) {
   const content = agreementsContent.agreementWorkspacePage;
+  const portalToken = resolveClientPortalToken(agreement);
+  const portalRoute =
+    agreement.status === "SENT" || agreement.status === "DISPUTED"
+      ? "portalHome"
+      : "tracking";
+  const portalHref = portalToken ? buildPortalPath(portalToken, portalRoute) : null;
+  const portalDisplayLink =
+    portalToken && typeof window !== "undefined"
+      ? buildPortalUrl(portalToken, portalRoute, window.location.origin)
+      : portalHref ?? content.clientPortalLink;
   const quickSummaryItems = [
     {
       label: "قيمة الاتفاق",
@@ -721,9 +769,28 @@ function WorkspaceSidebar({
         <div className="space-y-2">
           {content.quickActions.map((action) => {
             const isActive = "active" in action && action.active;
+            const isSubmitAction = action.label === content.submitLabel;
+
+            if (isSubmitAction) {
+              return (
+                <Link
+                  key={action.label}
+                  href={deliveryHref ?? buildCreateDeliveryHubHref()}
+                  className={cn(
+                    "flex h-9 w-full items-center justify-between rounded-[9px] border px-3 text-[12px] font-bold transition",
+                    isActive
+                      ? "border-[#6f52ff]/45 bg-[#6f52ff]/20 text-white"
+                      : "border-[#252a42] bg-[#101323] text-[#8a91ac] hover:text-white",
+                  )}
+                >
+                  {action.label}
+                  <Send className="size-3.5" />
+                </Link>
+              );
+            }
 
             return (
-            <button key={action.label} className={cn("flex h-9 w-full items-center justify-between rounded-[9px] border px-3 text-[12px] font-bold transition", isActive ? "border-[#6f52ff]/45 bg-[#6f52ff]/20 text-white" : "border-[#252a42] bg-[#101323] text-[#8a91ac] hover:text-white")} type="button">
+              <button key={action.label} className={cn("flex h-9 w-full items-center justify-between rounded-[9px] border px-3 text-[12px] font-bold transition", isActive ? "border-[#6f52ff]/45 bg-[#6f52ff]/20 text-white" : "border-[#252a42] bg-[#101323] text-[#8a91ac] hover:text-white")} type="button">
                 {action.label}
                 <Send className="size-3.5" />
               </button>
@@ -735,13 +802,13 @@ function WorkspaceSidebar({
       <article className="rounded-[14px] border border-[#6f52ff]/25 bg-[#6f52ff]/10 p-5">
         <div className="mb-3 flex items-center justify-between gap-3">
           <h2 className="text-[14px] font-extrabold text-white">{content.clientPortalTitle}</h2>
-          <span className="rounded-md bg-emerald-500/15 px-2 py-1 text-[11px] font-bold text-emerald-300">{agreement.portalToken ? content.clientPortalStatus : "غير متاح"}</span>
+          <span className="rounded-md bg-emerald-500/15 px-2 py-1 text-[11px] font-bold text-emerald-300">{portalHref ? content.clientPortalStatus : "غير متاح"}</span>
         </div>
         <p className="text-[12px] leading-6 text-[#a7aecb]">{content.clientPortalDescription}</p>
-        <span className="mt-3 block rounded-[8px] bg-[#101323] px-3 py-2 text-center text-[11px] text-[#a898ff]" dir="ltr">{agreement.portalToken ?? content.clientPortalLink}</span>
-        {agreement.portalToken ? (
+        <span className="mt-3 block rounded-[8px] bg-[#101323] px-3 py-2 text-center text-[11px] text-[#a898ff]" dir="ltr">{portalDisplayLink}</span>
+        {portalHref ? (
           <Button asChild variant="secondary" className="mt-3 h-9 w-full rounded-[9px] border border-[#252a42] bg-[#101323] text-[12px] font-bold text-white hover:bg-[#1d2135]">
-            <Link href={`/portal/${agreement.portalToken}/payments`}>
+            <Link href={portalHref}>
               <ExternalLink className="size-3.5" />
               {content.clientPortalAction}
             </Link>
@@ -757,9 +824,9 @@ function WorkspaceSidebar({
       <article className="rounded-[14px] border border-[#6f52ff]/40 bg-gradient-to-l from-[#6f52ff] to-[#8b74ff] p-5 text-white shadow-[0_16px_34px_rgba(111,82,255,0.24)]">
         <h2 className="text-[14px] font-extrabold">{content.nextStepTitle}</h2>
         <p className="mt-3 text-[12px] leading-6 text-white/75">{content.nextStepDescription}</p>
-        {agreement.status === "ACTIVE" ? (
+        {agreement.status === "ACTIVE" && deliveryHref ? (
           <Button asChild className="mt-4 h-9 w-full rounded-[9px] bg-white text-[12px] font-extrabold text-[#4c35c7] hover:bg-white/90">
-            <Link href="/agreements/delivery">
+            <Link href={deliveryHref}>
               <Send className="size-3.5" />
               {content.nextStepAction}
             </Link>
@@ -812,13 +879,21 @@ export function AgreementWorkspaceSection({
   const workspacePaymentRows = liveMilestoneSummary
     ? buildAgreementWorkspacePaymentRows(liveMilestoneSummary.milestones)
     : content.paymentRows;
+  const primaryDeliveryHref = resolvePrimaryDeliveryHref(
+    agreementId,
+    workspaceMilestones,
+  );
 
   async function handleCopyInvite() {
-    if (!agreement?.inviteToken || typeof navigator === "undefined") {
+    const portalToken = agreement ? resolveClientPortalToken(agreement) : null;
+
+    if (!portalToken || typeof navigator === "undefined") {
       return;
     }
 
-    await navigator.clipboard.writeText(agreement.inviteToken);
+    await navigator.clipboard.writeText(
+      buildPortalUrl(portalToken, "portalHome", window.location.origin),
+    );
     setWorkspaceFeedback("تم نسخ رابط الدعوة / Invite link copied");
   }
 
@@ -930,6 +1005,7 @@ export function AgreementWorkspaceSection({
     <>
       <WorkspaceHeader
         agreement={agreement}
+        deliveryHref={primaryDeliveryHref}
         isSendInvitePending={sendInviteMutation.isPending}
         isActivatePending={activateMutation.isPending}
         isArchivePending={archiveMutation.isPending}
@@ -947,6 +1023,7 @@ export function AgreementWorkspaceSection({
       <section dir="ltr" className="mx-auto flex max-w-[980px] flex-col gap-4 xl:flex-row xl:items-start">
         <WorkspaceSidebar
           agreement={agreement}
+          deliveryHref={primaryDeliveryHref}
           paymentSummary={workspacePaymentSummary}
         />
         <div dir="rtl" className="min-w-0 flex-1 space-y-4 pb-10">

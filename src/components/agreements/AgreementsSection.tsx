@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   CircleDollarSign,
   Clock3,
@@ -334,9 +335,12 @@ function AgreementsTable({
                       className="h-[94px] border-b border-[#252a42]/55 last:border-0"
                     >
                       <td className="py-0 pe-4">
-                        <strong className="block max-w-[145px] text-[14px] font-extrabold leading-5 text-white">
+                        <Link
+                          href={`/agreements/${agreement.id}`}
+                          className="block max-w-[145px] text-[14px] font-extrabold leading-5 text-white hover:text-[#a898ff]"
+                        >
                           {agreement.title}
-                        </strong>
+                        </Link>
                         <span className="mt-1 block text-[11px] text-[#58607c]">
                           {agreement.id}
                         </span>
@@ -457,6 +461,7 @@ function AgreementsInsights() {
 }
 
 export function AgreementsSection() {
+  const searchParams = useSearchParams();
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [status, setStatus] = useState<AgreementStatus | undefined>();
@@ -480,10 +485,16 @@ export function AgreementsSection() {
 
   const agreements = Array.isArray(data?.data) ? data.data : [];
   const totalPages = data?.totalPages ?? 1;
+  const showCreatedMessage = searchParams.get("created") === "1";
 
   return (
     <>
       <AgreementsHeader />
+      {showCreatedMessage ? (
+        <section className="mb-4 rounded-[12px] border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-[12px] leading-6 text-emerald-100/90">
+          تم إنشاء الاتفاق بنجاح.
+        </section>
+      ) : null}
       <AgreementsMetrics />
       <AgreementsFilters
         search={search}

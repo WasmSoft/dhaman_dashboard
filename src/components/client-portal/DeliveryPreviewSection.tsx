@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Bot,
   CheckCircle2,
@@ -21,6 +22,7 @@ import {
   useRequestDeliveryChangesMutation,
 } from "@/hooks/deliveries";
 import { useOpenAiReviewMutation } from "@/hooks/ai-review";
+import { buildPortalPath } from "@/lib/client-portal";
 import {
   buildPortalDeliveryContext,
   buildPortalPaymentAmount,
@@ -40,6 +42,7 @@ export function DeliveryPreviewSection({
   portalToken,
   deliveryId,
 }: DeliveryPreviewSectionProps) {
+  const router = useRouter();
   const previewContent = clientPortalContent.deliveryPreview;
   const [reason, setReason] = useState("");
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
@@ -84,11 +87,15 @@ export function DeliveryPreviewSection({
     );
   }
 
+  const activePortalToken = portalToken;
+  const activeDeliveryId = deliveryId;
+
   async function handleAccept() {
     try {
       const result = await acceptDeliveryMutation.mutateAsync();
       setErrorMessage(null);
       setFeedbackMessage(result.data.message);
+      router.push(buildPortalPath(activePortalToken, "releasePayment"));
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : "تعذر قبول التسليم الحالي.",
@@ -111,6 +118,7 @@ export function DeliveryPreviewSection({
       const result = await requestDeliveryChangesMutation.mutateAsync(validation.data);
       setErrorMessage(null);
       setFeedbackMessage(result.data.message);
+      router.push(buildPortalPath(activePortalToken, "changeRequests"));
     } catch (error) {
       setErrorMessage(
         error instanceof Error
@@ -121,18 +129,18 @@ export function DeliveryPreviewSection({
   }
 
   async function handleOpenAiReview() {
-    if (!portalToken || !deliveryId) {
+    if (!activePortalToken || !activeDeliveryId) {
       return;
     }
 
     try {
-      await openAiReviewMutation.mutateAsync({
-        token: portalToken,
-        deliveryId,
+      const result = await openAiReviewMutation.mutateAsync({
+        token: activePortalToken,
+        deliveryId: activeDeliveryId,
         payload: {
           objection:
             reason.trim() ||
-            `Client requested AI review for delivery ${deliveryId}.`,
+            `Client requested AI review for delivery ${activeDeliveryId}.`,
           relatedCriteria: portalContext?.milestone?.description
             ? [portalContext.milestone.description]
             : undefined,
@@ -140,6 +148,16 @@ export function DeliveryPreviewSection({
       });
       setErrorMessage(null);
       setFeedbackMessage("تم فتح مراجعة AI لهذا التسليم.");
+
+      if (result.data.recommendation === "ACCEPT") {
+        router.push(buildPortalPath(activePortalToken, "releasePayment"));
+      } else if (result.data.recommendation === "REJECT") {
+        router.push(buildPortalPath(activePortalToken, "changeRequests"));
+      } else if (result.data.recommendation === "PARTIAL") {
+        router.push(buildPortalPath(activePortalToken, "changeRequestPayment"));
+      } else if (result.data.recommendation === "NEEDS_HUMAN_REVIEW") {
+        router.push(buildPortalPath(activePortalToken, "tracking"));
+      }
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : "تعذر فتح مراجعة AI الحالية.",

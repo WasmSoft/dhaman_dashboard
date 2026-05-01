@@ -3,6 +3,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import {
   Clock,
   Eye,
@@ -267,6 +268,7 @@ function ReviewDetailSidebar({
 }
 
 export function AIReviewSection() {
+  const router = useRouter();
   const { aiReview } = aiReviewContent;
 
   // AR: جلب بيانات المراجعات من API.
@@ -340,6 +342,10 @@ export function AIReviewSection() {
   const [selectedRow, setSelectedRow] = useState<AIReviewRow | null>(
     rows.length > 0 ? rows[0] : null,
   );
+
+  function openReviewDetail(reviewId: string) {
+    router.push(`/ai-reviews/${reviewId}`);
+  }
 
   const filteredRows =
     activeTab === "الكل"
@@ -500,7 +506,7 @@ export function AIReviewSection() {
                     "cursor-pointer border-b border-[#1d2135] transition-colors hover:bg-[#1a1f33]/60",
                     selectedRow?.id === row.id && "bg-[#1a1f33]",
                   )}
-                  onClick={() => setSelectedRow(row)}
+                  onClick={() => openReviewDetail(row.id)}
                 >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
@@ -509,7 +515,7 @@ export function AIReviewSection() {
                         className="grid size-[28.6px] shrink-0 place-items-center rounded-lg border border-[#252a42] bg-[#1d2135] text-[#a7aecb] hover:border-[#6f52ff]/40 hover:text-white"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setSelectedRow(row);
+                          openReviewDetail(row.id);
                         }}
                       >
                         <Eye className="size-3" />
@@ -520,7 +526,7 @@ export function AIReviewSection() {
                         className="h-[28px] rounded-[8px] border-[#252a42] bg-[#1d2135] text-[13px] text-[#a7aecb] hover:bg-[#6f52ff] hover:text-white"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setSelectedRow(row);
+                          openReviewDetail(row.id);
                         }}
                       >
                         {row.actionLabel}

@@ -6,6 +6,8 @@ import { useForm } from "react-hook-form";
 import {
   ArrowRight,
   CheckCircle2,
+  Copy,
+  ExternalLink,
   FileText,
   Link2,
   LockKeyhole,
@@ -17,11 +19,17 @@ import { Button } from "@/components/shared";
 import { Input } from "@/components/shared/input";
 import { TimelineEvidencePanel } from "@/components/timeline-events";
 import { agreementsContent } from "@/constants";
+import { useAgreementDetailsQuery } from "@/hooks/agreements";
 import { useDeliveriesQuery } from "@/hooks/deliveries/use-deliveries-query";
 import { useCreateDeliveryMutation } from "@/hooks/deliveries/use-create-delivery-mutation";
 import { useSubmitDeliveryMutation } from "@/hooks/deliveries/use-submit-delivery-mutation";
 import { useUpdateDeliveryMutation } from "@/hooks/deliveries/use-update-delivery-mutation";
 import { useMilestoneDetailsQuery } from "@/hooks/milestones";
+import {
+  buildPortalPath,
+  buildPortalUrl,
+  resolveClientPortalToken,
+} from "@/lib/client-portal";
 import {
   deliveryDraftSchema,
   deliverySubmitSchema,
@@ -31,6 +39,7 @@ import {
 import {
   buildAgreementWorkspaceHref,
   buildMilestoneDetailHref,
+  resolveMilestoneDetail,
 } from "@/lib/milestones/helpers";
 import { formatMilestoneAmount } from "@/lib/milestones";
 import type { Delivery, DeliveryDetailsResponse, DeliverySubmitFormValues } from "@/types";
@@ -60,10 +69,11 @@ export function AgreementDeliverySection({
   const content = agreementsContent.agreementDeliveryPage;
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { data: agreement } = useAgreementDetailsQuery(agreementId ?? "");
 
   const { data: milestoneResponse, isLoading: isMilestoneLoading } =
     useMilestoneDetailsQuery(milestoneId);
-  const milestone = milestoneResponse?.data;
+  const milestone = resolveMilestoneDetail(milestoneResponse);
 
   const { data: milestoneDeliveriesResponse, isLoading: isDeliveriesLoading } =
     useDeliveriesQuery(
@@ -90,6 +100,18 @@ export function AgreementDeliverySection({
     () => [...milestoneDeliveries].sort(sortDeliveriesByUpdatedAt)[0],
     [milestoneDeliveries],
   );
+  const portalToken = agreement ? resolveClientPortalToken(agreement) : null;
+  const shareableDeliveryId = latestDelivery?.id ?? editableDelivery?.id ?? null;
+  // AR: يستخدم مسار معاينة التسليم المطلوب في روابط البريد وبطاقة النسخ اليدوي.
+  // EN: Uses the required delivery-preview portal path for email links and manual copy cards.
+  const portalDeliveryHref =
+    portalToken && shareableDeliveryId
+      ? buildPortalPath(portalToken, "deliveryPreview")
+      : null;
+  const portalDeliveryDisplayLink =
+    portalToken && portalDeliveryHref && typeof window !== "undefined"
+      ? buildPortalUrl(portalToken, "deliveryPreview", window.location.origin)
+      : portalDeliveryHref ?? content.portalLinkPendingLabel;
 
   const form = useForm<DeliverySubmitFormValues>({
     defaultValues: defaultFormValues,
@@ -215,6 +237,19 @@ export function AgreementDeliverySection({
         error instanceof Error ? error.message : "تعذر إرسال التسليم الحالي.",
       );
     }
+  }
+
+  async function handleCopyPortalDeliveryLink() {
+    if (!portalDeliveryHref || typeof navigator === "undefined") {
+      return;
+    }
+
+    await navigator.clipboard.writeText(
+      portalToken
+        ? buildPortalUrl(portalToken, "deliveryPreview", window.location.origin)
+        : `${window.location.origin}${portalDeliveryHref}`,
+    );
+    setFeedbackMessage("تم نسخ رابط مراجعة التسليم / Delivery review link copied");
   }
 
   const workspaceHref = agreementId
@@ -488,6 +523,38 @@ export function AgreementDeliverySection({
             </div>
           </article>
 
+          <article className="rounded-[14px] border border-[#6f52ff]/25 bg-[#6f52ff]/10 p-5">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h2 className="text-[14px] font-extrabold text-white">{content.portalLinkTitle}</h2>
+              <span className="rounded-md bg-emerald-500/15 px-2 py-1 text-[11px] font-bold text-emerald-300">
+                {portalDeliveryHref ? content.portalLinkStatus : "غير جاهز"}
+              </span>
+            </div>
+            <p className="text-[12px] leading-6 text-[#a7aecb]">{content.portalLinkDescription}</p>
+            <span className="mt-3 block rounded-[8px] bg-[#101323] px-3 py-2 text-center text-[11px] text-[#a898ff]" dir="ltr">
+              {portalDeliveryDisplayLink}
+            </span>
+            {portalDeliveryHref ? (
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                <Button asChild variant="secondary" className="h-9 rounded-[9px] border border-[#252a42] bg-[#101323] text-[12px] font-bold text-white hover:bg-[#1d2135]">
+                  <Link href={portalDeliveryHref}>
+                    <ExternalLink className="size-3.5" />
+                    {content.portalLinkAction}
+                  </Link>
+                </Button>
+                <Button variant="secondary" className="h-9 rounded-[9px] border border-[#252a42] bg-[#101323] text-[12px] font-bold text-white hover:bg-[#1d2135]" onClick={handleCopyPortalDeliveryLink}>
+                  <Copy className="size-3.5" />
+                  {content.portalCopyAction}
+                </Button>
+              </div>
+            ) : (
+              <Button variant="secondary" className="mt-3 h-9 w-full rounded-[9px] border border-[#252a42] bg-[#101323] text-[12px] font-bold text-white hover:bg-[#1d2135]" disabled>
+                <ExternalLink className="size-3.5" />
+                {content.portalLinkPendingLabel}
+              </Button>
+            )}
+          </article>
+
           {agreementId ? (
             <TimelineEvidencePanel
               agreementId={agreementId}
@@ -511,7 +578,10 @@ export function AgreementDeliverySection({
   );
 }
 
-function sortDeliveriesByUpdatedAt(left: Delivery, right: Delivery) {
+function sortDeliveriesByUpdatedAt(
+  left: { updatedAt: string },
+  right: { updatedAt: string },
+) {
   return new Date(right.updatedAt).getTime() - new Date(left.updatedAt).getTime();
 }
 

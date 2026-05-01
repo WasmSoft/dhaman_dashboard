@@ -9,6 +9,7 @@ import { PaymentStatusBadge } from "./PaymentStatusBadge";
 import { DemoPaymentNotice } from "./DemoPaymentNotice";
 import { portalPaymentErrorCopy } from "@/constants";
 import { cn } from "@/lib/utils";
+import { buildPortalPath } from "@/lib/client-portal";
 
 // AR: قسم إعداد الدفعات في بوابة العميل — يعرض خطة الدفع للموافقة.
 // EN: Portal payment setup section — shows the payment plan for review.
@@ -126,9 +127,7 @@ export function PortalPaymentSetupSection({
                     size="sm"
                     className="h-8 gap-1.5 rounded-[10px] bg-[#6f52ff] px-4 text-[12px] font-bold text-white hover:bg-[#7b63ff]"
                   >
-                    <Link
-                      href={`/portal/${token}/payments/${payment.id}/fund`}
-                    >
+                    <Link href={buildPortalPath(token, "fundMilestone")}>
                       <LockKeyhole className="size-3" />
                       {locale === "ar" ? "تمويل" : "Fund"}
                     </Link>

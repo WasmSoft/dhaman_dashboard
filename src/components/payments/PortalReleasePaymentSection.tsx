@@ -1,12 +1,15 @@
 "use client";
 
+import { useEffect } from "react";
 import { usePortalPaymentsQuery, usePortalReleasePaymentMutation } from "@/hooks/payments";
 import { Loader2, CheckCircle2, ShieldAlert, XCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/shared";
 import { formatPaymentAmount } from "@/lib/payments/helpers";
 import { DemoPaymentNotice } from "./DemoPaymentNotice";
 import { PaymentStatusBadge } from "./PaymentStatusBadge";
 import { portalPaymentErrorCopy } from "@/constants";
+import { buildPortalPath } from "@/lib/client-portal";
 
 // AR: صفحة تأكيد إصدار دفعة من بوابة العميل.
 // EN: Portal release payment confirmation page.
@@ -19,6 +22,7 @@ export function PortalReleasePaymentSection({
   paymentId: string;
   locale?: "en" | "ar";
 }) {
+  const router = useRouter();
   const { data, isLoading, isError, error } = usePortalPaymentsQuery(token);
   const releaseMutation = usePortalReleasePaymentMutation(token, paymentId);
 
@@ -27,6 +31,12 @@ export function PortalReleasePaymentSection({
 
   const isTokenError =
     isError && (error as { code?: string })?.code?.includes("PORTAL_TOKEN");
+
+  useEffect(() => {
+    if (releaseMutation.isSuccess) {
+      router.push(buildPortalPath(token, "tracking"));
+    }
+  }, [releaseMutation.isSuccess, router, token]);
 
   if (isLoading) {
     return (

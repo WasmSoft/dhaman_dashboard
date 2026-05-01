@@ -55,7 +55,7 @@ export interface DeliveryFilters {
 }
 
 export interface DeliveryListResponse {
-  items: Delivery[];
+  items: DeliveryRecordDto[];
   page: number;
   limit: number;
   total: number;
