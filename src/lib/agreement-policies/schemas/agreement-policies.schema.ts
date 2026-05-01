@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const optionalPolicyTextSchema = z
   .string()
-  .max(5000)
+  .max(3000)
   .nullable()
   .optional()
   .refine(
@@ -13,10 +13,8 @@ const optionalPolicyTextSchema = z
   );
 
 export const policyMutationSchema = z.object({
-  delayPolicy: optionalPolicyTextSchema,
-  cancellationPolicy: optionalPolicyTextSchema,
-  extraRequestPolicy: optionalPolicyTextSchema,
-  reviewPolicy: optionalPolicyTextSchema,
-  clientReviewPeriodDays: z.number().int().min(1).max(90).optional(),
-  freelancerDelayGraceDays: z.number().int().min(0).max(30).optional(),
+  defaultDelayPolicy: optionalPolicyTextSchema,
+  defaultCancellationPolicy: optionalPolicyTextSchema,
+  defaultExtraRequestPolicy: optionalPolicyTextSchema,
+  defaultReviewPolicy: optionalPolicyTextSchema,
 });

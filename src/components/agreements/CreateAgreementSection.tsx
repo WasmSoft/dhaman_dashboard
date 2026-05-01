@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Bot, CalendarDays, CheckCircle2, Circle, ClipboardList, CreditCard, FileText, LockKeyhole, Save, Sparkles, UsersRound } from "lucide-react";
 
@@ -9,7 +9,9 @@ import { Button } from "@/components/shared";
 import { Input } from "@/components/shared/input";
 import { agreementsContent } from "@/constants";
 import { useCreateAgreementMutation } from "@/hooks/agreements";
+import { useSettingsQuery, useDefaultPoliciesQuery } from "@/hooks/settings";
 import { ApiError } from "@/lib/axios-instance";
+import { getAgreementDefaultsFromSettings } from "@/lib/settings";
 import { cn } from "@/lib/utils";
 import type { CreateAgreementStep, GeneratedPlan } from "@/types";
 import { AiPlanSection } from "./AiPlanSection";
@@ -302,6 +304,29 @@ export function CreateAgreementSection() {
   const [expectedDeliveryDate, setExpectedDeliveryDate] = useState("");
   const [currency, setCurrency] = useState("SAR");
   const [formError, setFormError] = useState<string | null>(null);
+
+  const settingsQuery = useSettingsQuery();
+  const hasPrefilledRef = useRef(false);
+
+  // AR: تملأ هذه الدالة الحقول مرة واحدة فقط من إعدادات الفريلانسر المحفوظة.
+  // EN: Prefills agreement fields once from saved freelancer settings.
+  useEffect(() => {
+    if (!settingsQuery.data || hasPrefilledRef.current) {
+      return;
+    }
+
+    const defaults = getAgreementDefaultsFromSettings(settingsQuery.data);
+
+    hasPrefilledRef.current = true;
+
+    if (defaults.currency) {
+      setCurrency(defaults.currency);
+    }
+
+    if (defaults.serviceType) {
+      setServiceType(defaults.serviceType);
+    }
+  }, [settingsQuery.data]);
 
   // AR: تملأ هذه الدالة حقول نموذج الاتفاقية من الخطة المولَّدة.
   // EN: Populates the agreement form fields from the generated plan.

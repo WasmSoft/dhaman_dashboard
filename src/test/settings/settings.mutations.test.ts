@@ -11,14 +11,12 @@ describe("settings.mutations", () => {
 
     await options.onSuccess?.(
       {
-        delayPolicy: null,
-        cancellationPolicy: null,
-        extraRequestPolicy: null,
-        reviewPolicy: null,
-        clientReviewPeriodDays: 7,
-        freelancerDelayGraceDays: 3,
+        defaultDelayPolicy: null,
+        defaultCancellationPolicy: null,
+        defaultExtraRequestPolicy: null,
+        defaultReviewPolicy: null,
       },
-      { delayPolicy: "Updated" },
+      { defaultDelayPolicy: "Updated" },
       undefined,
       {} as never,
     );

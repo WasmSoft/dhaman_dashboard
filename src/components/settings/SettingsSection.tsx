@@ -24,39 +24,45 @@ import {
 
 import { Button } from "@/components/shared";
 import { settingsContent } from "@/constants";
-import { useDefaultPoliciesQuery, useUpdateDefaultPoliciesMutation } from "@/hooks/settings";
+import {
+  useSettingsQuery,
+  useUpdateSettingsMutation,
+  useDefaultPoliciesQuery,
+  useUpdateDefaultPoliciesMutation,
+} from "@/hooks/settings";
 import { ApiError } from "@/lib/axios-instance";
 import { policyMutationSchema } from "@/lib/agreement-policies";
+import { settingsSchema } from "@/lib/settings/schemas";
 import { cn } from "@/lib/utils";
 import type {
-  DefaultPoliciesMutationPayload,
+  UpdateSettingsPayload,
+  UpdateDefaultPoliciesPayload,
   SettingsAction,
   SettingsIconName,
   SettingsOverviewCard,
   SettingsPolicyCard,
   SettingsPolicyField,
   SettingsSectionKey,
+  SettingsResponse,
 } from "@/types";
 
-const panelKeysWithPolicies = new Set<SettingsSectionKey>(["agreementPolicies", "aiPreferences"]);
+const panelKeysWithContent = new Set<SettingsSectionKey>(["agreementPolicies", "aiPreferences", "business", "profile"]);
 
-type DefaultPolicyFieldName = keyof DefaultPoliciesMutationPayload;
+type DefaultPolicyFieldName = keyof UpdateDefaultPoliciesPayload;
 
 function getDefaultPoliciesFormValues(
-  values?: DefaultPoliciesMutationPayload | null,
-): DefaultPoliciesMutationPayload {
+  values?: UpdateDefaultPoliciesPayload | null,
+): UpdateDefaultPoliciesPayload {
   return {
-    delayPolicy: values?.delayPolicy ?? "",
-    cancellationPolicy: values?.cancellationPolicy ?? "",
-    extraRequestPolicy: values?.extraRequestPolicy ?? "",
-    reviewPolicy: values?.reviewPolicy ?? "",
-    clientReviewPeriodDays: values?.clientReviewPeriodDays,
-    freelancerDelayGraceDays: values?.freelancerDelayGraceDays,
+    defaultDelayPolicy: values?.defaultDelayPolicy ?? "",
+    defaultCancellationPolicy: values?.defaultCancellationPolicy ?? "",
+    defaultExtraRequestPolicy: values?.defaultExtraRequestPolicy ?? "",
+    defaultReviewPolicy: values?.defaultReviewPolicy ?? "",
   };
 }
 
 function getPolicyFieldError(
-  errors: FieldErrors<DefaultPoliciesMutationPayload>,
+  errors: FieldErrors<UpdateDefaultPoliciesPayload>,
   name?: string,
 ) {
   if (!name) {
@@ -77,7 +83,7 @@ function getSettingsErrorMessage(error: unknown) {
 
 function buildSettingsPolicyCards(
   policies: readonly SettingsPolicyCard[],
-  values: DefaultPoliciesMutationPayload,
+  values: UpdateDefaultPoliciesPayload,
 ): SettingsPolicyCard[] {
   return [
     {
@@ -85,21 +91,9 @@ function buildSettingsPolicyCards(
       showDefaultToggle: false,
       fields: [
         {
-          label: "مدة مراجعة العميل بالأيام",
-          name: "clientReviewPeriodDays",
-          value: values.clientReviewPeriodDays ?? "",
-          inputType: "number",
-        },
-        {
-          label: "مهلة التأخير المسموحة للفريلانسر بالأيام",
-          name: "freelancerDelayGraceDays",
-          value: values.freelancerDelayGraceDays ?? "",
-          inputType: "number",
-        },
-        {
-          label: "نص السياسة",
-          name: "delayPolicy",
-          value: values.delayPolicy ?? "",
+          label: "نص سياسة التأخير",
+          name: "defaultDelayPolicy",
+          value: values.defaultDelayPolicy ?? "",
           inputType: "textarea",
           placeholder: "اكتب سياسة التأخير الافتراضية",
         },
@@ -111,9 +105,9 @@ function buildSettingsPolicyCards(
       showDefaultToggle: false,
       fields: [
         {
-          label: "نص السياسة",
-          name: "cancellationPolicy",
-          value: values.cancellationPolicy ?? "",
+          label: "نص سياسة الإلغاء",
+          name: "defaultCancellationPolicy",
+          value: values.defaultCancellationPolicy ?? "",
           inputType: "textarea",
           placeholder: "اكتب سياسة الإلغاء الافتراضية",
         },
@@ -125,9 +119,9 @@ function buildSettingsPolicyCards(
       showDefaultToggle: false,
       fields: [
         {
-          label: "نص السياسة",
-          name: "extraRequestPolicy",
-          value: values.extraRequestPolicy ?? "",
+          label: "نص سياسة الطلبات الإضافية",
+          name: "defaultExtraRequestPolicy",
+          value: values.defaultExtraRequestPolicy ?? "",
           inputType: "textarea",
           placeholder: "اكتب سياسة الطلبات الإضافية الافتراضية",
         },
@@ -139,9 +133,9 @@ function buildSettingsPolicyCards(
       showDefaultToggle: false,
       fields: [
         {
-          label: "نص السياسة",
-          name: "reviewPolicy",
-          value: values.reviewPolicy ?? "",
+          label: "نص سياسة المراجعة والاعتراض",
+          name: "defaultReviewPolicy",
+          value: values.defaultReviewPolicy ?? "",
           inputType: "textarea",
           placeholder: "اكتب سياسة المراجعة والاعتراض الافتراضية",
         },
@@ -365,7 +359,7 @@ function PolicyField({
   disabled = false,
 }: {
   field: SettingsPolicyField;
-  register?: UseFormRegister<DefaultPoliciesMutationPayload>;
+  register?: UseFormRegister<UpdateDefaultPoliciesPayload>;
   error?: FieldError;
   disabled?: boolean;
 }) {
@@ -476,8 +470,8 @@ function PolicyCard({
   disabled = false,
 }: {
   card: SettingsPolicyCard;
-  register?: UseFormRegister<DefaultPoliciesMutationPayload>;
-  errors?: FieldErrors<DefaultPoliciesMutationPayload>;
+  register?: UseFormRegister<UpdateDefaultPoliciesPayload>;
+  errors?: FieldErrors<UpdateDefaultPoliciesPayload>;
   disabled?: boolean;
 }) {
   return (
@@ -542,7 +536,7 @@ function PoliciesPanel() {
     reset,
     setError,
     formState: { errors },
-  } = useForm<DefaultPoliciesMutationPayload>({
+  } = useForm<UpdateDefaultPoliciesPayload>({
     resolver: zodResolver(policyMutationSchema),
     defaultValues: getDefaultPoliciesFormValues(),
   });
@@ -555,7 +549,7 @@ function PoliciesPanel() {
     reset(getDefaultPoliciesFormValues(defaultPoliciesQuery.data));
   }, [defaultPoliciesQuery.data, reset]);
 
-  async function onSave(values: DefaultPoliciesMutationPayload) {
+  async function onSave(values: UpdateDefaultPoliciesPayload) {
     setSaveMessage(null);
     setSubmitError(null);
 
@@ -565,33 +559,18 @@ function PoliciesPanel() {
     } catch (error) {
       const apiError = error as ApiError;
 
-      if (apiError.code === "POLICY_INVALID_CONTENT") {
+      if (apiError.code === "SETTINGS_POLICY_INVALID") {
         const textFields: DefaultPolicyFieldName[] = [
-          "delayPolicy",
-          "cancellationPolicy",
-          "extraRequestPolicy",
-          "reviewPolicy",
+          "defaultDelayPolicy",
+          "defaultCancellationPolicy",
+          "defaultExtraRequestPolicy",
+          "defaultReviewPolicy",
         ];
 
         for (const fieldName of textFields) {
           setError(fieldName, {
             type: "server",
             message: "لا يمكن أن يكون النص فارغًا / Policy text cannot be empty",
-          });
-        }
-      }
-
-      if (apiError.code === "POLICY_INVALID_REVIEW_PERIOD") {
-        const numericFields: DefaultPolicyFieldName[] = [
-          "clientReviewPeriodDays",
-          "freelancerDelayGraceDays",
-        ];
-
-        for (const fieldName of numericFields) {
-          setError(fieldName, {
-            type: "server",
-            message:
-              "القيمة يجب أن تكون ضمن الحدود المسموحة / Value must stay within the allowed range",
           });
         }
       }
@@ -769,11 +748,219 @@ function PoliciesPanel() {
   );
 }
 
+function GeneralSettingsPanel({
+  settings,
+}: {
+  settings: SettingsResponse;
+}) {
+  const updateSettingsMutation = useUpdateSettingsMutation();
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<UpdateSettingsPayload>({
+    resolver: zodResolver(settingsSchema),
+    defaultValues: {
+      defaultCurrency: settings.defaultCurrency,
+      defaultServiceType: settings.defaultServiceType ?? "",
+      aiStrictness: settings.aiStrictness as "lenient" | "balanced" | "strict",
+      emailNotificationsEnabled: settings.emailNotificationsEnabled,
+    },
+  });
+
+  async function onSave(values: UpdateSettingsPayload) {
+    setSaveMessage(null);
+    setSubmitError(null);
+
+    try {
+      await updateSettingsMutation.mutateAsync(values);
+      setSaveMessage("تم حفظ الإعدادات / Settings saved");
+    } catch (error) {
+      setSubmitError(
+        (error as ApiError).message ??
+          "تعذر حفظ الإعدادات الآن / Could not save settings right now",
+      );
+    }
+  }
+
+  const aiOptions = settingsContent.settings.aiPreferenceOptions;
+
+  return (
+    <section className="space-y-4">
+      <form onSubmit={handleSubmit(onSave)} className="space-y-4">
+        <article className="rounded-[16px] border border-[#252a42] bg-[#15192b] p-5 shadow-[0_18px_40px_rgba(3,5,18,0.2)]">
+          <h2 className="mb-4 text-[17px] font-extrabold text-white">الإعدادات العامة</h2>
+
+          <div className="space-y-4">
+            <div>
+              <label className="mb-2 block text-[12px] font-bold text-[#a7aecb]">العملة الافتراضية</label>
+              <input
+                {...register("defaultCurrency")}
+                className="h-[38px] w-full rounded-[10px] border border-[#252a42] bg-[#1d2135] px-3 text-[12px] text-white outline-none placeholder:text-[#636b8a]"
+                placeholder="SAR"
+              />
+              {errors.defaultCurrency ? (
+                <p className="mt-1 text-[11px] text-red-300">{errors.defaultCurrency.message}</p>
+              ) : null}
+            </div>
+
+            <div>
+              <label className="mb-2 block text-[12px] font-bold text-[#a7aecb]">نوع الخدمة الافتراضي</label>
+              <input
+                {...register("defaultServiceType")}
+                className="h-[38px] w-full rounded-[10px] border border-[#252a42] bg-[#1d2135] px-3 text-[12px] text-white outline-none placeholder:text-[#636b8a]"
+                placeholder="تصميم وتطوير واجهات"
+              />
+              {errors.defaultServiceType ? (
+                <p className="mt-1 text-[11px] text-red-300">{errors.defaultServiceType.message}</p>
+              ) : null}
+            </div>
+
+            <div>
+              <label className="mb-2 block text-[12px] font-bold text-[#a7aecb]">مستوى دقة AI</label>
+              <div className="flex flex-wrap gap-2">
+                {aiOptions.map((option) => {
+                  const isSelected = settings.aiStrictness === option.key;
+
+                  return (
+                    <label
+                      key={option.key}
+                      className={cn(
+                        "cursor-pointer rounded-[10px] border px-4 py-2 text-[12px] font-bold transition-colors",
+                        isSelected
+                          ? "border-[#6f52ff] bg-[#6f52ff] text-white shadow-[0_12px_24px_rgba(111,82,255,0.22)]"
+                          : "border-[#252a42] bg-[#1d2135] text-[#cbd1e8] hover:bg-[#262b49]",
+                      )}
+                    >
+                      <input
+                        type="radio"
+                        value={option.key}
+                        {...register("aiStrictness")}
+                        className="hidden"
+                      />
+                      {option.label}
+                    </label>
+                  );
+                })}
+              </div>
+              {errors.aiStrictness ? (
+                <p className="mt-1 text-[11px] text-red-300">{errors.aiStrictness.message}</p>
+              ) : null}
+            </div>
+
+            <label className="flex cursor-pointer items-center justify-between gap-4 rounded-[10px] border border-[#252a42] bg-[#171b2d] px-3 py-3.5">
+              <input
+                type="checkbox"
+                {...register("emailNotificationsEnabled")}
+                className="sr-only"
+              />
+              <span
+                className={cn(
+                  "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full border border-transparent transition-colors",
+                  settings.emailNotificationsEnabled ? "bg-[#6f52ff]" : "bg-[#2a2f46]",
+                )}
+              >
+                <span
+                  className={cn(
+                    "block size-3.5 rounded-full bg-white transition-transform",
+                    settings.emailNotificationsEnabled ? "translate-x-[2px]" : "translate-x-[17px]",
+                  )}
+                />
+              </span>
+              <span className="text-[12px] font-medium text-[#cbd1e8]">تفعيل إشعارات البريد الإلكتروني</span>
+            </label>
+          </div>
+
+          <div className="mt-5 flex flex-wrap gap-2">
+            <Button
+              type="submit"
+              className="h-[35.6px] rounded-[10px] border border-transparent bg-[#6f52ff] px-3.5 text-[13px] font-bold text-white shadow-[0_14px_30px_rgba(111,82,255,0.26)] hover:bg-[#7b63ff]"
+              disabled={updateSettingsMutation.isPending}
+            >
+              <Save className="size-3.5" />
+              {updateSettingsMutation.isPending ? "جارٍ الحفظ..." : "حفظ التغييرات"}
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              className="h-[35.6px] rounded-[10px] border border-[#252a42] bg-[#1d2135] px-3.5 text-[13px] font-bold text-white hover:bg-[#262b49]"
+              onClick={() =>
+                reset({
+                  defaultCurrency: settings.defaultCurrency,
+                  defaultServiceType: settings.defaultServiceType ?? "",
+                  aiStrictness: settings.aiStrictness as "lenient" | "balanced" | "strict",
+                  emailNotificationsEnabled: settings.emailNotificationsEnabled,
+                })
+              }
+            >
+              <X className="size-3.5" />
+              إلغاء
+            </Button>
+          </div>
+
+          {saveMessage ? (
+            <p className="mt-4 rounded-[10px] border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-[12px] leading-6 text-emerald-100/90">
+              {saveMessage}
+            </p>
+          ) : null}
+          {submitError ? (
+            <p className="mt-4 rounded-[10px] border border-red-500/20 bg-red-500/10 px-4 py-3 text-[12px] leading-6 text-red-100/90">
+              {submitError}
+            </p>
+          ) : null}
+        </article>
+      </form>
+    </section>
+  );
+}
+
 export function SettingsSection() {
   const { actions, description, overviewCards, title } = settingsContent.settings;
   const [activeSection, setActiveSection] = useState<SettingsSectionKey>("profile");
 
-  const showPolicies = panelKeysWithPolicies.has(activeSection);
+  const settingsQuery = useSettingsQuery();
+  const showPolicies = activeSection === "agreementPolicies" || activeSection === "aiPreferences";
+  const showGeneral = activeSection === "profile" || activeSection === "business";
+
+  function renderMainPanel() {
+    if (showPolicies) {
+      return <PoliciesPanel />;
+    }
+
+    if (showGeneral && settingsQuery.data) {
+      return <GeneralSettingsPanel settings={settingsQuery.data} />;
+    }
+
+    if (showGeneral && settingsQuery.isLoading) {
+      return (
+        <section className="grid min-h-[308px] place-items-center rounded-[16px] border border-[#252a42] bg-[#15192b] px-6 py-10 shadow-[0_18px_40px_rgba(3,5,18,0.2)]">
+          <div className="h-5 w-40 animate-pulse rounded bg-[#252a42]" />
+        </section>
+      );
+    }
+
+    if (showGeneral && settingsQuery.isError) {
+      return (
+        <section className="rounded-[16px] border border-red-500/20 bg-red-500/10 px-5 py-5 text-start text-[12px] leading-6 text-red-100/90">
+          <p>{(settingsQuery.error as ApiError).message ?? "تعذر تحميل الإعدادات"}</p>
+          <Button
+            type="button"
+            variant="secondary"
+            className="mt-4 h-[35.6px] rounded-[10px] border border-red-500/20 bg-red-500/10 px-4 text-[12px] font-bold text-red-50 hover:bg-red-500/20"
+            onClick={() => settingsQuery.refetch()}
+          >
+            <RefreshCcw className="size-3.5" />
+            إعادة المحاولة
+          </Button>
+        </section>
+      );
+    }
+
+    return <PlaceholderPanel onFocusPolicies={() => setActiveSection("agreementPolicies")} />;
+  }
 
   return (
     <section className="space-y-5" dir="rtl">
@@ -795,7 +982,7 @@ export function SettingsSection() {
         </div>
 
         <div className="order-2 min-w-0 flex-1">
-          {showPolicies ? <PoliciesPanel /> : <PlaceholderPanel onFocusPolicies={() => setActiveSection("agreementPolicies")} />}
+          {renderMainPanel()}
         </div>
 
         <div className="order-3 grid gap-4 md:grid-cols-2 xl:w-[256px] xl:grid-cols-1 xl:shrink-0">

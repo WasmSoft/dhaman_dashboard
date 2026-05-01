@@ -173,6 +173,7 @@ export const API_PATHS = {
     SEND_TEST: "/notifications/test",
   },
   SETTINGS: {
+    ROOT: "/settings",
     DEFAULT_POLICIES: "/settings/default-policies",
   },
   USERS: {

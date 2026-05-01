@@ -128,3 +128,41 @@ export interface SettingsContent {
   footerBanner: string;
   footerNote: string;
 }
+
+export type AiStrictness = "lenient" | "balanced" | "strict";
+
+export interface SettingsResponse {
+  id: string;
+  userId: string;
+  defaultCurrency: string;
+  defaultServiceType: string | null;
+  aiStrictness: string;
+  emailNotificationsEnabled: boolean;
+  defaultDelayPolicy: string | null;
+  defaultCancellationPolicy: string | null;
+  defaultExtraRequestPolicy: string | null;
+  defaultReviewPolicy: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UpdateSettingsPayload {
+  defaultCurrency?: string;
+  defaultServiceType?: string;
+  aiStrictness?: AiStrictness;
+  emailNotificationsEnabled?: boolean;
+}
+
+export interface DefaultPoliciesResponse {
+  defaultDelayPolicy: string | null;
+  defaultCancellationPolicy: string | null;
+  defaultExtraRequestPolicy: string | null;
+  defaultReviewPolicy: string | null;
+}
+
+export interface UpdateDefaultPoliciesPayload {
+  defaultDelayPolicy?: string | null;
+  defaultCancellationPolicy?: string | null;
+  defaultExtraRequestPolicy?: string | null;
+  defaultReviewPolicy?: string | null;
+}

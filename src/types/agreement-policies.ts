@@ -12,12 +12,10 @@ export interface AgreementPolicy {
 }
 
 export interface DefaultPolicies {
-  delayPolicy: string | null;
-  cancellationPolicy: string | null;
-  extraRequestPolicy: string | null;
-  reviewPolicy: string | null;
-  clientReviewPeriodDays: number;
-  freelancerDelayGraceDays: number;
+  defaultDelayPolicy: string | null;
+  defaultCancellationPolicy: string | null;
+  defaultExtraRequestPolicy: string | null;
+  defaultReviewPolicy: string | null;
 }
 
 export interface PolicyMutationPayload {
