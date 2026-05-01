@@ -550,33 +550,29 @@ The project structure may follow a typical Next.js dashboard application format:
 
 ```text
 dhaman_dashboard/
-├── public/                     # Static assets and images
-├── src/
-│   ├── app/                    # Next.js App Router pages
-│   │   ├── dashboard/          # Freelancer dashboard routes
-│   │   ├── invite/             # Client invitation pages
-│   │   ├── portal/             # Client portal routes
-│   │   ├── login/              # Authentication page
-│   │   └── layout.tsx          # Root layout
-│   ├── components/             # Shared UI components
-│   ├── features/               # Feature-based modules
-│   │   ├── agreements/         # Agreement UI and logic
-│   │   ├── milestones/         # Milestone UI and logic
-│   │   ├── clients/            # Client UI and logic
-│   │   ├── payments/           # Payment UI and logic
-│   │   ├── deliveries/         # Delivery UI and logic
-│   │   ├── portal/             # Client portal UI and logic
-│   │   └── reviews/            # AI review UI and logic
-│   ├── lib/                    # API client, helpers, constants
-│   ├── hooks/                  # Custom React hooks
-│   ├── types/                  # TypeScript types
-│   ├── styles/                 # Global styles if used
-│   └── middleware.ts           # Route protection if used
-├── .env.example                # Example environment variables
-├── next.config.ts              # Next.js configuration
-├── package.json                # Project dependencies and scripts
-├── tailwind.config.ts          # Tailwind CSS configuration
-└── tsconfig.json               # TypeScript configuration
+├── public/                 # Static assets such as images, icons, logos, and public files
+├── src/                    # Main application source code
+│   ├── app/                # Next.js App Router pages, layouts, route groups, and page-level logic
+│   ├── components/         # Reusable UI components used across the dashboard and client portal
+│   ├── constants/          # Shared constants such as routes, labels, statuses, config values, and static options
+│   ├── hooks/              # Custom React hooks for reusable frontend logic
+│   ├── lib/                # Utility functions, API clients, helpers, formatters, and shared logic
+│   ├── test/               # Test setup, test utilities, or frontend test files
+│   └── types/              # Shared TypeScript types and interfaces
+├── .codex                  # Codex-related configuration or project notes
+├── .gitignore              # Git ignored files and folders
+├── AGENTS.md               # Agent instructions or project collaboration notes
+├── CLAUDE.md               # Claude-related project instructions or development notes
+├── README.md               # Project documentation
+├── components.json         # Component/UI configuration, commonly used with shadcn/ui
+├── eslint.config.mjs       # ESLint configuration for code quality and consistency
+├── next.config.ts          # Next.js configuration
+├── opencode.json           # OpenCode configuration
+├── package-lock.json       # Locked npm dependency versions
+├── package.json            # Project dependencies, metadata, and available scripts
+├── postcss.config.mjs      # PostCSS configuration, commonly used with Tailwind CSS
+├── tsconfig.json           # TypeScript compiler configuration
+└── vitest.config.ts        # Vitest configuration for testing
 ```
 
 ---
