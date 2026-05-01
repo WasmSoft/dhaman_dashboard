@@ -1,11 +1,54 @@
-# Dhaman Dashboard
+<div align="center">
 
-A professional web application dashboard for **Dhaman**, a fintech MVP designed to protect freelance payments through structured agreements, milestone-based payment contracts, protected payment flows, client tracking portals, delivery reviews, and AI-powered dispute resolution.
+# 🛡️ Dhaman Dashboard
 
-The dashboard represents the main operational interface of the Dhaman system. It allows freelancers to manage agreements, clients, milestones, deliveries, and payment states, while clients can access a secure portal link to review agreements, track project progress, approve deliveries, request changes, or open AI-assisted dispute reviews.
+### Freelancer Dashboard & Client Portal — Structured Payment Protection for Freelance Work
 
-> **Core Principle:**  
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-4-18181B?logo=shadcnui&logoColor=white)](https://ui.shadcn.com/)
+[![TanStack Query](https://img.shields.io/badge/TanStack_Query-5-FF4154?logo=react-query&logoColor=white)](https://tanstack.com/query)
+[![Axios](https://img.shields.io/badge/Axios-1-5A29E4?logo=axios&logoColor=white)](https://axios-http.com/)
+[![Zod](https://img.shields.io/badge/Zod-4-3068B0?logo=zod&logoColor=white)](https://zod.dev/)
+[![Vitest](https://img.shields.io/badge/Vitest-4-6E9F18?logo=vitest&logoColor=white)](https://vitest.dev/)
+[![React Hook Form](https://img.shields.io/badge/React_Hook_Form-7-EC5993?logo=react-hook-form&logoColor=white)](https://react-hook-form.com/)
+[![License](https://img.shields.io/badge/License-Private-red)]()
+
+</div>
+
+---
+
+> **Core Principle:**
 > Dhaman creates balanced financial protection between clients and freelancers: clients pay with confidence, and freelancers work with secured payment assurance.
+
+---
+
+## 📚 Table of Contents
+
+- [🚧 Current Project Status](#-current-project-status)
+- [🧾 Overview](#-overview)
+- [🎯 Project Purpose](#-project-purpose)
+- [💡 Product Concept](#-product-concept)
+- [🧩 Core Application Areas](#-core-application-areas)
+- [✨ Main Features](#-main-features)
+- [🔁 System Flow](#-system-flow)
+- [📌 Agreement and Payment States](#-agreement-and-payment-states)
+- [🛠️ Technology Stack](#-technology-stack)
+- [📂 Project Structure](#-project-structure)
+- [🔑 Key Files](#-key-files)
+- [🔐 Environment Variables](#-environment-variables)
+- [🎓 Demo Access](#-demo-access)
+- [🚀 Getting Started](#-getting-started)
+- [🧭 Usage Flow](#-usage-flow)
+- [🔌 API Integration](#-api-integration)
+- [📜 Available Scripts](#-available-scripts)
+- [🚢 Deployment](#-deployment)
+- [🗺️ Roadmap](#-roadmap)
+- [🔗 Related Repositories](#-related-repositories)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
 
 ---
 
@@ -29,36 +72,10 @@ However, the backend API already exposes the full system capabilities through Sw
 
 You can explore and test all available backend routes here:
 
-**Swagger API Documentation:**  
+**Swagger API Documentation:**
 https://backend.dhaman.wasmsoft.com/docs
 
 From Swagger, you can view all available modules, routes, request bodies, responses, and test the backend functionality directly.
-
----
-
-## 📚 Table of Contents
-
-- [Overview](#overview)
-- [Project Purpose](#project-purpose)
-- [Product Concept](#product-concept)
-- [Core Application Areas](#core-application-areas)
-- [Main Features](#main-features)
-- [Freelancer Dashboard](#freelancer-dashboard)
-- [Client Portal](#client-portal)
-- [System Flow](#system-flow)
-- [Agreement and Payment States](#agreement-and-payment-states)
-- [Technology Stack](#technology-stack)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-- [Environment Variables](#environment-variables)
-- [Available Scripts](#available-scripts)
-- [API Integration](#api-integration)
-- [Current Functional Status](#current-functional-status)
-- [Deployment](#deployment)
-- [Roadmap](#roadmap)
-- [Related Repositories](#related-repositories)
-- [Contributing](#contributing)
-- [License](#license)
 
 ---
 
@@ -121,8 +138,6 @@ This allows both parties to work with more confidence, clarity, and accountabili
 ---
 
 ## 🧩 Core Application Areas
-
-The dashboard is built around two main user experiences:
 
 ### 1. Freelancer Dashboard
 
@@ -276,179 +291,20 @@ This gives both parties a reliable history of what happened.
 
 ---
 
-## 🧑‍💼 Freelancer Dashboard
-
-The Freelancer Dashboard is the main workspace for managing all projects and payment agreements.
-
-### Main Dashboard Responsibilities
-
-The dashboard helps the freelancer:
-
-- View active agreements
-- Track total protected payments
-- See pending client actions
-- Monitor deliveries under review
-- View recent timeline activity
-- Manage project statuses
-- Access agreement details
-- Submit deliverables
-- Review disputes and AI recommendations
-
-### Recommended Pages
-
-The dashboard may include the following pages:
-
-```text
-/dashboard
-/dashboard/agreements
-/dashboard/agreements/new
-/dashboard/agreements/[id]
-/dashboard/agreements/[id]/builder
-/dashboard/agreements/[id]/workspace
-/dashboard/clients
-/dashboard/deliveries
-/dashboard/payments
-/dashboard/reviews
-/dashboard/settings
-```
-
-### Dashboard Overview
-
-The overview page should provide a clear summary of:
-
-- Active agreements
-- Pending client approvals
-- Payments under review
-- Released payments
-- Disputed milestones
-- Recent activity
-- Required actions
-
-### Agreement Workspace
-
-The agreement workspace is where the freelancer manages a single agreement after creation.
-
-It may include:
-
-- Agreement summary
-- Client information
-- Milestones
-- Payment status
-- Delivery actions
-- Timeline
-- AI review status
-- Change requests
-
-### Create Agreement Flow
-
-The create agreement flow allows the freelancer to define the project and client details.
-
-Typical steps:
-
-```text
-1. Enter project details
-2. Add client information
-3. Define total project amount
-4. Add milestones
-5. Configure acceptance criteria
-6. Review agreement draft
-7. Send invitation to the client
-```
-
-### Submit Delivery Flow
-
-When a milestone is ready, the freelancer can submit work for review.
-
-Typical steps:
-
-```text
-1. Select active milestone
-2. Add delivery description
-3. Attach links or files
-4. Submit delivery
-5. Client receives review request
-6. Payment moves to client review state
-```
-
----
-
-## 👤 Client Portal
-
-The Client Portal is a secure, token-based experience for clients.
-
-The client does not need to register or log in with a password in the MVP.
-
-The client accesses the agreement using a secure invitation link.
-
-### Recommended Client Portal Routes
-
-```text
-/invite/[token]
-/portal/[token]
-/portal/[token]/deliveries/[deliveryId]
-/portal/[token]/payment-history
-```
-
-### Client Portal Responsibilities
-
-The portal allows the client to:
-
-- Review the agreement
-- Approve the agreement
-- Request changes before approval
-- View project progress
-- Track milestones
-- View payment status
-- Review submitted deliveries
-- Accept delivery
-- Request changes
-- Open AI review
-- View timeline evidence
-
-### Client Review Flow
-
-The client review flow may look like this:
-
-```text
-1. Client receives invitation email
-2. Client opens secure agreement link
-3. Client reviews agreement details
-4. Client approves or requests changes
-5. Agreement becomes active after approval
-6. Client tracks progress from the portal
-7. Client reviews milestone delivery
-8. Client accepts, requests changes, or opens AI review
-```
-
-### Why Token-Based Access?
-
-Token-based access makes the MVP faster and easier to use.
-
-It avoids forcing clients to create accounts before they understand the product value.
-
-In future versions, Dhaman can support:
-
-- Magic links
-- OTP verification
-- Full client accounts
-- Multi-project client dashboards
-
----
-
 ## 🔁 System Flow
 
 The complete Dhaman dashboard flow can be summarized as:
 
 ```text
-1. Freelancer logs in
-2. Freelancer creates an agreement
-3. Freelancer adds client details
-4. Freelancer defines milestones and payment terms
-5. Freelancer sends an invitation to the client
-6. Client opens the secure invitation link
-7. Client reviews the agreement
-8. Client approves or requests changes
-9. Agreement becomes active
+1.  Freelancer logs in
+2.  Freelancer creates an agreement
+3.  Freelancer adds client details
+4.  Freelancer defines milestones and payment terms
+5.  Freelancer sends an invitation to the client
+6.  Client opens the secure invitation link
+7.  Client reviews the agreement
+8.  Client approves or requests changes
+9.  Agreement becomes active
 10. Freelancer submits milestone delivery
 11. Client reviews the delivery
 12. Client accepts, requests changes, or opens a dispute
@@ -467,113 +323,168 @@ Clear states are very important in Dhaman because they show that the system is n
 
 ### Agreement States
 
-```text
-Draft              → Agreement is being created by the freelancer
-Sent               → Agreement invitation has been sent to the client
-Change Requested   → Client requested edits before approval
-Active             → Client approved and project execution started
-Disputed           → A milestone or payment is under dispute
-Completed          → All milestones are completed and payments released
-Archived           → Agreement is no longer active
-```
+| State             | Description                                        |
+| ----------------- | -------------------------------------------------- |
+| Draft             | Agreement is being created by the freelancer       |
+| Sent              | Agreement invitation has been sent to the client   |
+| Change Requested  | Client requested edits before approval             |
+| Active            | Client approved and project execution started      |
+| Disputed          | A milestone or payment is under dispute            |
+| Completed         | All milestones are completed and payments released  |
+| Archived          | Agreement is no longer active                      |
 
 ### Payment States
 
-```text
-Waiting            → Payment is not yet reserved
-Reserved           → Payment is protected or reserved for the milestone
-Client Review      → Delivery was submitted and is waiting for client review
-AI Review          → Dispute is being analyzed by AI
-Ready to Release   → Payment can be released
-Released           → Payment has been released
-On Hold            → Payment is temporarily blocked due to dispute or issue
-```
+| State              | Description                                              |
+| ------------------- | -------------------------------------------------------- |
+| Waiting             | Payment is not yet reserved                              |
+| Reserved            | Payment is protected or reserved for the milestone       |
+| Client Review       | Delivery was submitted and is waiting for client review   |
+| AI Review           | Dispute is being analyzed by AI                           |
+| Ready to Release    | Payment can be released                                  |
+| Released            | Payment has been released                                |
+| On Hold             | Payment is temporarily blocked due to dispute or issue   |
 
 ### Delivery States
 
-```text
-Draft              → Delivery is being prepared
-Submitted          → Delivery was submitted to the client
-Accepted           → Client accepted the delivery
-Changes Requested  → Client requested modifications
-Disputed           → Delivery is under dispute review
-```
+| State              | Description                                   |
+| ------------------- | --------------------------------------------- |
+| Draft               | Delivery is being prepared                    |
+| Submitted           | Delivery was submitted to the client          |
+| Accepted            | Client accepted the delivery                  |
+| Changes Requested   | Client requested modifications               |
+| Disputed            | Delivery is under dispute review              |
 
 ---
 
 ## 🛠️ Technology Stack
 
-This repository is focused on the dashboard and client portal frontend.
-
 ### Frontend
 
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
-
-### Application Architecture
-
-- App Router structure
-- Protected dashboard routes
-- Token-based client portal routes
-- Reusable UI components
-- Modular feature sections
-- API integration layer
-- Responsive interface
+| Technology          | Purpose                                  |
+| ------------------- | ---------------------------------------- |
+| Next.js 16          | React framework with App Router          |
+| React 19            | UI library                               |
+| TypeScript          | Type-safe development                    |
+| Tailwind CSS 4      | Utility-first CSS styling                |
+| shadcn/ui           | Accessible component system              |
+| Radix UI            | Headless UI primitives                   |
+| TanStack Query 5    | Server state management                  |
+| Axios                | HTTP client                              |
+| Zod 4               | Schema validation                        |
+| React Hook Form 7   | Form state management                    |
+| Lucide React        | Icon library                             |
 
 ### Backend Integration
 
-The dashboard connects to the Dhaman backend API.
+| Technology          | Purpose                                  |
+| ------------------- | ---------------------------------------- |
+| NestJS              | Backend API framework                   |
+| Prisma              | Database ORM                             |
+| PostgreSQL / Neon   | Database                                 |
+| JWT                 | Freelancer authentication                |
+| Portal Tokens       | Client access authentication              |
+| Google Gemini AI    | AI-powered dispute review                 |
+| Resend              | Email delivery service                   |
 
-The backend is built with:
+### Development & Testing
 
-- NestJS
-- Prisma
-- PostgreSQL / Neon
-- JWT authentication
-- Portal tokens
-- Gemini AI
-- Resend email service
-
-Backend API documentation is available here:
-
-```text
-https://backend.dhaman.wasmsoft.com/docs
-```
+| Technology          | Purpose                                  |
+| ------------------- | ---------------------------------------- |
+| Vitest              | Unit and integration testing             |
+| Testing Library     | React component testing                  |
+| ESLint              | Code linting                             |
+| TypeScript 5       | Static type checking                     |
 
 ---
 
 ## 📂 Project Structure
 
-The project structure may follow a typical Next.js dashboard application format:
-
 ```text
 dhaman_dashboard/
-├── public/                 # Static assets such as images, icons, logos, and public files
-├── src/                    # Main application source code
-│   ├── app/                # Next.js App Router pages, layouts, route groups, and page-level logic
-│   ├── components/         # Reusable UI components used across the dashboard and client portal
-│   ├── constants/          # Shared constants such as routes, labels, statuses, config values, and static options
-│   ├── hooks/              # Custom React hooks for reusable frontend logic
-│   ├── lib/                # Utility functions, API clients, helpers, formatters, and shared logic
-│   ├── test/               # Test setup, test utilities, or frontend test files
-│   └── types/              # Shared TypeScript types and interfaces
-├── .codex                  # Codex-related configuration or project notes
-├── .gitignore              # Git ignored files and folders
-├── AGENTS.md               # Agent instructions or project collaboration notes
-├── CLAUDE.md               # Claude-related project instructions or development notes
-├── README.md               # Project documentation
-├── components.json         # Component/UI configuration, commonly used with shadcn/ui
-├── eslint.config.mjs       # ESLint configuration for code quality and consistency
-├── next.config.ts          # Next.js configuration
-├── opencode.json           # OpenCode configuration
-├── package-lock.json       # Locked npm dependency versions
-├── package.json            # Project dependencies, metadata, and available scripts
-├── postcss.config.mjs      # PostCSS configuration, commonly used with Tailwind CSS
-├── tsconfig.json           # TypeScript compiler configuration
-└── vitest.config.ts        # Vitest configuration for testing
+├── public/                  # Static assets organized by feature
+│   ├── auth/                # Auth images and icons
+│   ├── dashboard/           # Dashboard images and icons
+│   └── ...                  # Feature-specific public assets
+├── src/
+│   ├── app/                 # Next.js App Router (routes, layouts, pages)
+│   │   ├── (auth)/         # Authentication route group (login, sign-up)
+│   │   ├── (admin)/        # Admin dashboard route group
+│   │   └── (client-portal)/ # Client portal route group
+│   ├── components/          # Reusable UI components
+│   │   └── shared/          # Shared reusable components (Button, Card, etc.)
+│   ├── constants/           # Static data, navigation, labels, routes
+│   ├── hooks/               # Custom React hooks (TanStack Query, mutations, UI state)
+│   ├── lib/                 # Helpers, schemas, actions, API logic
+│   │   ├── axios-instance.ts # Shared Axios client
+│   │   ├── api-paths.ts     # Centralized API endpoint registry
+│   │   └── {feature}/       # Feature-scoped actions, helpers, schemas
+│   ├── test/                # Test files organized by feature
+│   └── types/               # TypeScript type definitions
+├── .env                     # Environment variables (gitignored)
+├── AGENTS.md                # Agent collaboration instructions
+├── components.json          # shadcn/ui configuration
+├── next.config.ts           # Next.js configuration
+├── package.json             # Dependencies and scripts
+├── postcss.config.mjs       # PostCSS configuration
+├── tsconfig.json            # TypeScript configuration
+└── vitest.config.ts         # Vitest test configuration
 ```
+
+---
+
+## 🔑 Key Files
+
+| File                       | Purpose                                              |
+| -------------------------- | ---------------------------------------------------- |
+| `src/lib/axios-instance.ts` | Shared Axios client with base URL and headers       |
+| `src/lib/api-paths.ts`     | Centralized API endpoint registry                    |
+| `src/app/layout.tsx`       | Root layout with providers and global structure      |
+| `src/app/(admin)/layout.tsx` | Admin dashboard layout with sidebar and auth      |
+| `src/app/(client-portal)/layout.tsx` | Client portal layout with token access  |
+| `src/components/shared/`   | Reusable UI components built on shadcn/ui            |
+| `src/constants/`           | Static navigation, routes, and content data          |
+| `src/types/`               | TypeScript type definitions by feature               |
+| `src/hooks/`               | TanStack Query hooks, mutations, and UI hooks       |
+| `next.config.ts`           | Next.js configuration including rewrites             |
+| `vitest.config.ts`         | Vitest test runner configuration                     |
+
+---
+
+## 🔐 Environment Variables
+
+Create a `.env.local` file in the root directory and configure the required environment variables.
+
+```env
+# Application
+NEXT_PUBLIC_APP_URL="http://localhost:3032"
+
+# Backend API
+NEXT_PUBLIC_API_BASE_URL="http://localhost:8080/api/v1"
+
+# API Documentation
+NEXT_PUBLIC_SWAGGER_URL="https://backend.dhaman.wasmsoft.com/docs"
+```
+
+> Depending on the current integration stage, additional variables may be added later.
+
+---
+
+## 🎓 Demo Access
+
+**Swagger API Documentation:**
+
+https://backend.dhaman.wasmsoft.com/docs
+
+From Swagger, you can:
+
+- View all available API routes
+- Test authentication endpoints
+- Create agreements and milestones
+- Send client invitations
+- Explore client portal routes
+- Test payment and delivery workflows
+- Inspect request and response structures
 
 ---
 
@@ -583,11 +494,9 @@ dhaman_dashboard/
 
 Make sure you have the following installed:
 
-- Node.js 18+
-- npm, yarn, pnpm, or bun
-- Git
-
----
+- **Node.js** 18+
+- **npm**, yarn, pnpm, or bun
+- **Git**
 
 ### Installation
 
@@ -624,114 +533,7 @@ npm run dev
 Open the app in your browser:
 
 ```text
-http://localhost:3000
-```
-
----
-
-## 🔐 Environment Variables
-
-Create a `.env.local` file in the root directory and configure the required environment variables.
-
-Example:
-
-```env
-NEXT_PUBLIC_APP_URL="http://localhost:3000"
-NEXT_PUBLIC_API_URL="https://backend.dhaman.wasmsoft.com"
-NEXT_PUBLIC_SWAGGER_URL="https://backend.dhaman.wasmsoft.com/docs"
-```
-
-Depending on the current integration stage, additional variables may be added later.
-
----
-
-## 📜 Available Scripts
-
-### Start Development Server
-
-```bash
-npm run dev
-```
-
-### Build for Production
-
-```bash
-npm run build
-```
-
-### Start Production Server
-
-```bash
-npm run start
-```
-
-### Run Linting
-
-```bash
-npm run lint
-```
-
----
-
-## 🔌 API Integration
-
-The dashboard communicates with the Dhaman backend API for authentication, agreement management, client portal access, milestones, payments, deliveries, timeline events, and AI review workflows.
-
-The backend Swagger documentation is available here:
-
-```text
-https://backend.dhaman.wasmsoft.com/docs
-```
-
-Swagger allows developers to:
-
-- View all available API routes
-- Test authentication endpoints
-- Create agreements
-- Create milestones
-- Send client invitations
-- Explore client portal routes
-- Test payment workflows
-- Submit and review deliveries
-- Trigger AI review workflows
-- Inspect request and response structures
-
----
-
-## 🧪 Current Functional Status
-
-### Ready
-
-The main product flows are ready and available:
-
-- Freelancer login
-- Dashboard access
-- Create new agreement
-- Create milestones
-- Send invitation to client
-- Client access through secure invitation link
-- Core backend API routes
-- Swagger API documentation
-
-### Partially Integrated
-
-Some secondary features may still be under frontend-backend integration, including:
-
-- Some advanced dashboard analytics
-- Some delivery review screens
-- Some AI review UI states
-- Some payment history screens
-- Some settings and policy management flows
-- Some timeline visualization improvements
-
-### Testable Through Swagger
-
-Even if a specific frontend screen is not fully connected yet, the backend route may already be available and testable through Swagger.
-
-Use:
-
-```text
-https://backend.dhaman.wasmsoft.com/docs
+http://localhost:3032
 ```
 
 ---
@@ -741,15 +543,15 @@ https://backend.dhaman.wasmsoft.com/docs
 ### Freelancer Flow
 
 ```text
-1. Log in to the dashboard
-2. Create a new agreement
-3. Add client information
-4. Add milestones and acceptance criteria
-5. Send invitation to the client
-6. Wait for client approval
-7. Submit milestone delivery
-8. Track review and payment status
-9. Handle change requests or disputes
+1.  Log in to the dashboard
+2.  Create a new agreement
+3.  Add client information
+4.  Add milestones and acceptance criteria
+5.  Send invitation to the client
+6.  Wait for client approval
+7.  Submit milestone delivery
+8.  Track review and payment status
+9.  Handle change requests or disputes
 10. Review AI recommendation if dispute occurs
 ```
 
@@ -767,13 +569,87 @@ https://backend.dhaman.wasmsoft.com/docs
 
 ---
 
+## 📜 Available Scripts
+
+| Command           | Description                        |
+| ----------------- | ---------------------------------- |
+| `npm run dev`     | Start development server (port 3032) |
+| `npm run build`   | Build for production               |
+| `npm run start`   | Start production server            |
+| `npm run lint`    | Run ESLint                         |
+| `npm run test`    | Run tests with Vitest              |
+| `npm run test:watch` | Run tests in watch mode         |
+
+---
+
+## 🔌 API Integration
+
+The dashboard communicates with the Dhaman backend API for authentication, agreement management, client portal access, milestones, payments, deliveries, timeline events, and AI review workflows.
+
+All API endpoints are defined in `src/lib/api-paths.ts` and called through the shared Axios instance in `src/lib/axios-instance.ts`.
+
+The backend Swagger documentation is available here:
+
+```text
+https://backend.dhaman.wasmsoft.com/docs
+```
+
+Swagger allows developers to:
+
+- View all available API routes
+- Test authentication endpoints
+- Create agreements, milestones, and invitations
+- Explore client portal routes
+- Test payment workflows
+- Submit and review deliveries
+- Trigger AI review workflows
+- Inspect request and response structures
+
+---
+
+## 🧪 Current Functional Status
+
+### ✅ Ready
+
+The main product flows are ready and available:
+
+- Freelancer login
+- Dashboard access
+- Create new agreement
+- Create milestones
+- Send invitation to client
+- Client access through secure invitation link
+- Core backend API routes
+- Swagger API documentation
+
+### 🔄 Partially Integrated
+
+Some secondary features may still be under frontend-backend integration, including:
+
+- Some advanced dashboard analytics
+- Some delivery review screens
+- Some AI review UI states
+- Some payment history screens
+- Some settings and policy management flows
+- Some timeline visualization improvements
+
+### 📡 Testable Through Swagger
+
+Even if a specific frontend screen is not fully connected yet, the backend route may already be available and testable through Swagger.
+
+```text
+https://backend.dhaman.wasmsoft.com/docs
+```
+
+---
+
 ## 🚢 Deployment
 
 The project can be deployed to platforms such as:
 
-- Vercel
-- Netlify
-- Render
+- **Vercel**
+- **Netlify**
+- **Render**
 - Any Node.js-compatible hosting provider
 
 ### Production Build
@@ -788,7 +664,7 @@ npm run build
 npm run start
 ```
 
-For Vercel deployment:
+### Vercel Deployment
 
 1. Connect the GitHub repository.
 2. Add the required environment variables.
@@ -822,11 +698,11 @@ Planned improvements may include:
 
 Dhaman is organized into multiple repositories:
 
-```text
-dhaman_landing_page   # Public product landing page
-dhaman_dashboard      # Freelancer dashboard and client portal frontend
-dhaman_backend        # NestJS backend API with Prisma and PostgreSQL
-```
+| Repository              | Description                                              |
+| ----------------------- | -------------------------------------------------------- |
+| `dhaman_landing_page`  | Public product landing page                             |
+| `dhaman_dashboard`     | Freelancer dashboard and client portal frontend          |
+| `dhaman_backend`        | NestJS backend API with Prisma and PostgreSQL            |
 
 ---
 
@@ -881,12 +757,8 @@ License details can be added based on the final project decision.
 
 ---
 
-## 👥 Team Note
+<div align="center">
 
-Dhaman Dashboard is being developed as the operational frontend for a focused fintech MVP:
+**Dhaman Dashboard** — *A financial protection layer for freelance payments.*
 
-```text
-A financial protection layer for freelance payments.
-```
-
-The goal of this repository is to provide a clear, reliable, and professional interface where freelancers can manage agreements and clients can review project progress through a secure portal.
+</div>
