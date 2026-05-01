@@ -478,7 +478,7 @@ export function AgreementsSection() {
     status,
   });
 
-  const agreements = data?.data ?? [];
+  const agreements = Array.isArray(data?.data) ? data.data : [];
   const totalPages = data?.totalPages ?? 1;
 
   return (
