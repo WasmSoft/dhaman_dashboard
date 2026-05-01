@@ -82,9 +82,12 @@ function DashboardSidebar() {
                       </Link>
                     </SidebarMenuButton>
                     {"badge" in item && item.badge ? (
-                      <SidebarMenuBadge className="start-3 end-auto top-[9.7px] size-[19.6px] rounded-full bg-[#6f52ff] px-0 text-[11px] font-bold leading-none text-white">
-                        {item.badge}
-                      </SidebarMenuBadge>
+                      // <SidebarMenuBadge className="start-3 end-auto top-[9.7px] size-[19.6px] rounded-full bg-[#6f52ff] px-0 text-[11px] font-bold leading-none text-white">
+                      //   {item.badge}
+                      // </SidebarMenuBadge>
+                        <SidebarMenuBadge className="left-3 right-auto top-[9.7px] size-[19.6px] rounded-full bg-[#6f52ff] px-0 text-[11px] font-bold leading-none text-white">
+                          {item.badge}
+                        </SidebarMenuBadge>
                     ) : null}
                   </SidebarMenuItem>
                   );
