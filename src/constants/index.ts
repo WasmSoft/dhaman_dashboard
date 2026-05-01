@@ -3,6 +3,7 @@ export * from "./agreements";
 export * from "./client";
 export * from "./client-portal";
 export * from "./dashboard";
+export * from "./users";
 export * from "./deliveries";
 export * from "./ai-review";
 export * from "./settings";

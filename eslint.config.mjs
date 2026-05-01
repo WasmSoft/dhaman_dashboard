@@ -11,11 +11,14 @@ const eslintConfig = defineConfig([
     "**/*.min.js",
     // Default ignores of eslint-config-next:
     ".next/**",
+    "node_modules/**",
     "out/**",
     "build/**",
     "dist/**",
     "coverage/**",
+    "coverage/**",
     "next-env.d.ts",
+    "**/*.min.js",
   ]),
 ]);
 

@@ -5,6 +5,7 @@ import { FundMilestoneDetailsSection } from "@/components/client-portal/FundMile
 import { clientPortalContent } from "@/constants";
 import { cn } from "@/lib/utils";
 import type { PortalFundMilestoneAction } from "@/types";
+import { FundMileStoneOutcomeSection } from "./FundMilestoneOutcomeSection";
 
 const actionIcons = {
   lock: LockKeyhole,
@@ -44,10 +45,7 @@ export function FundMilestoneSection() {
         </div>
 
         <div className="relative mt-6 overflow-hidden rounded-[18px] border border-[#6d5dfc]/25 bg-[linear-gradient(164deg,#12102a_0%,#1a1440_50%,#0f1222_100%)] px-5 py-6 sm:px-7 lg:min-h-[290px]">
-          <div
-            className="pointer-events-none absolute -top-16 end-[-76px] size-60 rounded-full bg-[radial-gradient(circle,rgba(109,93,252,0.18)_0%,rgba(55,47,126,0.09)_35%,rgba(0,0,0,0)_70%)]"
-            aria-hidden="true"
-          />
+          
           <p className="relative z-10 text-start text-[10px] uppercase leading-[15px] tracking-[0.6px] text-[#7f86a8]">
             {fundMilestone.eyebrow}
           </p>
@@ -118,13 +116,15 @@ export function FundMilestoneSection() {
               </article>
 
               <div className="flex h-[28.1px] w-full items-center justify-center gap-2">
+                <span className="inline-flex h-full min-w-0 flex-1 items-center justify-center rounded-lg border border-amber-400/20 bg-amber-400/10 px-2.5 text-[11px] font-extrabold text-[#fbbf24] text-nowrap">
+                  {fundMilestone.milestone.currentStatus}
+                </span>
+                
+                <span className="text-sm leading-[21px] text-[#7f86a8]">←</span>
                 <span className="inline-flex h-full items-center rounded-lg border border-[#6d5dfc]/30 bg-[#6d5dfc]/15 px-2.5 text-[11px] font-extrabold text-[#a78bfa]">
                   {fundMilestone.milestone.nextStatus}
                 </span>
-                <span className="text-sm leading-[21px] text-[#7f86a8]">←</span>
-                <span className="inline-flex h-full min-w-0 flex-1 items-center justify-center rounded-lg border border-amber-400/20 bg-amber-400/10 px-2.5 text-[11px] font-extrabold text-[#fbbf24]">
-                  {fundMilestone.milestone.currentStatus}
-                </span>
+                
               </div>
             </div>
           </div>
@@ -136,6 +136,7 @@ export function FundMilestoneSection() {
         </div>
 
         <FundMilestoneDetailsSection details={fundMilestone.details} />
+        <FundMileStoneOutcomeSection outcome={fundMilestone.fundOutcome}/>
       </section>
     </main>
   );

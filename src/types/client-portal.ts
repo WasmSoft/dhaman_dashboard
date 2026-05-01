@@ -823,6 +823,7 @@ export interface PortalFundMilestoneContent {
   actions: PortalFundMilestoneAction[];
   notice: string;
   details: PortalFundMilestoneDetails;
+  fundOutcome:PortalPaymentSetupOutcome
 }
 
 export interface PortalFundMilestoneAction {
