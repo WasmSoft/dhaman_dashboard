@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { ApiError } from "@/lib/axios-instance";
@@ -79,6 +79,7 @@ describe("SettingsSection", () => {
     });
 
     render(<SettingsSection />);
+    fireEvent.click(screen.getByRole("button", { name: /سياسات الاتفاق/ }));
 
     expect(screen.getByText("سياسات الاتفاق الافتراضية")).toBeInTheDocument();
   });
@@ -87,10 +88,12 @@ describe("SettingsSection", () => {
     mockedSettingsHooks.useSettingsQuery.mockReturnValue({
       data: undefined,
       isLoading: false,
+      isError: true,
       error: new ApiError({
         message: "تعذر تحميل الإعدادات",
         statusCode: 500,
       }),
+      refetch: vi.fn(),
     });
     mockedSettingsHooks.useUpdateSettingsMutation.mockReturnValue({
       isPending: false,

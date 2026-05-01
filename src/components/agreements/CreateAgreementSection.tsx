@@ -102,10 +102,10 @@ function FormCard({ icon, title, description, children }: { icon: ReactNode; tit
 
 function mapDefaultPoliciesToTexts(defaultPolicies?: DefaultPolicies | null) {
   return {
-    delay: defaultPolicies?.delayPolicy ?? "",
-    cancellation: defaultPolicies?.cancellationPolicy ?? "",
-    extraRequest: defaultPolicies?.extraRequestPolicy ?? "",
-    review: defaultPolicies?.reviewPolicy ?? "",
+    delay: defaultPolicies?.defaultDelayPolicy ?? "",
+    cancellation: defaultPolicies?.defaultCancellationPolicy ?? "",
+    extraRequest: defaultPolicies?.defaultExtraRequestPolicy ?? "",
+    review: defaultPolicies?.defaultReviewPolicy ?? "",
   };
 }
 
@@ -148,8 +148,8 @@ function buildPolicyPayload(
     cancellationPolicy: selectedPolicies.cancellation ? policyTexts.cancellation || null : null,
     extraRequestPolicy: selectedPolicies.extraRequest ? policyTexts.extraRequest || null : null,
     reviewPolicy: selectedPolicies.review ? policyTexts.review || null : null,
-    clientReviewPeriodDays: defaultPolicies?.clientReviewPeriodDays ?? 7,
-    freelancerDelayGraceDays: defaultPolicies?.freelancerDelayGraceDays ?? 3,
+    clientReviewPeriodDays: 7,
+    freelancerDelayGraceDays: 3,
   };
 }
 
@@ -497,10 +497,10 @@ export function CreateAgreementSection() {
         }
 
         return {
-          delay: Boolean(defaultPoliciesQuery.data.delayPolicy),
-          cancellation: Boolean(defaultPoliciesQuery.data.cancellationPolicy),
-          extraRequest: Boolean(defaultPoliciesQuery.data.extraRequestPolicy),
-          review: Boolean(defaultPoliciesQuery.data.reviewPolicy),
+          delay: Boolean(defaultPoliciesQuery.data.defaultDelayPolicy),
+          cancellation: Boolean(defaultPoliciesQuery.data.defaultCancellationPolicy),
+          extraRequest: Boolean(defaultPoliciesQuery.data.defaultExtraRequestPolicy),
+          review: Boolean(defaultPoliciesQuery.data.defaultReviewPolicy),
         };
       });
     });
